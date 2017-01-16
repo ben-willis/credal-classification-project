@@ -1,0 +1,64 @@
+\chapter{Naive Credal Classifier}
+To classify the data we will be use the \textit{Naive Credal Classifier} (NCC), an extension of the naive Bayes classifier (NBC) \cite{Zaffalon01}. The NCC is a case of the credal classifier and differs from the NBC in that it returns a set of classes as opposed to a single class.
+
+Formally, let us denote the class variable by $C$, taking values in the set $\mathcal{C}$. Also we measure $\mathit{k}$ features $A_1,\dots,A_k$ from the sets $\mathcal{A}_1,\dots,\mathcal{A}_k$.
+
+\section{Naive Bayes Classifier}
+To formulate the Naive Credal Classifier we first need to understand the simpler naive Bayes classifier.
+
+Both the NCC and the NBC share the naivety assumption \cite{Zaffalon01}. This is the assumption that the features of an object are independent \cite{Rish01}. Hence:
+\begin{equation} \label{naive_assumption}
+	P(\mathbf{a} \mid c) = \prod_{i=1}^{k} P(a_i \mid c)
+\end{equation}
+This assumption greatly simplifies the problem. They also make use of Bayes' theorem which allows us to rewrite the probability of an object belonging to a class like so:
+\begin{equation} \label{bayes_theorem}
+    P(c \mid \mathbf{a}) = \frac{P(c) P(\mathbf{a} \mid c)}{P(\mathbf{a})}
+\end{equation}
+
+Using \cref{naive_assumption,bayes_theorem} we can assign probabilities to each class:
+\begin{equation}
+    P(C \mid \mathbf{a}) \propto P(c) \prod_{i=1}^k P(a_i \mid c)
+\end{equation}
+The NBC then assigns the most probable class to the object, known as the maximum a posteriori estimate.
+
+\section{Imprecise Dirichlet Model}
+
+The Credal Classifier makes use of the \textit{Imprecise Dirichlet Model} (IDM) as its prior. The IDM is useful as it models prior ignorance and is invariant to changes in the sample space \cite{Bernard04}.
+
+The Imprecise Dirichlet Model a set of Dirichlet distributions. The Dirichlet distribution is the multinomial extension on the gamma distribution for $x_1,\dots,x_k$ where $x_i \in (0,1)$ and $\sum_{i=1}^k x_i = 1$ with probability density function:
+\begin{equation} \label{dirichlet_pdf}
+	f(x_1,\dots,x_k \mid \alpha_1,\dots,\alpha_k) = \frac{\Gamma(\sum_{i=1}^k\alpha_i)}{\prod_{i=1}^k\Gamma(\alpha_i)} \prod_{i=1}^k x_i^{\alpha_i - 1}
+\end{equation}
+where $\Gamma$ is the gamma function and $\alpha_i > 0$.
+
+The IDM is the set of all Dirichlet distributions with $\alpha_i = st_i$ such that $\sum_{i=1}^k t_i = 1$ and $s > 0$ \cite{Walley96}.
+
+\section{Naive Credal Classifier}
+
+The NCC brings together the NBC and the IDM. We use a slightly different version of the IDM as the set of prior distributions and the assumptions of the NBC to update these priors.
+
+First we denote the chance of observing and object in class $c$ with features $\mathbf{a}$ as $\theta_{c,\mathbf{a}}$, the chance of observing an individual feature $a_i$ and class $c$ as $\theta_{c,a_i}$ and the chance of observing $\mathbf{a}$ given $c$ as $\theta_{\mathbf{a} \mid c}$.
+
+Similarly after observing $N$ objects we denote the number of objects in class $c$ as $n(c)$ and the number of objects in class $c$ with feature $a_i$ as $n(c, a_i)$. Thus $0 \leq n(c, a_i) \leq N$, $\sum_{c \in \mathcal{C}} n(c) = N$ and $\sum_{a_i \in \mathcal{A}_i} n(c, a_i) = n(c)$ for all $c \in \mathcal{C}$.
+
+If we denote the vector $\mathbf{\theta}$ whose elements are $\theta_{c,\mathbf{a}}$ then after observing N objects we can write the likelihood function as:
+\begin{equation} \label{likelihood}
+	L(\mathbf{\theta} \mid \mathbf{n}) \propto \prod_{x \in \mathcal{C}} \left[ \theta_c^{n(c)} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{n(c, a_i)} \right]
+\end{equation}
+
+We can also write the prior densities in our IDM in a similar manner. By setting $x_i = \theta_{c,\mathbf{a}}$ the prior distributions become:
+\begin{equation} \label{prior}
+	f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{x \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(c, a_i) - 1} \right]
+\end{equation}
+where $t(\cdot)$ corresponds to $n(\cdot)$. These priors are products of Dirichlet distributions \cite{Zaffalon01} and have the following constraints:
+\begin{equation}
+	\sum_{c \in \mathcal{C}} t(c) = 1
+\end{equation}
+\begin{equation}
+	\sum_{a_i \in \mathcal{A}_i} t(a_i, c) = t(c)
+\end{equation}
+\begin{equation}
+	t(a_i, c) > 0
+\end{equation}
+For all $(i, a_i, c)$.
+

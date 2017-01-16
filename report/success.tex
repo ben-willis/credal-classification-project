@@ -1,0 +1,11 @@
+\chapter{Measuring Success}
+
+\section{Definitions}
+
+The metric we will use to measure the success of our classifier is \textit{accuracy}. Accuracy is the probability of successfully assigning a class to an object. Estimating this is important as it is a useful measure for deciding which model to apply to a given problem \cite{Kohavi95}.
+
+\section{Cross Validation}
+
+Cross validation, or $k$-fold cross validation is a method for estimating accuracy. In $k$-fold cross validation the dataset is split into k roughly equally sized groups. For each of these groups the rest of the data is used to train the classifier and then the  data from the remaining group is used to test the classifier. After this process has been completed for all the groups the average success rate of the classifier is considered \cite{Priddy05}.
+
+The choice of $k$ is leads to different types of cross validation. A standard choice is $k=10$ \cite{Priddy05}. A special case of cross validation is when $k=n$ (the number of observations). This is knowns as \textit{Leave-one-out cross validation}.

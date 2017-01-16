@@ -1,0 +1,70 @@
+\chapter{MLE estimate for NBC}
+
+First we look at the maximum likelihood estimate for the naive Bayes classifier.
+
+\section{Notation}
+
+Formally, let us denote the class variable by $C$, taking values in the set $\mathcal{C}$. Also we measure $\mathit{k}$ features $A_1,\dots,A_k$ from the sets $\mathcal{A}_1,\dots,\mathcal{A}_k$.
+
+We will also denote the unknown chances of observing an object with $C=c$ by $\theta_c$ and the change of observing an object with $C=c$ and $\mathbf{A} = \mathbf{a}$ by $\theta_{\mathbf{a}, c}$. Similarly we denote the conditional chances of $A_i=a_i$ and $(A_1,\dots,A_k)=(a_1,\dots,a_k)$ given $C=c$ by $\theta_{a_i \mid c}$ and $\theta_{\mathbf{a} \mid c}$ respectively.
+
+Finally after making observations of the attributes and class of $N$ objects. We denote the frequency of those in class $c$ by $n(c)$ and those in class c with attribute $a_i$ by $n(a_i, c)$. We have the following structural constraints:
+\begin{gather}
+	0 \leq n(a_i \mid c) \leq n(c) \\
+	\sum_{a_i \in \mathcal{A}_i} n(a_i | c) = n(c) \\
+	\sum_{c \in \mathcal{C}} n(c) = N
+\end{gather}
+\section{Assumptions}
+
+Both the NCC and the NBC share the naivety assumption \cite{Zaffalon01}. This is the assumption that the features of an object are independent \cite{Rish01}. Hence:
+\begin{equation} \label{naive_assumption}
+	\theta_{\mathbf{a} \mid c} = \prod_{i=1}^{k} \theta_{a_i \mid c}
+\end{equation}
+This assumption greatly simplifies the problem.
+
+They also make use of Bayes' theorem which allows us to rewrite the probability of an object belonging to a class like so:
+\begin{equation} \label{bayes_theorem}
+    P(A \mid B) = \frac{P(B \mid A) P(A)}{P(B)}
+\end{equation}
+
+\section{Likelihood Function}
+
+Using \cref{bayes_theorem,naive_assumption} we can derive the likelihood function for the $\mathbf{\theta}$, the vector whose elements are the chances $\theta_{\mathbf{a}, c}$ given data $\mathbf{n}$, the vector of all known frequencies.
+
+The likelihood function can be expressed as:
+\begin{equation} \label{likelihood}
+	l(\mathbf{\theta} \mid \mathbf{n}) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{n(c)} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{n(c, a_i)} \right]
+\end{equation}
+
+\section{Maximum Likelihood Estimate}
+
+We can derive the maximum likelihood estimate from this function.
+
+First we take the log likelihood:
+\begin{equation}
+	L(\mathbf{\theta} \mid \mathbf{n}) \propto \sum_{c \in \mathcal{C}}  n(c)log(\theta_c) + \sum_{c \in \mathcal{C}} \sum_{i=1}^k \sum_{a_i \in \mathcal{A}_i} n(c, a_i) log(\theta_{a_i \mid c}) 
+\end{equation}
+So to maximise the likelihood function we need to maximise the two parts of the log likelihood function.
+
+To do so we use Lagrange multipliers. These allow us to solve problems in the form max f(x,y) s.t. g(x,y) = 0.
+
+For the first equation we have
+\begin{align}
+	f(\mathbf{\theta}, \mathbf{n})& = \sum_{c \in \mathcal{C}}  n(c)log(\theta_c) \\
+	g(\mathbf{\theta}, \mathbf{n})& = \sum_{c \in \mathcal{C}}  \theta_c - 1
+\end{align}
+This gives us our Lagrangian:
+\begin{equation}
+	\mathcal{L}(\mathbf{\theta}, \mathbf{n}, \lambda) = \sum_{c \in \mathcal{C}}  n(c)log(\theta_c) - \lambda(\sum_{c \in \mathcal{C}}  \theta_c - 1)
+\end{equation}
+
+Differentiating with respect to $\theta_c$ we have:
+\begin{equation}
+	\nabla_{\theta_c} \mathcal{L}(\mathbf{\theta}, \mathbf{n}, \lambda) = \frac{n(c)}{\theta_c} - \lambda
+\end{equation}
+
+Hence the maximum is achieved giving an mle of $\hat{\theta_c} = \frac{n(c)}{N}$. Intuitively this is just the relative frequency of observations that fall into that class.
+
+\section{Classifiction}
+
+We can use the maximum likelihood estimates for these chances to create a naive Bayes Classifier. We can estimate $P(c|\mathbf{a})$ with our maximum likelihood estimates for our theta chances.

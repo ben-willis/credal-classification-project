@@ -1,0 +1,14 @@
+\chapter{Applying of the naive Bayes classifier}
+
+\section{Maximum Likelihood Estimate}
+We will use the naivety assumption to find the maximum likelihood estimate for an object's class. The naivety assumptions is that all the features of an object are independent \cite{Zaffalon01}. We can write this as:
+\begin{equation} \label{naivety}
+	P(\mathbf{a} \mid c) = \prod_{i=1}^{k} P(a_i \mid c)
+\end{equation}
+
+The maximum likelihood estimate (MLE) is the class which maximizes the probability in \cref{naivety}. i.e. $\hat{c} = \argmax_{c \in \mathcal{C}} P(\mathbf{a} \mid c)$.
+
+\section{Classification}
+To begin with we take three pieces of vehicular information and train these against the experts assessed risk with our classifier. The three features we use are price, body style and horsepower of the vehicle. These were selected as they do not show strong levels of correlation and are therefore a good fit for the naivety assumption. In the case of price and horsepower we split the data into 10 equally sized intervals to discretize the data. We also remove any rows with missing values to simplify the process.
+
+We estimate the probabilities required to find the maximum likelihood estimate by using the relative frequencies of each of the features given each of the possible classes in our training set.

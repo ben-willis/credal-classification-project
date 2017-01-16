@@ -1,0 +1,16 @@
+*.aux
+*.bbl
+*.toc
+*.blg
+*.fdb_latexmk
+*.fls
+
+*.sublime-workspace
+*.sublime-project
+
+language.json
+
+.RData
+.Rhistory
+
+tmp
