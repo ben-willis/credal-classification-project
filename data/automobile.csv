@@ -1,4 +1,4 @@
-Normalized-losses, Make, Fuel-type, Aspiration, Num-of-doors, Body-style, Drive-wheels, Engine-location, Wheel-base, Length, Width, Height, Curb-weight, Engine-type, Num-of-cylinders, Engine-size, Fuel-system, Bore, Stroke, Compression-ratio, Horsepower, Peak-rpm, City-mpg, Highway-mpg, Price, Symboling
+Normalized-losses,Make,Fuel-type,Aspiration,Num-of-doors,Body-style,Drive-wheels,Engine-location,Wheel-base,Length,Width,Height,Curb-weight,Engine-type,Num-of-cylinders,Engine-size,Fuel-system,Bore,Stroke,Compression-ratio,Horsepower,Peak-rpm,City-mpg,Highway-mpg,Price,Symboling
 168,toyota,gas,std,two,sedan,rwd,front,94.5,168.7,64,52.6,2169,ohc,four,98,2bbl,3.19,3.03,9,70,4800,29,34,8058,1
 113,mazda,gas,std,four,sedan,fwd,front,93.1,166.8,64.2,54.1,1950,ohc,four,91,2bbl,3.08,3.15,9,68,5000,31,38,7395,1
 87,toyota,gas,std,two,hatchback,fwd,front,95.7,158.7,63.6,54.5,1985,ohc,four,92,2bbl,3.05,3.03,9,62,4800,35,39,5348,1
