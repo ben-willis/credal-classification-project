@@ -68,3 +68,11 @@ Hence the maximum is achieved giving an mle of $\hat{\theta_c} = \frac{n(c)}{N}$
 \section{Classifiction}
 
 We can use the maximum likelihood estimates for these chances to create a naive Bayes Classifier. We can estimate $P(c|\mathbf{a})$ with our maximum likelihood estimates for our theta chances.
+
+Applying this to our data set and using a technique known as $k$-fold cross validation to evaluate accuracy. In $k$-fold cross validation we split our dataset into $k$ equally sized groups. Then for each group we train the classifier on all the other groups and test it on that group. We then average all these accuracy to return an (unbiased?) estimate for the accuracy of our classifier.
+
+The choice of $k$ leads to different types of cross validation. A standard choice is $k=10$. A special case of cross validation is when $k=n$ (the number of observations). This is knowns as \textit{Leave-one-out cross validation} \cite{Priddy05}.
+
+In this case we set $k=10$ and the estimated accuracy was \%66.54.
+
+This is pretty bad, can we improve?

@@ -8,7 +8,11 @@ Formally, let us denote the class variable by $C$, taking values in the set $\ma
 
 \section{Auto mobile Insurance}
 
-We will study the problem of classifying the risk to an insurer of a car and comparing this solution to the classification of an expert. We will then examine how both classifications compare to the normalised loss to the insurer. The dataset we're analysing contains 24 attributes that give information about the type of vehicle. These range from number of doors to engine location. The data set also contains a risk assigned by an expert. This risk is initially assigned by price and then, if it is more (or less) risky, shifted up (or down). This is known as symboling \cite{Automobile}.
+We will study the problem of classifying the risk to an insurer of a car and comparing this solution to the classification of an expert. We will then examine how both classifications compare to the normalised loss to the insurer.
+
+The data set we will be analysing contains vehicular information about 205 auto mobiles. This features includes dimensions, engine specifications and vehicle characteristics. It also contains an experts assessed risk to the insurer of the vehicle on an integer scale of -2 to 3 with 3 being most risky and -2 being least risky. In addition to the technical information and the experts assessment the data set also contains the normalized loss to the insurer. This ranges from 65 to 256 and is normalized for all vehicles within a particular size classification (two-door small, station wagons, etc) and represents the average loss per car per year \cite{Automobile}.
+
+Initially we will discard objects with missing values and discretize all continuous attributes.
 
 
 
