@@ -4,7 +4,7 @@ First we look at the maximum likelihood estimate for the naive Bayes classifier.
 
 \section{Notation}
 
-Formally, let us denote the class variable by $C$, taking values in the set $\mathcal{C}$. Also we measure $\mathit{k}$ features $A_1,\dots,A_k$ from the sets $\mathcal{A}_1,\dots,\mathcal{A}_k$.
+Formally, let us denote the class variable by $C$, taking values in the set $\mathcal{C}$. Also we measure $k$ features $A_1,\dots,A_k$ from the sets $\mathcal{A}_1,\dots,\mathcal{A}_k$. We denote observations of these variables as $c$ and $a_1,\dots,a_k$ respectively.
 
 We will also denote the unknown chances of observing an object with $C=c$ by $\theta_c$ and the change of observing an object with $C=c$ and $\mathbf{A} = \mathbf{a}$ by $\theta_{\mathbf{a}, c}$. Similarly we denote the conditional chances of $A_i=a_i$ and $(A_1,\dots,A_k)=(a_1,\dots,a_k)$ given $C=c$ by $\theta_{a_i \mid c}$ and $\theta_{\mathbf{a} \mid c}$ respectively.
 
@@ -46,7 +46,7 @@ First we take the log likelihood:
 \end{equation}
 So to maximise the likelihood function we need to maximise the two parts of the log likelihood function.
 
-To do so we use Lagrange multipliers. These allow us to solve problems in the form max f(x,y) s.t. g(x,y) = 0.
+To do so we use the method of Lagrange multipliers. This is a strategy for finding local maxima and minima of a function subject to constraints.
 
 For the first equation we have
 \begin{align}
@@ -65,7 +65,7 @@ Differentiating with respect to $\theta_c$ we have:
 
 Hence the maximum is achieved giving an mle of $\hat{\theta_c} = \frac{n(c)}{N}$. Intuitively this is just the relative frequency of observations that fall into that class.
 
-\section{Classifiction}
+\section{Classification}
 
 We can use the maximum likelihood estimates for these chances to create a naive Bayes Classifier. We can estimate $P(c|\mathbf{a})$ with our maximum likelihood estimates for our theta chances.
 

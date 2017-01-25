@@ -1,0 +1,27 @@
+\chapter{Corrected NBC with Dirichlet Prior}
+
+We can use the Dirichlet distribution as a conjugate prior to our likelihood function.
+
+The Dirichlet distribution is the multinomial extension on the gamma distribution for $x_1,\dots,x_k$ where $x_i \in (0,1)$ and $\sum_{i=1}^k x_i = 1$ with probability density function:
+\begin{equation} \label{dirichlet_pdf}
+	f(x_1,\dots,x_k \mid \alpha_1,\dots,\alpha_k) = \frac{\Gamma(\sum_{i=1}^k\alpha_i)}{\prod_{i=1}^k\Gamma(\alpha_i)} \prod_{i=1}^k x_i^{\alpha_i - 1}
+\end{equation}
+where $\Gamma$ is the gamma function and $\alpha_i > 0$.
+
+We can rewrite the prior density of our Dirichlet distribution in a similar manner to our likelihood function. By setting $x_i = \theta_{c,\mathbf{a}}$ the prior distributions become:
+\begin{equation} \label{prior}
+	f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{x \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(c, a_i) - 1} \right]
+\end{equation}
+where $t(\cdot)$ corresponds to $n(\cdot)$. This prior Dirichlet distribution \cite{Zaffalon01} has the following constraints:
+\begin{equation}
+	\sum_{c \in \mathcal{C}} t(c) = 1
+\end{equation}
+\begin{equation}
+	\sum_{a_i \in \mathcal{A}_i} t(a_i, c) = t(c)
+\end{equation}
+\begin{equation}
+	t(a_i, c) > 0
+\end{equation}
+For all $(i, a_i, c)$.
+
+When we multiply our likelihood by this prior density get a posterior in the same form.

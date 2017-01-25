@@ -1,10 +1,10 @@
 \chapter{Introduction}
 
+We will start by building the classifier beginning with simple maximum likelihood estimates for the chances before introducing a prior probability. We will then introduce the idea of a credal classifier which returns a set of possible classes as oposed to a single class. Finally we will see how this classifier can be adapted to work with missing data. At each stage we will apply our classifier to the problem of determining the risk to an insurer of a car.
+
 \section{Classification}
 
 Classification is the problem of identifying which class an object belongs to. Each object can be distinguished by a set of properties know as features and each object belongs to a single class. A classifier is an algorithm which, given previous observations and their classes, can determine which class a new observation belongs to \cite{Theodoridis03}. There are many applications of classifiers, ranging from image recognition to sentiment analysis.
-
-Formally, let us denote the class variable by $C$, taking values in the set $\mathcal{C}$. Also we measure $k$ features $A_1,\dots,A_k$ from the sets $\mathcal{A}_1,\dots,\mathcal{A}_k$. We denote observations of these variables as $c$ and $a_1,\dots,a_k$ respectively.
 
 \section{Auto mobile Insurance}
 
