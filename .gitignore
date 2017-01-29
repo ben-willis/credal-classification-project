@@ -14,7 +14,8 @@ language.json
 .Rhistory
 
 tmp
+reading
 
 __pycache__/
 *.py[cod]
-env/
+venv/
