@@ -59,6 +59,12 @@ Hence the maximum is achieved giving an mle of $\hat{\theta_c} = \frac{n(c)}{N}$
 
 We now have our naive Bayes classifier. We estimate $P(c)$ by $\frac{n(c)}{N}$ and $P(a_i \mid c)$ by $\frac{n(a_i, c)}{n(c)}$, the relative frequencies. Then we choose the class $c$ which maximises $P(c)\prod_{i=1}^{k}P(a_i \mid c)$.
 
+\section{Diagnostics}
+
+We use a technique known as $k$-fold cross validation to evaluate accuracy. In $k$-fold cross validation we split our dataset into $k$ equally sized groups. Then for each group we train the classifier on all the other groups and test it on that group. We then average all these accuracy to return an (unbiased?) estimate for the accuracy of our classifier.
+
+The choice of $k$ leads to different types of cross validation. A standard choice is $k=10$. A special case of cross validation is when $k=n$ (the number of observations). This is knowns as \textit{Leave-one-out cross validation} \cite{Priddy05}.
+
 \section{Applications}
 
 \subsection{Forest Type Data Set}
@@ -67,8 +73,19 @@ First we will apply this classifier to a data set from a remote sensing study. T
 
 To make our data appropriate for this method we discrete the continuous variables into $n$ bins with an equal frequency.
 
-\section{Diagnostics}
+Using cross validation to determine the accuracy of this classifier has 80\% accuracy on this data set.
 
-Applying this to our data set and using a technique known as $k$-fold cross validation to evaluate accuracy. In $k$-fold cross validation we split our dataset into $k$ equally sized groups. Then for each group we train the classifier on all the other groups and test it on that group. We then average all these accuracy to return an (unbiased?) estimate for the accuracy of our classifier.
+\subsection{Automobile Data Set}
 
-The choice of $k$ leads to different types of cross validation. A standard choice is $k=10$. A special case of cross validation is when $k=n$ (the number of observations). This is knowns as \textit{Leave-one-out cross validation} \cite{Priddy05}.
+To make our data appropriate for this method we discrete the continuous variables into $n$ bins with an equal frequency. We also discard any objects with missing values giving us a total of 200 objects to test out classifier on.
+
+Using cross validation to determine the accuracy of this classifier has 66\% accuracy on this data set.
+
+\section{Conclusions}
+
+Clearly the classifier performs better on the forest type dataset than on the auto mobile data set. This could be due to a few different reasons.
+
+Firstly our classifier falls down if there are no observations with attribute $a_k$ and class $c$ in our training set. In these case the maximum likelihood estimate for $\theta_{a_k \mid c}$ is 0. This estimate leads to $P(c \mid \mathbf{a}) = 0$ and would rule out assigning any objects with the attribute $a_k$ to class $c$. This is especially problematic for small sets of data. We can tackle this by introducing prior probabilities for the theta chances.
+
+Another reason the classifier appears to perform worse on our auto mobile data set could be the nature of its categories. The accuracy metric does not take into account how close the classification is. For example if the true class is 2 an assigned class of 1 should be considered better than an assigned class of -2.
+
