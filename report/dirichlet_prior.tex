@@ -1,8 +1,12 @@
 \chapter{Corrected NBC with Dirichlet Prior}
 
-We can use the Dirichlet distribution as a conjugate prior to our likelihood function.
+We will introduce a prior distribution for our theta variables to improve our classifier. We will also investigate new ways of measuring how successful our classifier is.
 
-The Dirichlet distribution is the multinomial extension on the gamma distribution for $x_1,\dots,x_k$ where $x_i \in (0,1)$ and $\sum_{i=1}^k x_i = 1$ with probability density function:
+\section{Theory}
+
+We return to our likelihood function \cref{likelihood} for our theta variables. We can introduce a prior probability for these parameters and then aim to maximise the posterior.
+
+The Dirichlet distribution is the multinomial extension of the beta distribution for $x_1,\dots,x_k$ where $x_i \in (0,1)$ and $\sum_{i=1}^k x_i = 1$ with probability density function:
 \begin{equation} \label{dirichlet_pdf}
 	f(x_1,\dots,x_k \mid \alpha_1,\dots,\alpha_k) = \frac{\Gamma(\sum_{i=1}^k\alpha_i)}{\prod_{i=1}^k\Gamma(\alpha_i)} \prod_{i=1}^k x_i^{\alpha_i - 1}
 \end{equation}
