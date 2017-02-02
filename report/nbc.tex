@@ -11,7 +11,7 @@ We are interested in $P(c \mid \mathbf{a})$. Using Bayes theorem we can rewrite 
 	P(c \mid \mathbf{a}) = \frac{P(\mathbf{a} \mid c)P(c)}{P(\mathbf{a})}
 \end{equation}
 
-Moreover we can make use of the naivety assumption. The naivety assumptions states that each attribute is independent of one another. We can now write the probability of an object being in class $c$ with attributes $a_1,\dots,a_k$ as:
+Moreover we can make use of the naivety assumption. The naivety assumptions states that each attribute is conditionally independent of one another. We can now write the probability of an object being in class $c$ with attributes $a_1,\dots,a_k$ as:
 \begin{equation}
 	P(c \mid \mathbf{a}) = \frac{P(c)\prod_{i=1}^{k}P(a_i \mid c)}{P(\mathbf{a})}
 \end{equation}
@@ -23,7 +23,7 @@ To turn this into a classifier we need a way to make a decision for which class 
 
 Now that we have our method for making our decision we need to estimate the required probabilities.
 
-Firstly we parametrise these probabilities.We denote the unknown chances of observing an object with $C=c$ by $\theta_c$ and the change of observing an object with $C=c$ and $\mathbf{A} = \mathbf{a}$ by $\theta_{\mathbf{a}, c}$. Similarly we denote the conditional chances of $A_i=a_i$ and $(A_1,\dots,A_k)=(a_1,\dots,a_k)$ given $C=c$ by $\theta_{a_i \mid c}$ and $\theta_{\mathbf{a} \mid c}$ respectively.
+Firstly we parametrise these probabilities. We denote the unknown chances of observing an object with $C=c$ by $\theta_c$ and the change of observing an object with $C=c$ and $\mathbf{A} = \mathbf{a}$ by $\theta_{\mathbf{a}, c}$. Similarly we denote the conditional chances of $A_i=a_i$ and $(A_1,\dots,A_k)=(a_1,\dots,a_k)$ given $C=c$ by $\theta_{a_i \mid c}$ and $\theta_{\mathbf{a} \mid c}$ respectively.
 
 We can consider the likelihood function for the $\mathbf{\theta}$, the vector whose elements are the chances $\theta_{\mathbf{a}, c}$ given data $\mathbf{n}$, the vector of all known frequencies.
 
@@ -61,25 +61,25 @@ We now have our naive Bayes classifier. We estimate $P(c)$ by $\frac{n(c)}{N}$ a
 
 \section{Diagnostics}
 
-We use a technique known as $k$-fold cross validation to evaluate accuracy. In $k$-fold cross validation we split our dataset into $k$ equally sized groups. Then for each group we train the classifier on all the other groups and test it on that group. We then average all these accuracy to return an (unbiased?) estimate for the accuracy of our classifier.
+We use a technique known as $k$-fold cross validation to evaluate accuracy. In $k$-fold cross validation we split our dataset into $k$ equally sized groups. Then for each group we train the classifier on all the other groups and test it on that group. We then average all these accuracy to return an estimate for the accuracy of our classifier.
 
-The choice of $k$ leads to different types of cross validation. A standard choice is $k=10$. A special case of cross validation is when $k=n$ (the number of observations). This is knowns as \textit{Leave-one-out cross validation} \cite{Priddy05}.
+The choice of $k$ leads to different types of cross validation. A standard choice is $k=10$. A special case of cross validation is when $k=n$ (the number of observations). This is knowns as \textit{leave-one-out cross validation} \cite{Priddy05}.
 
 \section{Applications}
 
 \subsection{Forest Type Data Set}
 
-First we will apply this classifier to a data set from a remote sensing study. The study measured spectral information in the green, red and infrared wavelengths on three separate dates of different forest types in Japan. In total we have nine continuous attributes and four possible classes: Sugi forest, Hinoki forest, Mixed deciduous forest and other non-forest land.
+First we will apply this classifier to a data set from a remote sensing study. The study measured spectral information in the green, red and infrared wavelengths on three separate dates of different forest types in Japan. In total we have nine continuous attributes and four possible classes: Sugi forest, Hinoki forest, Mixed deciduous forest and other non-forest land. This data set was chosen as it contained a large number of observations and demonstrates a situation where the naive Bayes classifier works well.
 
-To make our data appropriate for this method we discrete the continuous variables into $n$ bins with an equal frequency.
+To make our data appropriate for this method we discretize the continuous variables into $n$ bins with an equal frequency.
 
-Using cross validation to determine the accuracy of this classifier has 80\% accuracy on this data set.
+The accuracy of the classifier is 80\% on this data set, using 10-fold cross validation.
 
 \subsection{Automobile Data Set}
 
-To make our data appropriate for this method we discrete the continuous variables into $n$ bins with an equal frequency. We also discard any objects with missing values giving us a total of 200 objects to test out classifier on.
+To make our data appropriate for this method we discretize the continuous variables into $n$ bins with an equal frequency. We also discard any objects with missing values giving us a total of 200 objects to test out classifier on.
 
-Using cross validation to determine the accuracy of this classifier has 66\% accuracy on this data set.
+The accuracy of the classifier is 80\% on this data set, using 10-fold cross validation.
 
 \section{Conclusions}
 
