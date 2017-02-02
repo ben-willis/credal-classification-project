@@ -1,10 +1,12 @@
 \chapter{Corrected NBC with Dirichlet Prior}
 
-We will introduce a prior distribution for our theta variables to improve our classifier. We will also investigate new ways of measuring how successful our classifier is.
+We will introduce a prior distribution for our theta variables to improve our classifier.
+We will also investigate new ways of measuring how successful our classifier is.
 
 \section{Theory}
 
-We return to our likelihood function \cref{likelihood} for our theta variables. We can introduce a prior probability for these parameters and then aim to maximise the posterior.
+We return to our likelihood function \cref{likelihood} for our theta variables.
+We can introduce a prior probability for these parameters and then aim to maximise the posterior.
 
 The Dirichlet distribution is the multinomial extension of the beta distribution for $x_1,\dots,x_k$ where $x_i \in (0,1)$ and $\sum_{i=1}^k x_i = 1$ with probability density function:
 \begin{equation} \label{dirichlet_pdf}
@@ -12,11 +14,13 @@ The Dirichlet distribution is the multinomial extension of the beta distribution
 \end{equation}
 where $\Gamma$ is the gamma function and $\alpha_i > 0$.
 
-We can rewrite the prior density of our Dirichlet distribution in a similar manner to our likelihood function. By setting $x_i = \theta_{c,\mathbf{a}}$ the prior distributions become:
+We can rewrite the prior density of our Dirichlet distribution in a similar manner to our likelihood function.
+By setting $x_i = \theta_{c,\mathbf{a}}$ the prior distributions become:
 \begin{equation} \label{prior}
 	f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{x \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(c, a_i) - 1} \right]
 \end{equation}
-where $t(\cdot)$ corresponds to $n(\cdot)$. This prior Dirichlet distribution \cite{Zaffalon01} has the following constraints:
+where $t(\cdot)$ corresponds to $n(\cdot)$.
+This prior Dirichlet distribution \cite{Zaffalon01} has the following constraints:
 \begin{equation}
 	\sum_{c \in \mathcal{C}} t(c) = 1
 \end{equation}
