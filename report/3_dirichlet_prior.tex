@@ -1,21 +1,17 @@
 \chapter{Corrected NBC with Dirichlet Prior}
 
-We will introduce a prior distribution for our theta variables to improve our classifier.
-We will also investigate new ways of measuring how successful our classifier is.
-
 \section{Theory}
 
 We return to our likelihood function \cref{likelihood} for our theta variables.
-We can introduce a prior probability for these parameters and then aim to maximise the posterior.
+We can introduce a prior distribution for these parameters and then consider the posterior distribution.
 
 The Dirichlet distribution is the multinomial extension of the beta distribution for $x_1,\dots,x_k$ where $x_i \in (0,1)$ and $\sum_{i=1}^k x_i = 1$ with probability density function:
 \begin{equation} \label{dirichlet_pdf}
-	f(x_1,\dots,x_k \mid \alpha_1,\dots,\alpha_k) = \frac{\Gamma(\sum_{i=1}^k\alpha_i)}{\prod_{i=1}^k\Gamma(\alpha_i)} \prod_{i=1}^k x_i^{\alpha_i - 1}
+	f(x_1,\dots,x_k \mid s, t(1),\dots,t(k)) \propto \prod_{i=1}^k x_i^{st(i) - 1}
 \end{equation}
-where $\Gamma$ is the gamma function and $\alpha_i > 0$.
+where $s > 0$ and each $t(i)>0$ such that $\sum_{i=1}^{k}t(i) = 1$.
 
-We can rewrite the prior density of our Dirichlet distribution in a similar manner to our likelihood function.
-By setting $x_i = \theta_{c,\mathbf{a}}$ the prior distributions become:
+We introduce a similar distribution as our prior density:
 \begin{equation} \label{prior}
 	f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{x \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(c, a_i) - 1} \right]
 \end{equation}
@@ -33,3 +29,6 @@ This prior Dirichlet distribution \cite{Zaffalon01} has the following constraint
 For all $(i, a_i, c)$.
 
 When we multiply our likelihood by this prior density get a posterior in the same form.
+This prior distribute is same conjugate family as our likelihood function.
+
+How do we choose prior parameters? $s$ affects the speed at which our classifier learns and $t(c)$ kind of represents our beliefs for $\theta_c$.
