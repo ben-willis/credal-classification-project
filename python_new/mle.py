@@ -25,15 +25,15 @@ def p_ai_given_c_mle(M, a_id, c_id):
 	for c in get_classes(M, c_id):
 		M_filtered = filter_by_class(M, c_id, c)
 		vals = transpose(M_filtered)[a_id]
-		probs.append([vals.count(a)/len(vals) for a in range(10)])
+		probs.append([vals.count(a)/len(vals) for a in range(30)])
 	return probs
 
 def train_classifier(data, a_ids, c_id):
 	p_cs = p_a_mle(data, c_id)
 	p_ai_given_cs = [p_ai_given_c_mle(data, a_id, c_id) for a_id in a_ids]
 	def trained_classifier(obj):
-		p_c_given_ais = [0] * 4
-		for c in range(4):
+		p_c_given_ais = [0] * 5
+		for c in range(5):
 			p_c_given_ais[c] = p_cs[c]
 			for a_id in a_ids:
 				p_c_given_ais[c] = p_c_given_ais[c] * p_ai_given_cs[a_id][c][obj[a_id]]
@@ -71,4 +71,4 @@ def cross_validate(data, c_id, classifier, k):
 p_a_mle(data, 9)
 
 
-print cross_validate(data, 9, train_classifier, 10)
+print cross_validate(data, 24, train_classifier, 10)
