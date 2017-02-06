@@ -31,10 +31,18 @@ For all $(i, a_i, c)$.
 When we multiply our likelihood by this prior density get a posterior in the same form.
 This prior distribute is same conjugate family as our likelihood function.
 
+\textit{The following is just to give an idea of direction}
+
 New estimates are $P(c)$ by $\frac{n(c) + st(c)}{N + s}$ and $P(a_i \mid c)$ by $\frac{n(a_i, c) + st(a_i,c)}{n(c)+st(c)}$, the relative frequencies.
 
 How do we choose prior parameters? $s$ affects the speed at which our classifier learns and $t(c)$ kind of represents our beliefs for $\theta_c$ etc.
 
 Let us set $s=1$, $t(c) = \frac{1}{|C|}$ and $t(a_i) = \frac{1}{|A_i||C|}$ then what.
 
+\section{Application}
+
 New accuracy of classifier on auto mobile data set is 64.75\%.
+
+Can we consider a different metric other than success? As our classes are integer classes we could consider the squared error of our classification.
+
+\section{Conclusions}
