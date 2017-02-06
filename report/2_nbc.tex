@@ -81,6 +81,22 @@ Hence the maximum likelihood estimate is $\hat{\theta_c} = \frac{n(c)}{N}$.
 Intuitively this is just the relative frequency of observations that fall into that class.
 Returning to our example data set we know that $N=523$ and $n(0)=158$ so $\hat\theta_0 = \frac{158}{523} \approx 0.302$
 
+The next decision we need to make is how we actually choose the class once we've estimated these probabilities.
+We can introduce a \mathit{loss function} to allow us to choose the class.
+If we define the loss function as:
+\begin{equation}
+	L(c, \hat{c}) = 
+	\begin{cases}
+		0 & c = \hat{c} \\
+		1 & otherwise
+	\end{cases}
+\end{equation}
+then we can write our expected loss as:
+\begin{equation}
+	E(L) = \sum L(c, \hat{c})P(c \mid \mathbf{a}) = 1 - P(\hat{c} \mid \mathbf{a})
+\end{equation}
+So to minimize our expected loss we choose the class $c$ which maximises $P(c \mid \mathbf{a})$.
+
 We now have our naive Bayes classifier.
 We estimate $P(c)$ by $\frac{n(c)}{N}$ and $P(a_i \mid c)$ by $\frac{n(a_i, c)}{n(c)}$, the relative frequencies.
 Then we choose the class $c$ which maximises $P(c)\prod_{i=1}^{k}P(a_i \mid c)$.
