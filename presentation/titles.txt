@@ -1,0 +1,8 @@
+Problem/Data Set
+Naive Bayes Classifier (Naivety assumption and loss function)
+Estimating Chances (Introduce the liklihood and MLE)
+Results and Improvements
+Introducing the Prior
+Diagnostics (Measuring squared differences vs Accuracy)
+Credal Classifier
+Future Work
