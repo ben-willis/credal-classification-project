@@ -2,18 +2,18 @@
 
 \section{Theory}
 
-To demonstrate the workings of the naive Bayes classifier will introduce a new data set from a remote sensing study.
+To help explain how the naive Bayes classifier works will introduce a new data set from a remote sensing study.
 The study measured spectral information in the green, red and infrared wavelengths on three separate dates of $523$ different areas of forest in Japan.
-In total we have nine continuous attributes and four possible classes: Sugi forest, Hinoki forest, Mixed deciduous forest and other non-forest land. This data set was chosen as it contained a large number of observations and demonstrates a situation where this type of classifier works well.
+In total each observation has nine continuous attributes and falls in to one of four possible classes: Sugi forest, Hinoki forest, Mixed deciduous forest and other non-forest land.
+This data set was chosen as it contained a large number of observations and demonstrates a situation where this type of classifier works well.
 
 Formally, let us denote the class variable by $C$, taking values in the set $\{0,1,2,3,4\}$ for each of the four types of forest.
-Also we measure 9 features $A_1,\dots,A_9$.
-We discretize these continuous features so that they all take values in from the set $\{0,\dots,9\}$.
+We measure 9 features $A_1,\dots,A_9$ which we discretize so that they all take values from set $\{0,\dots,9\}$.
 We denote observations of the observed values as $c$ and $a_1,\dots,a_9$ respectively.
 
 We are interested in the probability of a forest being of type $c$ given sensor readings $\mathbf{a}$ i.e. $P(c \mid \mathbf{a})$.
 Using Bayes theorem we can rewrite this as:
-\begin{equation}
+\begin{equation} \label{bayes}
 	P(c \mid \mathbf{a}) = \frac{P(\mathbf{a} \mid c)P(c)}{P(\mathbf{a})}
 \end{equation}
 
@@ -21,17 +21,29 @@ Moreover we can make use of the naivety assumption.
 The naivety assumptions states that each attribute is conditionally independent of one another.
 In the context of this data set we are assuming the same sensor readings for the same forest are conditionally independent which indicates the possible issues with this strong assumption.
 We can now write the probability of an object being in class $c$ with attributes $a_1,\dots,a_k$ as:
-\begin{equation}
+\begin{equation} \label{naivety}
 	P(c \mid \mathbf{a}) = \frac{P(c)\prod_{i=1}^{k}P(a_i \mid c)}{P(\mathbf{a})}
 \end{equation}
 
 To turn this into a classifier we need a way to make a decision for which class an object falls into based on the estimated probabilities.
-A common method is choosing the class that maximises $P(c \mid \mathbf{a})$.
-This is known as the maximum a posteriori (MAP) estimate.
-We also note that $P(\mathbf{a})$ is not dependent on $C$ hence we can write our estimate as:
+We can introduce a \textit{loss function} to allow us to choose the class.
+As standard choice is the 0-1 loss function we defined as:
+\begin{equation}
+	L(c, \hat{c}) = 
+	\begin{cases}
+		0 & c = \hat{c} \\
+		1 & otherwise
+	\end{cases}
+\end{equation}
+We can write our expected loss as:
+\begin{equation}
+	E(L) = \sum L(c, \hat{c})P(c \mid \mathbf{a}) = 1 - P(\hat{c} \mid \mathbf{a})
+\end{equation}
+So to minimize our expected loss we choose:
 \begin{equation}
 	\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
 \end{equation}
+This is known as the maximum a posteriori (MAP) estimate.
 
 Now that we have our method for making our decision we need to estimate the required probabilities.
 
@@ -79,23 +91,9 @@ Differentiating with respect to $\theta_c$ we have:
 
 Hence the maximum likelihood estimate is $\hat{\theta_c} = \frac{n(c)}{N}$.
 Intuitively this is just the relative frequency of observations that fall into that class.
-Returning to our example data set we know that $N=523$ and $n(0)=158$ so $\hat\theta_0 = \frac{158}{523} \approx 0.302$
+For example returning to our example data set we have $N=523$ and $n(0)=158$ so $\hat\theta_0 = \frac{158}{523} \approx 0.302$
 
-The next decision we need to make is how we actually choose the class once we've estimated these probabilities.
-We can introduce a \mathit{loss function} to allow us to choose the class.
-If we define the loss function as:
-\begin{equation}
-	L(c, \hat{c}) = 
-	\begin{cases}
-		0 & c = \hat{c} \\
-		1 & otherwise
-	\end{cases}
-\end{equation}
-then we can write our expected loss as:
-\begin{equation}
-	E(L) = \sum L(c, \hat{c})P(c \mid \mathbf{a}) = 1 - P(\hat{c} \mid \mathbf{a})
-\end{equation}
-So to minimize our expected loss we choose the class $c$ which maximises $P(c \mid \mathbf{a})$.
+% TODO: MLE for other parameters
 
 We now have our naive Bayes classifier.
 We estimate $P(c)$ by $\frac{n(c)}{N}$ and $P(a_i \mid c)$ by $\frac{n(a_i, c)}{n(c)}$, the relative frequencies.
@@ -110,11 +108,11 @@ The choice of $k$ leads to different types of cross validation.
 A standard choice is $k=10$. A special case of cross validation is when $k=n$ (the number of observations).
 This is knowns as \textit{leave-one-out cross validation} \cite{Priddy05}.
 
-The accuracy of the classifier is 82.37\% on this data set, using 10-fold cross validation.
+The accuracy of the classifier is 82.37\% on the forest data set, using 10-fold cross validation.
 
 \section{Application to Automobile Data set}
 
-To make our data appropriate for this method we discretize the continuous variables into $10$ bins with an equal frequency.
+To make our aut mobile data appropriate for this method we discretize the continuous variables into $10$ bins with an equal frequency.
 
 Unlike in the trees data set in this data set we have objects with missing values for attributes.
 We have no mechanism for considering these so we must discard these observations.
@@ -126,14 +124,19 @@ This is considerably worse than the example forest data set.
 \section{Conclusions}
 
 Clearly the classifier performs better on the forest type dataset than on the auto mobile data set.
-There are also general failings in our classifier we can fix to improve it form both data sets.
+There are also general failings in our classifier we can fix to improve its accuracy for both data sets.
 
 Firstly our classifier falls down if there are no observations with attribute $a_j$ and class $c$ in our training set. In these case the maximum likelihood estimate for $\theta_{a_j \mid c}$ is $0$.
 This estimate leads to $P(c \mid \mathbf{a}) = 0$ and would rule out assigning any objects with the attribute $a_j$ to class $c$.
 This is especially problematic for small sets of data.
 We can tackle this by introducing prior probabilities for the theta chances.
 
-Another reason the classifier appears to perform worse on our auto mobile data set could be the nature of its categories.
+One thing that the auto mobile data set has that the forest type data set doesn't is missing values.
+By discarding the objects with missing values we throw away $20$ observations from an already small data set.
+If we could make use of these incomplete observation we should be able to improve our classifier.
+
+We can also make use of the structure in the auto mobile data set's ordered classes.
 The accuracy metric does not take into account how close the classification is.
 For example if the true class is 2 an assigned class of 1 should be considered better than an assigned class of -2.
+The 0-1 loss function also does not take this into account and a better choice of loss function may prove beneficial.
 
