@@ -1,41 +1,60 @@
 \chapter{Naive Bayes Classifier}
 
-\section{History}
-
 \section{Theory}
 
-Formally, let us denote the class variable by $C$, taking values in the set $\mathcal{C}$.
-Also we measure $k$ features $A_1,\dots,A_k$ from the sets $\mathcal{A}_1,\dots,\mathcal{A}_k$.
-We denote observations of these variables as $c$ and $a_1,\dots,a_k$ respectively.
+To help explain how the naive Bayes classifier works we will introduce a new data set from a remote sensing study.
+The study measured spectral information in the green, red and infrared wavelengths on three separate dates of $523$ different areas of forest in Japan.
+In total each observation has nine continuous attributes and falls in to one of four possible classes: Sugi forest, Hinoki forest, Mixed deciduous forest and other non-forest land.
+This data set was chosen as it contained a large number of observations and demonstrates a situation where this type of classifier works well.
 
-We are interested in $P(c \mid \mathbf{a})$.
+Formally, let us denote the class variable by $C$, taking values from the set $\{0,1,2,3,4\}$ for each of the four types of forest.
+We measure 9 features $A_1,\dots,A_9$ which we discretize so that they all take values from the set $\{0,\dots,9\}$.
+We denote observations of the observed values as $c$ and $a_1,\dots,a_9$ respectively.
+
+We are interested in the probability of a forest being of type $c$ given sensor readings $\mathbf{a}$ i.e. $P(c \mid \mathbf{a})$.
 Using Bayes theorem we can rewrite this as:
-\begin{equation}
+\begin{equation} \label{bayes}
 	P(c \mid \mathbf{a}) = \frac{P(\mathbf{a} \mid c)P(c)}{P(\mathbf{a})}
 \end{equation}
 
 Moreover we can make use of the naivety assumption.
-The naivety assumptions states that each attribute is conditionally independent of one another.
+The naivety assumptions states that each attribute is conditionally independent given the class.
+In the context of this data set we are assuming the sensor readings are conditionally independent given the type of forest.
 We can now write the probability of an object being in class $c$ with attributes $a_1,\dots,a_k$ as:
-\begin{equation}
+\begin{equation} \label{naivety}
 	P(c \mid \mathbf{a}) = \frac{P(c)\prod_{i=1}^{k}P(a_i \mid c)}{P(\mathbf{a})}
 \end{equation}
 
 To turn this into a classifier we need a way to make a decision for which class an object falls into based on the estimated probabilities.
-A common method is choosing the class that maximises $P(c \mid \mathbf{a})$.
-This is known as the maximum a posteriori (MAP) estimate.
-We also note that $P(\mathbf{a})$ is not dependent on $C$ hence we can write our MAP estimate as:
+We can introduce a \textit{loss function} to allow us to choose the class.
+As standard choice is the 0-1 loss function we defined as:
 \begin{equation}
-	c_{MAP} = argmax_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
+	L(c, \hat{c}) = 
+	\begin{cases}
+		0 & \text{if}\ c = \hat{c} \\
+		1 & \text{otherwise}
+	\end{cases}
 \end{equation}
+We can write our expected loss as:
+\begin{equation}
+	E(L) = \sum L(c, \hat{c})P(c \mid \mathbf{a}) = 1 - P(\hat{c} \mid \mathbf{a})
+\end{equation}
+So to minimize our expected loss we choose:
+\begin{equation}
+	\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
+\end{equation}
+This is known as the maximum a posteriori (MAP) estimate.
 
 Now that we have our method for making our decision we need to estimate the required probabilities.
 
 Firstly we parametrise these probabilities.
-We denote the unknown chances of observing an object with $C=c$ by $\theta_c$ and the change of observing an object with $C=c$ and $\mathbf{A} = \mathbf{a}$ by $\theta_{\mathbf{a}, c}$.
-Similarly we denote the conditional chances of $A_i=a_i$ and $(A_1,\dots,A_k)=(a_1,\dots,a_k)$ given $C=c$ by $\theta_{a_i \mid c}$ and $\theta_{\mathbf{a} \mid c}$ respectively.
+We denote the unknown chances of observing an object in class $c$ by $\theta_c$ and the chance of observing an object in class $c$ with attributes $\mathbf{a}$ by $\theta_{\mathbf{a}, c}$.
+Similarly we denote the conditional chances of observing an individual attribute $a_i$ and a set of attributes $\mathbf{a}$ given $C=c$ by $\theta_{a_i \mid c}$ and $\theta_{\mathbf{a} \mid c}$ respectively.
 
-We can consider the likelihood function for the $\mathbf{\theta}$, the vector whose elements are the chances $\theta_{\mathbf{a}, c}$ given data $\mathbf{n}$, the vector of all known frequencies.
+Now we have parametrised the probabilities, we wish to estimate we can consider the likelihood function for $\mathbf{\theta}$, the vector whose elements are the chances $\theta_{c}$ and $\theta_{a_i \mid c}$.
+Using our data we denote the frequencies of objects in each class $c$ by $n(c)$ and the number of objects in class $c$ with attribute $a_i$ by $n(a_i, c)$.
+For example the number of observations of class $0$ is $158$ so $n(0) = 158$
+We then consider the vector $\mathbf{n}$ which contains these frequencies.
 
 The likelihood function can be expressed as:
 \begin{equation} \label{likelihood}
@@ -47,16 +66,19 @@ To find the MLE first we take the log likelihood:
 \begin{equation}
 	L(\mathbf{\theta} \mid \mathbf{n}) \propto \sum_{c \in \mathcal{C}}  n(c)log(\theta_c) + \sum_{c \in \mathcal{C}} \sum_{i=1}^k \sum_{a_i \in \mathcal{A}_i} n(a_i, c) log(\theta_{a_i \mid c}) 
 \end{equation}
-So to maximise the likelihood function we need to maximise the two parts of the log likelihood function.
+So to maximise the likelihood function we need to maximise the each part of the log likelihood function.
 
 To do so we use the method of Lagrange multipliers.
 This is a strategy for finding local maxima and minima of a function subject to constraints.
 
-For the first equation we have
-\begin{align}
-	f(\mathbf{\theta}, \mathbf{n})& = \sum_{c \in \mathcal{C}}  n(c)log(\theta_c) \\
-	g(\mathbf{\theta}, \mathbf{n})& = \sum_{c \in \mathcal{C}}  \theta_c - 1
-\end{align}
+For the $\theta{c}$ parameters we want to maximise:
+\begin{equation}
+	f(\mathbf{\theta}, \mathbf{n}) = \sum_{c \in \mathcal{C}}  n(c)log(\theta_c)
+\end{equation}
+under the constraint:
+\begin{equation}
+	g(\mathbf{\theta}, \mathbf{n}) = \sum_{c \in \mathcal{C}}  \theta_c - 1 = 0
+\end{equation}
 This gives us our Lagrangian:
 \begin{equation}
 	\mathcal{L}(\mathbf{\theta}, \mathbf{n}, \lambda) = \sum_{c \in \mathcal{C}}  n(c)log(\theta_c) - \lambda(\sum_{c \in \mathcal{C}}  \theta_c - 1)
@@ -67,16 +89,17 @@ Differentiating with respect to $\theta_c$ we have:
 	\nabla_{\theta_c} \mathcal{L}(\mathbf{\theta}, \mathbf{n}, \lambda) = \frac{n(c)}{\theta_c} - \lambda
 \end{equation}
 
-Hence the maximum is achieved giving an mle of $\hat{\theta_c} = \frac{n(c)}{N}$.
-Intuitively this is just the relative frequency of observations that fall into that class.
+Hence the maximum likelihood estimate is $\hat{\theta_c} = \frac{n(c)}{N}$.
+This is just the relative frequency of observations that fall into that class.
+For example returning to our example data set we have $N=523$ and $n(0)=158$ so $\hat\theta_0 = \frac{158}{523} \approx 0.302$
+
+% TODO: MLE for other parameters
 
 We now have our naive Bayes classifier.
 We estimate $P(c)$ by $\frac{n(c)}{N}$ and $P(a_i \mid c)$ by $\frac{n(a_i, c)}{n(c)}$, the relative frequencies.
 Then we choose the class $c$ which maximises $P(c)\prod_{i=1}^{k}P(a_i \mid c)$.
 
-\section{Diagnostics}
-
-We use a technique known as $k$-fold cross validation to evaluate accuracy.
+To measure how successful our classifier is we will initially use a technique known as $k$-fold cross validation to evaluate accuracy.
 In $k$-fold cross validation we split our dataset into $k$ equally sized groups.
 Then for each group we train the classifier on all the other groups and test it on that group.
 We then average all these accuracy to return an estimate for the accuracy of our classifier.
@@ -85,36 +108,35 @@ The choice of $k$ leads to different types of cross validation.
 A standard choice is $k=10$. A special case of cross validation is when $k=n$ (the number of observations).
 This is knowns as \textit{leave-one-out cross validation} \cite{Priddy05}.
 
-\section{Applications}
+The accuracy of the classifier is 82.37\% on the forest data set, using 10-fold cross validation.
 
-\subsection{Forest Type Data Set}
+\section{Application to Auto Mobile Data set}
 
-First we will apply this classifier to a data set from a remote sensing study.
-The study measured spectral information in the green, red and infrared wavelengths on three separate dates of different forest types in Japan.
-In total we have nine continuous attributes and four possible classes: Sugi forest, Hinoki forest, Mixed deciduous forest and other non-forest land. This data set was chosen as it contained a large number of observations and demonstrates a situation where the naive Bayes classifier works well.
+To make our auto mobile data appropriate for this method we discretize the continuous variables into $10$ bins with an equal frequency.
 
-To make our data appropriate for this method we discretize the continuous variables into $n$ bins with an equal frequency.
+Unlike in the trees data set, in this data set we have objects with missing values for attributes.
+For now we have no mechanism for considering these so we must discard these observations.
+This reduces our data set from 205 observations to 193 observations.
 
-The accuracy of the classifier is 80\% on this data set, using 10-fold cross validation.
-
-\subsection{Automobile Data Set}
-
-To make our data appropriate for this method we discretize the continuous variables into $n$ bins with an equal frequency.
-We also discard any objects with missing values giving us a total of 200 objects to test out classifier on.
-
-The accuracy of the classifier is 80\% on this data set, using 10-fold cross validation.
+The accuracy of the classifier is 56.48\% on this data set, using 10-fold cross validation.
+This is considerably worse than the example forest data set.
 
 \section{Conclusions}
 
 Clearly the classifier performs better on the forest type dataset than on the auto mobile data set.
-This could be due to a few different reasons.
+There are also general failings in our classifier we can fix to improve its accuracy for both data sets.
 
-Firstly our classifier falls down if there are no observations with attribute $a_k$ and class $c$ in our training set. In these case the maximum likelihood estimate for $\theta_{a_k \mid c}$ is 0.
-This estimate leads to $P(c \mid \mathbf{a}) = 0$ and would rule out assigning any objects with the attribute $a_k$ to class $c$.
+Firstly our classifier falls down if there are no observations with attribute $a_j$ and class $c$ in our training set. In these case the maximum likelihood estimate for $\theta_{a_j \mid c}$ is $0$.
+This estimate leads to $P(c \mid \mathbf{a}) = 0$ and would rule out assigning any objects with the attribute $a_j$ to class $c$.
 This is especially problematic for small sets of data.
 We can tackle this by introducing prior probabilities for the theta chances.
 
-Another reason the classifier appears to perform worse on our auto mobile data set could be the nature of its categories.
+One thing that the auto mobile data set has that the forest type data set doesn't is missing values.
+By discarding the objects with missing values we throw away $20$ observations from an already small data set.
+If we could make use of these incomplete observation we should be able to improve our classifier.
+
+We can also make use of the structure in the auto mobile data set's ordered classes.
 The accuracy metric does not take into account how close the classification is.
 For example if the true class is 2 an assigned class of 1 should be considered better than an assigned class of -2.
+The 0-1 loss function also does not take this into account and a better choice of loss function may prove beneficial.
 
