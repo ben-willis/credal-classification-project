@@ -2,13 +2,13 @@
 
 \section{Theory}
 
-To help explain how the naive Bayes classifier works will introduce a new data set from a remote sensing study.
+To help explain how the naive Bayes classifier works we will introduce a new data set from a remote sensing study.
 The study measured spectral information in the green, red and infrared wavelengths on three separate dates of $523$ different areas of forest in Japan.
 In total each observation has nine continuous attributes and falls in to one of four possible classes: Sugi forest, Hinoki forest, Mixed deciduous forest and other non-forest land.
 This data set was chosen as it contained a large number of observations and demonstrates a situation where this type of classifier works well.
 
-Formally, let us denote the class variable by $C$, taking values in the set $\{0,1,2,3,4\}$ for each of the four types of forest.
-We measure 9 features $A_1,\dots,A_9$ which we discretize so that they all take values from set $\{0,\dots,9\}$.
+Formally, let us denote the class variable by $C$, taking values from the set $\{0,1,2,3,4\}$ for each of the four types of forest.
+We measure 9 features $A_1,\dots,A_9$ which we discretize so that they all take values from the set $\{0,\dots,9\}$.
 We denote observations of the observed values as $c$ and $a_1,\dots,a_9$ respectively.
 
 We are interested in the probability of a forest being of type $c$ given sensor readings $\mathbf{a}$ i.e. $P(c \mid \mathbf{a})$.
@@ -18,8 +18,8 @@ Using Bayes theorem we can rewrite this as:
 \end{equation}
 
 Moreover we can make use of the naivety assumption.
-The naivety assumptions states that each attribute is conditionally independent of one another.
-In the context of this data set we are assuming the same sensor readings for the same forest are conditionally independent which indicates the possible issues with this strong assumption.
+The naivety assumptions states that each attribute is conditionally independent given the class.
+In the context of this data set we are assuming the sensor readings are conditionally independent given the type of forest.
 We can now write the probability of an object being in class $c$ with attributes $a_1,\dots,a_k$ as:
 \begin{equation} \label{naivety}
 	P(c \mid \mathbf{a}) = \frac{P(c)\prod_{i=1}^{k}P(a_i \mid c)}{P(\mathbf{a})}
@@ -31,8 +31,8 @@ As standard choice is the 0-1 loss function we defined as:
 \begin{equation}
 	L(c, \hat{c}) = 
 	\begin{cases}
-		0 & c = \hat{c} \\
-		1 & otherwise
+		0 & \text{if}\ c = \hat{c} \\
+		1 & \text{otherwise}
 	\end{cases}
 \end{equation}
 We can write our expected loss as:
@@ -49,9 +49,9 @@ Now that we have our method for making our decision we need to estimate the requ
 
 Firstly we parametrise these probabilities.
 We denote the unknown chances of observing an object in class $c$ by $\theta_c$ and the chance of observing an object in class $c$ with attributes $\mathbf{a}$ by $\theta_{\mathbf{a}, c}$.
-Similarly we denote the conditional chances of observing an indiviual attribute $a_i$ and a set of attributes $\mathbf{a}$ given $C=c$ by $\theta_{a_i \mid c}$ and $\theta_{\mathbf{a} \mid c}$ respectively.
+Similarly we denote the conditional chances of observing an individual attribute $a_i$ and a set of attributes $\mathbf{a}$ given $C=c$ by $\theta_{a_i \mid c}$ and $\theta_{\mathbf{a} \mid c}$ respectively.
 
-Now we have parametrised the probabilities we wish to estimate we can consider the likelihood function for $\mathbf{\theta}$, the vector whose elements are the chances $\theta_{\mathbf{a}, c}$.
+Now we have parametrised the probabilities, we wish to estimate we can consider the likelihood function for $\mathbf{\theta}$, the vector whose elements are the chances $\theta_{c}$ and $\theta_{a_i \mid c}$.
 Using our data we denote the frequencies of objects in each class $c$ by $n(c)$ and the number of objects in class $c$ with attribute $a_i$ by $n(a_i, c)$.
 For example the number of observations of class $0$ is $158$ so $n(0) = 158$
 We then consider the vector $\mathbf{n}$ which contains these frequencies.
@@ -77,7 +77,7 @@ For the $\theta{c}$ parameters we want to maximise:
 \end{equation}
 under the constraint:
 \begin{equation}
-	g(\mathbf{\theta}, \mathbf{n}) = \sum_{c \in \mathcal{C}}  \theta_c - 1
+	g(\mathbf{\theta}, \mathbf{n}) = \sum_{c \in \mathcal{C}}  \theta_c - 1 = 0
 \end{equation}
 This gives us our Lagrangian:
 \begin{equation}
@@ -90,7 +90,7 @@ Differentiating with respect to $\theta_c$ we have:
 \end{equation}
 
 Hence the maximum likelihood estimate is $\hat{\theta_c} = \frac{n(c)}{N}$.
-Intuitively this is just the relative frequency of observations that fall into that class.
+This is just the relative frequency of observations that fall into that class.
 For example returning to our example data set we have $N=523$ and $n(0)=158$ so $\hat\theta_0 = \frac{158}{523} \approx 0.302$
 
 % TODO: MLE for other parameters
@@ -100,7 +100,7 @@ We estimate $P(c)$ by $\frac{n(c)}{N}$ and $P(a_i \mid c)$ by $\frac{n(a_i, c)}{
 Then we choose the class $c$ which maximises $P(c)\prod_{i=1}^{k}P(a_i \mid c)$.
 
 To measure how successful our classifier is we will initially use a technique known as $k$-fold cross validation to evaluate accuracy.
-In $k$-fold cross validation we split our dataset into $k$ equally sized groups.11
+In $k$-fold cross validation we split our dataset into $k$ equally sized groups.
 Then for each group we train the classifier on all the other groups and test it on that group.
 We then average all these accuracy to return an estimate for the accuracy of our classifier.
 
@@ -110,12 +110,12 @@ This is knowns as \textit{leave-one-out cross validation} \cite{Priddy05}.
 
 The accuracy of the classifier is 82.37\% on the forest data set, using 10-fold cross validation.
 
-\section{Application to Automobile Data set}
+\section{Application to Auto Mobile Data set}
 
-To make our aut mobile data appropriate for this method we discretize the continuous variables into $10$ bins with an equal frequency.
+To make our auto mobile data appropriate for this method we discretize the continuous variables into $10$ bins with an equal frequency.
 
-Unlike in the trees data set in this data set we have objects with missing values for attributes.
-We have no mechanism for considering these so we must discard these observations.
+Unlike in the trees data set, in this data set we have objects with missing values for attributes.
+For now we have no mechanism for considering these so we must discard these observations.
 This reduces our data set from 205 observations to 193 observations.
 
 The accuracy of the classifier is 56.48\% on this data set, using 10-fold cross validation.

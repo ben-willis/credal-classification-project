@@ -5,15 +5,15 @@
 We return to our likelihood function \cref{likelihood} for our theta variables.
 We can introduce a prior distribution for these parameters and then consider the posterior distribution.
 
-The Dirichlet distribution is the multinomial extension of the beta distribution for $x_1,\dots,x_k$ where $x_i \in (0,1)$ and $\sum_{i=1}^k x_i = 1$ with probability density function:
+The Dirichlet distribution is the multinomial extension of the beta distribution for $\theta_1,\dots,\theta_k$ where $x_i \in (0,1)$ and $\sum_{i=1}^k \theta_i = 1$ with probability density function:
 \begin{equation} \label{dirichlet_pdf}
-	f(x_1,\dots,x_k \mid s, t(1),\dots,t(k)) \propto \prod_{i=1}^k x_i^{st(i) - 1}
+	f(\theta_1,\dots,\theta_k \mid s, t(1),\dots,t(k)) \propto \prod_{i=1}^k \theta_i^{st(i) - 1}
 \end{equation}
 where $s > 0$ and each $t(i)>0$ such that $\sum_{i=1}^{k}t(i) = 1$.
 
 We introduce a similar distribution as our prior density:
 \begin{equation} \label{prior}
-	f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{x \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(c, a_i) - 1} \right]
+	f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(c, a_i) - 1} \right]
 \end{equation}
 where $t(\cdot)$ corresponds to $n(\cdot)$.
 This prior Dirichlet distribution \cite{Zaffalon01} has the following constraints:
@@ -29,10 +29,10 @@ This prior Dirichlet distribution \cite{Zaffalon01} has the following constraint
 For all $(i, a_i, c)$.
 
 When we multiply our likelihood by this prior density get a posterior in the same form.
-This prior distribute is same conjugate family as our likelihood function.
 
 \textit{The following is just to give an idea of direction}
 
+Talk about conjugacy.
 New estimates are $P(c)$ by $\frac{n(c) + st(c)}{N + s}$ and $P(a_i \mid c)$ by $\frac{n(a_i, c) + st(a_i,c)}{n(c)+st(c)}$, the relative frequencies.
 
 How do we choose prior parameters? $s$ affects the speed at which our classifier learns and $t(c)$ kind of represents our beliefs for $\theta_c$ etc.
