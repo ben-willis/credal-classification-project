@@ -40,7 +40,7 @@ We can write our expected loss as:
 	E(L) = \sum L(c, \hat{c})P(c \mid \mathbf{a}) = 1 - P(\hat{c} \mid \mathbf{a})
 \end{equation}
 So to minimize our expected loss we choose:
-\begin{equation}
+\begin{equation} \label{mle_estimate}
 	\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
 \end{equation}
 This is known as the maximum a posteriori (MAP) estimate.
@@ -96,8 +96,13 @@ For example returning to our example data set we have $N=523$ and $n(0)=158$ so 
 % TODO: MLE for other parameters
 
 We now have our naive Bayes classifier.
-We estimate $P(c)$ by $\frac{n(c)}{N}$ and $P(a_i \mid c)$ by $\frac{n(a_i, c)}{n(c)}$, the relative frequencies.
-Then we choose the class $c$ which maximises $P(c)\prod_{i=1}^{k}P(a_i \mid c)$.
+We estimate:
+\begin{align}
+	P(c) & \text{ by } \frac{n(c)}{N} \\
+	P(a_i \mid c) & \text{ by } \frac{n(a_i, c)}{n(c)}
+\end{align}
+
+Then we choose the class $c$ which maximises \cref{mle_estimate}.
 
 To measure how successful our classifier is we will initially use a technique known as $k$-fold cross validation to evaluate accuracy.
 In $k$-fold cross validation we split our dataset into $k$ equally sized groups.

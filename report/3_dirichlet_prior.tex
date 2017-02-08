@@ -17,16 +17,11 @@ We introduce a similar distribution as our prior density:
 \end{equation}
 where $t(\cdot)$ corresponds to $n(\cdot)$.
 This prior Dirichlet distribution \cite{Zaffalon01} has the following constraints:
-\begin{equation}
-	\sum_{c \in \mathcal{C}} t(c) = 1
-\end{equation}
-\begin{equation}
-	\sum_{a_i \in \mathcal{A}_i} t(a_i, c) = t(c)
-\end{equation}
-\begin{equation}
-	t(a_i, c) > 0
-\end{equation}
-For all $(i, a_i, c)$.
+\begin{align}
+	\sum_{c \in \mathcal{C}} t(c) & = 1 \\
+	\sum_{a_i \in \mathcal{A}_i} t(a_i, c) & = t(c) && \forall i, c \\
+	t(a_i, c) & > 0 && \forall i, a_i, c
+\end{align}
 
 When we multiply our likelihood by this prior density get a posterior in the same form.
 
