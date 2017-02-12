@@ -27,6 +27,4 @@ def remove_rows_with_missing_values(M):
 
 data = import_data('../data/automobile_discretized.csv')
 data = remove_column(data, 0)
-print len(data)
 data = remove_rows_with_missing_values(data)
-print len(data)

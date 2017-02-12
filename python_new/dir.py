@@ -1,9 +1,8 @@
 from __future__ import division
 import random
 
-# import data
 from data import data
-
+from diagnostics import accuracy, mse, cross_validate
 
 def transpose(M):
 	return [list(i) for i in zip(*M)]
@@ -11,61 +10,36 @@ def transpose(M):
 def filter_by_class(M, class_id, class_val):
 	return [row for row in M if row[class_id]==class_val]
 
-def get_classes(M, a_id):
+def p_a_map(M, col_id, col_values):
 	M_t = transpose(M)
-	return list(set(M_t[a_id]))
+	vals = M_t[col_id]
+	return [(vals.count(a)+(1*(1/len(col_values))))/(len(vals) + 1) for a in col_values]
 
-def p_a_map(M, a_id):
-	M_t = transpose(M)
-	vals = M_t[a_id]
-	return [(vals.count(a)+0.01)/len(vals) for a in get_classes(M, a_id)]
-
-def p_ai_given_c_map(M, a_id, c_id):
+def p_ai_given_c_map(M, a_id, c_id, a_values, c_values):
 	probs = []
-	for c in get_classes(M, c_id):
+	for c in c_values:
 		M_filtered = filter_by_class(M, c_id, c)
-		vals = transpose(M_filtered)[a_id]
-		probs.append([(vals.count(a)+0.01)/len(vals) for a in range(30)])
+		try:
+			vals = transpose(M_filtered)[a_id]
+		except IndexError as e:
+			probs.append([(1*(1/len(a_values))*(1/len(c_values)))/(1*(1/len(c_values))) for a in a_values])
+		else:
+			probs.append([(vals.count(a)+(1*(1/len(a_values))*(1/len(c_values))))/(len(vals) + (1*(1/len(c_values)))) for a in a_values])
 	return probs
 
-def train_classifier(data, a_ids, c_id):
-	p_cs = p_a_map(data, c_id)
-	p_ai_given_cs = [p_ai_given_c_map(data, a_id, c_id) for a_id in a_ids]
+def train_classifier(data, values, a_ids, c_id):
+	p_cs = p_a_map(data, c_id, values[c_id])
+	p_ai_given_cs = [p_ai_given_c_map(data, a_id, c_id, values[a_id], values[c_id]) for a_id in a_ids]
 	def trained_classifier(obj):
-		p_c_given_ais = [0] * 5
-		for c in range(5):
+		p_c_given_ais = [0] * len(values[c_id])
+		for c in values[c_id]:
 			p_c_given_ais[c] = p_cs[c]
 			for a_id in a_ids:
 				p_c_given_ais[c] = p_c_given_ais[c] * p_ai_given_cs[a_id][c][obj[a_id]]
 		return p_c_given_ais.index(max(p_c_given_ais))
 	return trained_classifier
 
-def split_data(data, k):
-	split_data = [[] for i in range(k)]
-	for i in range(len(data)):
-		split_data[i%k].append(data[i])
-	return split_data
-
-def merge_datas(datas):
-	res = []
-	for data in datas:
-		res = res + data
-	return res
-
-
-def cross_validate(data, c_id, classifier, k):
-	random.shuffle(data)
-	datas = split_data(data, k)
-	res = []
-	for i in range(k):
-		training_data = merge_datas(datas[:i] + datas[i+1:])
-		classifier = train_classifier(training_data, range(c_id), c_id)
-		for obj in datas[i]:
-			if classifier(obj) == obj[c_id]:
-				res.append(1)
-			else: 
-				res.append(0)
-	return sum(res)/len(res)
-
-
-print cross_validate(data, 24, train_classifier, 10)
+res = []
+for i in range(100):
+	res.append(cross_validate(data, 24, train_classifier, accuracy, 10))
+print sum(res)/len(res)
