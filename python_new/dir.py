@@ -1,5 +1,5 @@
 from __future__ import division
-import random
+import random, math
 
 from data import data
 from diagnostics import accuracy, mse, cross_validate
@@ -40,6 +40,12 @@ def train_classifier(data, values, a_ids, c_id):
 	return trained_classifier
 
 res = []
-for i in range(100):
-	res.append(cross_validate(data, 24, train_classifier, accuracy, 10))
-print sum(res)/len(res)
+se = 1000
+res.append(cross_validate(data, 24, train_classifier, mse, 5))
+while(se/math.sqrt(len(res)) > 0.002):
+	res.append(cross_validate(data, 24, train_classifier, mse, 5))
+	mean = sum(res)/len(res)
+	se = math.sqrt( (1/(len(res)-1)) * sum([(x - mean)**2 for x in res]) )
+	print mean
+print(len(res))
+print mean

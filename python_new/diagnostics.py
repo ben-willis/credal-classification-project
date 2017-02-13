@@ -9,6 +9,10 @@ def mse(classifications):
 	results = [(obj[0]-obj[1])**2 for obj in classifications]
 	return sum(results)/len(results)
 
+def unclassified(classifications):
+	results = [1 if obj[0]==-1 else 0 for obj in classifications]
+	return sum(results)/len(results)
+
 def split_data(data, k):
 	split_data = [[] for i in range(k)]
 	for i in range(len(data)):
@@ -32,9 +36,9 @@ def cross_validate(data, c_id, train_classifier, metric, k):
 	values = [range(max(get_classes(data, col_id))+1) for col_id in range(c_id+1)]
 	random.shuffle(data)
 	datas = split_data(data, k)
-	res = []
+	classifications = []
 	for i in range(k):
 		training_data = merge_datas(datas[:i] + datas[i+1:])
 		classifier = train_classifier(training_data, values, range(c_id), c_id)
-		classifications = [(classifier(obj), obj[c_id]) for obj in datas[i]]
+		classifications = classifications + [(classifier(obj), obj[c_id]) for obj in datas[i]]
 	return metric(classifications)
