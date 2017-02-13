@@ -25,7 +25,7 @@ $s > 0$ is a fixed constant and we have the following constraints on $t(\cdot):$
 
 This distribution is the conjugate prior for the likelihood function \cref{likelihood}.
 When we multiply our likelihood by this prior density we get a posterior in the same family as this prior.
-If the prior has hyperparameters $st(\cdot)$ the posterior will have hyperparameters $st(\dot) + n(\cdot)$.
+If the prior has hyper parameters $st(\cdot)$ the posterior will have hyper parameters $st(\dot) + n(\cdot)$.
 
 We can now estimate the parameters by taking the MAP estimates i.e.
 \begin{equation}
@@ -38,9 +38,9 @@ We estimate:
 	P(a_i \mid c) & \text{ by } \frac{n(a_i, c) + st(a_i, c)}{n(c) + st(c)}
 \end{align}
 
-\section{Application}{}
+\section{Application}
 
-To apply this classifier to our data set we need to choose the hyperparameters of the prior distribution.
+To apply this classifier to our data set we need to choose the hyper parameters of the prior distribution.
 We note that $s$ affects the speed at which our classifier learns and $t(\cdot)$ represents our beliefs for $\theta_\cdot$.
 To comply with the constraints \ref{prior_constraints} let us set:
 \begin{align}
@@ -49,18 +49,21 @@ To comply with the constraints \ref{prior_constraints} let us set:
 	t(a_i, c) & = \frac{1}{|A_i||C|}
 \end{align}
 
-New accuracy of classifier on auto mobile data set is $64.75\%$.
-
+Previously we've considered the accuracy of our classifier.
 An alternative metric is the mean squared error of our estimate.
 \begin{equation}
 	\text{MSE} = \frac{1}{n}\sum_{i=1}^n(\hat{c_i} = c_i)^2
 \end{equation}
 
-The naive Bayes classifier in the first chapter on the auto mobile data set had a MSE of $3.66$.
-This new classifier with the prior distribution has a MSE of $1.05$.
+\begin{center}
+	\begin{tabular}{ c|c c c c c c }
+		       & Accuracy & MSE & Failed Classifications\\
+		\hline
+		NBC           & 59.95\% & 0.689 & 22.45\% \\
+		Corrected NBC & 68.17\% & 2.823 & 0\%
+	\end{tabular}
+\end{center}
+
 This again shows an improvement over the previous classifier.
-
-
-Can we consider a different metric other than success? As our classes are integer classes we could consider the squared error of our classification.
 
 \section{Conclusions}
