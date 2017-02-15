@@ -27,9 +27,9 @@ This distribution is the conjugate prior for the likelihood function \cref{likel
 When we multiply our likelihood by this prior density we get a posterior in the same family as this prior.
 If the prior has hyper parameters $st(\cdot)$ the posterior will have hyper parameters $st(\dot) + n(\cdot)$.
 
-We can now estimate the parameters by taking the MAP estimates i.e.
+We can now estimate the parameters by taking the posterior expectation e.g.
 \begin{equation}
-	\hat{\theta_c} = \frac{n(c) + st(c)}{N + s}
+	E(\theta_c|\mathbf{n},s,\mathbf{t})=\hat{\theta_c} = \frac{n(c) + st(c)}{N + s}
 \end{equation}
 
 We estimate:
@@ -52,7 +52,7 @@ To comply with the constraints \ref{prior_constraints} let us set:
 Previously we've considered the accuracy of our classifier.
 An alternative metric is the mean squared error of our estimate.
 \begin{equation}
-	\text{MSE} = \frac{1}{n}\sum_{i=1}^n(\hat{c_i} = c_i)^2
+	\text{MSE} = \frac{1}{n}\sum_{i=1}^n(\hat{c_i} - c_i)^2
 \end{equation}
 
 \begin{center}

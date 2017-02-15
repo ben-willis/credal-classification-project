@@ -170,7 +170,6 @@ There are also general failings in our classifier we can fix to improve its accu
 Firstly our classifier falls down if there are no observations with attribute $a_j$ and class $c$ in our training set.
 In these case the maximum likelihood estimate for $\theta_{a_j \mid c}$ is $0$.
 This estimate leads to $P(c \mid \mathbf{a}) = 0$ and would rule out assigning any objects with the attribute $a_j$ to class $c$.
-In fact there are $50$ objects in our data set for which our classifier returns $P(c \mid \mathbf{a}) = 0$ for all $c \in C$.
 This is especially problematic for small sets of data and contributes to the large percentage of failed classifications we was.
 We can tackle this by introducing prior probabilities for the theta chances.
 
