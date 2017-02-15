@@ -1,0 +1,110 @@
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+ 
+ 
+%Information to be included in the title page:
+\title{Credal Classification}
+\author{Ben Willis}
+\institute{Durham University}
+\date{2017}
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+
+\begin{frame}
+	\frametitle{Problem}
+	\begin{itemize}
+		\item Classification is the problem of identifying which class ($c \in \mathcal{C}$) an object with attributes ($\mathbf{a} \in \mathcal{A}$) belongs to.
+		\item We will tackle the problem of classifying the risk to an insurer of an auto mobile.
+		\item The data set we will be analysing contains technical information about 205 vehicles and an expert's assessment of their risk.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Naive Bayes Classifier}
+		\begin{block}{Probabilistic Interpretation}
+			Bayes theorem and the naivety assumption gives us:
+			\begin{equation}
+				P(c \mid \mathbf{a}) \propto P(c)\prod_{i=1}^{k}P(a_i \mid c)
+			\end{equation}
+		\end{block}
+		\begin{block}{Choosing the Class}
+			We introduce the \textit{0-1 loss function} then to minimize the loss we choose the class:
+			\begin{equation}
+				\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
+			\end{equation}
+			This is known as the maximum a posteriori (MAP) estimate.
+		\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Estimating Chances}
+	To estimate these probabilities we parametrise them.
+	\begin{block}{The Likelihood Function}
+		Parametrise the unknown probability $P(\cdot)$ by $\theta_{\cdot}$.
+		Also denote the number of objects in class $c$ by $n(c)$ and the number of objects in class c with attribute $a_i$ by $n(a_i, c)$. Then:
+		\begin{equation}\label{likelihood function}
+			l(\mathbf{\theta} \mid \mathbf{n}) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{n(c)} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{n(a_i, c)} \right]
+		\end{equation}
+	\end{block}
+	\begin{block}{Maximum Likelihood Estimates}
+		A simple estimate for each parameter is the maximum likelihood estimate (MLE). These are:
+		\begin{equation}
+			\hat{\theta}_c = \frac{n(c)}{N} , \hat{\theta}_{a_i \mid c} = \frac{n(a_i, c)}{n(c)}
+		\end{equation}
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Application and Results}
+	\begin{itemize}
+		\item We discretize our continuous variables and discard objects with missing values.
+		\item We use a technique called \textit{k-fold cross validation} to estimate key metrics.
+		\item Our classifier has  an accuracy of 59.95\% on the auto mobile data set.
+		\item In addition 22.45\% of the objects in our data set weren't classified.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Introducing the Prior}
+	\begin{block}{Prior Distribution}
+		We introduce a conjugate prior for the likelihood function eq. (\ref{likelihood function}):
+		\begin{equation}
+			f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(c, a_i) - 1} \right]
+		\end{equation}
+		with hyper parameters $s>0$ and $\mathbf{t}$ such that:
+		\begin{equation}
+			\sum_{c \in \mathcal{C}} t(c) = 1, \sum_{a_i \in \mathcal{A}_i} t(a_i \mid c) = t(c) \text{ and } t(a_i \mid c) > 0
+		\end{equation}
+	\end{block}
+	To comply with the constraints prior constraints let us set:
+	\begin{equation}
+		s = 1, t(c) = \frac{1}{|C|} \text{ and } t(a_i, c) = \frac{1}{|A_i||C|}
+	\end{equation}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Diagnostics}
+	Introduce the mean squared error
+	\begin{tabular}{ c|c c c c c c }
+		              & Accuracy & MSE   & Failed Classifications \\
+		\hline
+		NBC           & 59.95\%  & 2.823 & 22.45\%                \\
+		Corrected NBC & 68.17\%  & 0.689 & 0\%
+	\end{tabular}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Credal Classifier}
+	Not sure what I want to put here. Something explaining the theory behind how this can be extended to create a credal classifier (Sets of priors, credal dominance).
+\end{frame}
+
+\begin{frame}
+	\frametitle{Future Work}
+	Summary of findings so far and future work
+\end{frame}
+ 
+\end{document}
