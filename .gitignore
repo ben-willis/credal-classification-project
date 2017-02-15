@@ -4,6 +4,7 @@
 *.blg
 *.fdb_latexmk
 *.fls
+*.pdf
 
 *.sublime-workspace
 *.sublime-project
