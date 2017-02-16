@@ -3,9 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
  
- 
-%Information to be included in the title page:
-\title{Credal Classification}
+\title{Credal Classification of Auto Mobile Insurance Risk}
 \author{Ben Willis}
 \institute{Durham University}
 \date{2017}
@@ -16,10 +14,19 @@
 
 \begin{frame}
 	\frametitle{Problem}
+	\begin{center}
+		\begin{tabular}{l c c c c|c}
+			Make       & Length & $\dots$ & Horsepower & Price & Risk \\
+			\hline
+			Volvo      & 188.8  & $\dots$ & 114        & 12940 & -2   \\
+			Audi       & 192.7  & $\dots$ & 110        & 18920 & 2    \\
+			Mitsubishi & 172.4  & $\dots$ & 116        & 9279  & 1    \\
+			Audi       & 176.6  & $\dots$ & 115        & 17450 & ?
+		\end{tabular}
+	\end{center}
 	\begin{itemize}
-		\item Classification is the problem of identifying which class ($c \in \mathcal{C}$) an object with attributes ($\mathbf{a} \in \mathcal{A}$) belongs to.
-		\item We will tackle the problem of classifying the risk to an insurer of an auto mobile.
-		\item The data set we will be analysing contains technical information about 205 vehicles and an expert's assessment of their risk.
+		\item Problem of quantifying the risk to an insurer of an auto mobile.
+		\item Data set contains technical information about 205 vehicles and an expert's assessment of their risk.
 	\end{itemize}
 \end{frame}
 
@@ -31,8 +38,7 @@
 				P(c \mid \mathbf{a}) \propto P(c)\prod_{i=1}^{k}P(a_i \mid c)
 			\end{equation}
 		\end{block}
-		\begin{block}{Choosing the Class}
-			We introduce the \textit{0-1 loss function} then to minimize the loss we choose the class:
+		\begin{block}{Choosing the Risk}
 			\begin{equation}
 				\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
 			\end{equation}
@@ -44,16 +50,17 @@
 	\frametitle{Estimating Chances}
 	To estimate these probabilities we parametrise them.
 	\begin{block}{The Likelihood Function}
-		Parametrise the unknown probability $P(\cdot)$ by $\theta_{\cdot}$.
-		Also denote the number of objects in class $c$ by $n(c)$ and the number of objects in class c with attribute $a_i$ by $n(a_i, c)$. Then:
 		\begin{equation}\label{likelihood function}
 			l(\mathbf{\theta} \mid \mathbf{n}) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{n(c)} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{n(a_i, c)} \right]
 		\end{equation}
+		\begin{description}
+			\item[$\theta_\cdot$] Parameter for unknown $P(\cdot)$
+			\item[$n(\cdot)$] Number of times $\cdot$ observed
+		\end{description}
 	\end{block}
 	\begin{block}{Maximum Likelihood Estimates}
-		A simple estimate for each parameter is the maximum likelihood estimate (MLE). These are:
 		\begin{equation}
-			\hat{\theta}_c = \frac{n(c)}{N} , \hat{\theta}_{a_i \mid c} = \frac{n(a_i, c)}{n(c)}
+			\hat{\theta}_c = \frac{n(c)}{N} \qquad \hat{\theta}_{a_i \mid c} = \frac{n(a_i, c)}{n(c)}
 		\end{equation}
 	\end{block}
 \end{frame}
@@ -61,10 +68,10 @@
 \begin{frame}
 	\frametitle{Application and Results}
 	\begin{itemize}
-		\item We discretize our continuous variables and discard objects with missing values.
-		\item We use a technique called \textit{k-fold cross validation} to estimate key metrics.
+		\item Discretize continuous variables
+		\item Discard objects with missing values
+		\item \textit{k-fold cross validation} to estimate accuracy
 		\item Our classifier has  an accuracy of 59.95\% on the auto mobile data set.
-		\item In addition 22.45\% of the objects in our data set weren't classified.
 	\end{itemize}
 \end{frame}
 
