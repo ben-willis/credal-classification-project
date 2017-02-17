@@ -25,29 +25,24 @@ $s > 0$ is a fixed constant and we have the following constraints on $t(\cdot):$
 
 This distribution is the conjugate prior for the likelihood function \cref{likelihood}.
 When we multiply our likelihood by this prior density we get a posterior in the same family as this prior.
-If the prior has hyper parameters $st(\cdot)$ the posterior will have hyper parameters $st(\dot) + n(\cdot)$.
+If the prior has hyper parameters $st(\cdot)$ the posterior will have hyper parameters $st(\cdot) + n(\cdot)$.
 
 We can now estimate the parameters by taking the posterior expectation e.g.
-\begin{equation}
-	E(\theta_c|\mathbf{n},s,\mathbf{t})=\hat{\theta_c} = \frac{n(c) + st(c)}{N + s}
-\end{equation}
-
-We estimate:
 \begin{align}
-	P(c) & \text{ by } \frac{n(c) + st(c)}{N + s} \\
-	P(a_i \mid c) & \text{ by } \frac{n(a_i, c) + st(a_i, c)}{n(c) + st(c)}
+	E(\theta_c \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(c)}{N + s} = \hat{\theta}_c \\
+	E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(a_i, c)}{N + st(c)} = \hat{\theta}_{a_i \mid c}
 \end{align}
 
 \section{Application}
 
 To apply this classifier to our data set we need to choose the hyper parameters of the prior distribution.
 We note that $s$ affects the speed at which our classifier learns and $t(\cdot)$ represents our beliefs for $\theta_\cdot$.
-To comply with the constraints \ref{prior_constraints} let us set:
+We want our prior to be as uninformative as possible and assign the same probabilities to each chance\cite{laplace1812}. Therefore we set:
 \begin{align}
-	s & = 1 \\
 	t(c) & = \frac{1}{|C|} \\
 	t(a_i, c) & = \frac{1}{|A_i||C|}
 \end{align}
+Falling Walley's recommendation \cite{Walley96}, we also set $s=1$.
 
 Previously we've considered the accuracy of our classifier.
 An alternative metric is the mean squared error of our estimate.
@@ -57,7 +52,7 @@ An alternative metric is the mean squared error of our estimate.
 
 \begin{center}
 	\begin{tabular}{ c|c c c c c c }
-		              & Accuracy & MSE   & Failed Classifications\\
+		              & Accuracy & MSE   & Random Classifications\\
 		\hline
 		NBC           & 59.95\%  & 2.823 & 22.45\% \\
 		Corrected NBC & 68.17\%  & 0.689 & 0\%

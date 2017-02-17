@@ -58,13 +58,17 @@ Similarly we denote the conditional chances of observing an individual attribute
 
 Now we have parametrised the probabilities, we wish to estimate we can consider the likelihood function for $\mathbf{\theta}$, the vector whose elements are the chances $\theta_{c}$ and $\theta_{a_i \mid c}$.
 Using our data we denote the frequencies of objects in each class $c$ by $n(c)$ and the number of objects in class $c$ with attribute $a_i$ by $n(a_i, c)$.
-For example the number of observations of class $0$ is $158$ so $n(0) = 158$
+For example the number of observations of class $0$ is $158$ so $n(0) = 158$.
+Note that $\sum_{c \in \mathcal{C}}n(c) = N$ and $\sum_{a_i in \mathcal{A}_i}n(a_i, c) = n(c)$.
 We then consider the vector $\mathbf{n}$ which contains these frequencies.
 
-The likelihood function can be expressed as:
-\begin{equation} \label{likelihood}
-	l(\mathbf{\theta} \mid \mathbf{n}) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{n(c)} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{n(a_i, c)} \right]
-\end{equation}
+The likelihood function for the theta chances is:
+\begin{align} \label{likelihood}
+	l(\mathbf{\theta} \mid \mathbf{n}) & =  \prod_{c \in \mathcal{C}} \prod_{\mathbf{a} \in \mathbf{\mathcal{A}}} \theta_{\mathbf{a}, c}^{n(\mathbf{a}, c)} \\
+	& = \prod_{c \in \mathcal{C}} \prod_{\mathbf{a} \in \mathbf{\mathcal{A}}} \left[ \theta_{c}^{n(\mathbf{a}, c)} \theta_{\mathbf{a} \mid c}^{n(\mathbf{a}, c)} \right] \\
+	& = \prod_{c \in \mathcal{C}} \left[ \theta_{c}^{\sum_{\mathbf{a} \in \mathbf{\mathcal{A}}} n(\mathbf{a}, c)} \prod_{\mathbf{a} \in \mathbf{\mathcal{A}}} \prod_{i=1}^k \theta_{a_i \mid c}^{n(\mathbf{a}, c)} \right] \\
+	& \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{n(c)} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{n(a_i, c)} \right]
+\end{align}
 
 A simple estimate for these parameters is the maximum likelihood estimate (MLE).
 To find the MLE first we take the log likelihood:
