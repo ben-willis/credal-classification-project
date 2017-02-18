@@ -1,0 +1,87 @@
+\chapter{Alternate Loss Functions}
+
+In chapter two we introduced the idea of a loss function.
+We used the 0-1 loss function to make decision of which class to place an object in given its attributes.
+In this chapter we will investigate some alternate loss functions that make better use of the structure of the insurance problem.
+
+When classifying the insurance risk of a vehicle we return a class on an integer of scale of -2 to 3.
+The 0-1 loss function assigns a loss of 1 to any risk rating that is not the true risk rating, regardless of how close it is.
+We will test alternate choices for the loss function by measuring the accuracy and mean squared error.
+We will use the expected posterior estimates with the uniform prior as described in the previous chapter.
+
+\section{The Loss Functions}
+\subsection{0-1 Loss Function}
+Previously we considered the 0-1 loss function.
+To recap this is defined by:
+\begin{equation}
+	L(c, \hat{c}) = 
+	\begin{cases}
+		0 & \text{if}\ c = \hat{c} \\
+		1 & \text{otherwise}
+	\end{cases}
+\end{equation}
+
+The expected loss is:
+\begin{equation}
+	E(L) = \sum_{c \in \mathcal{C}} L(c, \hat{c})P(c \mid \mathbf{a}) = 1 - P(\hat{c} \mid \mathbf{a})
+\end{equation}
+
+So to minimize our expected loss we choose:
+\begin{equation}
+	\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
+\end{equation}
+This is known as the maximum a posteriori (MAP) estimate.
+
+\subsection{Squared Differences}
+The squared differences loss function is defined as:
+\begin{equation}
+	L(c, \hat{c}) = (c - \hat{c})^2
+\end{equation}
+This assigns greater loss to risk ratings that are further away from the true value.
+
+For this function the expected loss is:
+\begin{equation}
+	E(L) = \sum_{c \in \mathcal{C}} (c - \hat{c})^2P(c \mid \mathbf{a}) 
+\end{equation}
+
+Differentiating this with respect to $\hat{c}$ gives:
+\begin{equation}
+	\frac{\partial}{\partial \hat{c}} E(L) = \sum_{c \in \mathcal{C}} (-2c + 2\hat{c})P(c \mid \mathbf{a}) 
+\end{equation}
+Setting this equal to zero gives:
+\begin{align}
+	\sum_{c \in \mathcal{C}} cP(c \mid \mathbf{a}) & = \sum_{c \in \mathcal{C}} \hat{c}P(c \mid \mathbf{a}) \\
+	E(c \mid \mathbf{a}) & = \hat{c}
+\end{align}
+So the estimate which minimizes the loss function is the expected class.
+In the context of our problem the estimated class must be an integer, however this expected value may not be.
+
+\subsection{Absolute Difference}
+Finally we have the absolute difference loss function:
+\begin{equation}
+	L(c, \hat{c}) = | c - \hat{c} |
+\end{equation}
+Once again this assigns greater loss to risk ratings that are further away from the true value.
+
+For this function the expected loss is:
+\begin{align}
+	E(L) & = \sum_{c \in \mathcal{C}} |c - \hat{c}|P(c \mid \mathbf{a}) \\
+	     & = \sum_{c < \hat{c}} (\hat{c} - c)P(c \mid \mathbf{a}) - \sum_{c > \hat{c}} (\hat{c} - c)P(c \mid \mathbf{a})
+\end{align}
+
+Differentiating this with respect to $\hat{c}$ gives:
+\begin{equation}
+	\frac{\partial}{\partial \hat{c}} E(L) = \sum_{c < \hat{c}} P(c \mid \mathbf{a}) - \sum_{c > \hat{c}} P(c \mid \mathbf{a})
+\end{equation}
+Setting this equal to zero gives:
+\begin{align}
+	\sum_{c < \hat{c}} P(c \mid \mathbf{a}) & = \sum_{c > \hat{c}} P(c \mid \mathbf{a}) \\
+	P(c < \hat{c} \mid \mathbf{a}) & = P(c > \hat{c} \mid \mathbf{a})
+\end{align}
+So the estimate for this loss function is the median value.
+
+\section{Application}
+We will now apply these loss functions to our vehicle data set and measure accuracy and mean squared error.
+We will also investigate how often the assigned classes agree.
+
+Once again we discretize and discard vehicles with missing attributes.
