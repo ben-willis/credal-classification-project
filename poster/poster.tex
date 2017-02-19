@@ -2,8 +2,10 @@
 \mode<presentation>{\usetheme{DUR}}
 \usepackage{amsmath}
 \usepackage{cleveref}
+\usepackage{wrapfig}
 \usepackage[orientation=landscape,size=a2,scale=1.4,grid,debug]{beamerposter}
 
+\newcommand{\defn}[1]{\textit{\color{ETH10}#1}}
 
 \title{Determining Insurance Risk}
 \author[Ben Willis]{Ben Willis\\\normalsize{ Supervised by: Dr Matthias Troffaes}}
@@ -15,8 +17,13 @@
 	\begin{column}{0.30\paperwidth}
 
 		\begin{block}{Insurance Data Set}
+
 			Classifiers have many applications in the finance industry ranging from financial trading to credit card fraud detection.
 			We will study the problem of determining the risk on insuring an auto mobile. \vspace{0.5em}
+
+			\begin{center}
+				\includegraphics[width=.4\textwidth, keepaspectratio]{img/crash}
+			\end{center}
 
 			We will analyse a data set containing the technical attributes of 205 vehicles as well an expert's insurance risk rating.
 			This rating is on an integer scale of -2 to 3 with 3 be most risky and -2 being least risky \cite{Automobile}.
@@ -36,11 +43,11 @@
 		\end{block}
 
 		\begin{block}{Naive Bayes Classifier}
-			The naive Bayes classifier (NBC) is a simple probabilistic approach to this classification problem. We are interested in the probability of an auto mobile with attributes $\mathbf{a}$ having risk rating $c$ i.e. $P(c \mid \mathbf{a})$. Using Bayes theorem we can rewrite this as:
+			The \defn{naive Bayes classifier} is a simple probabilistic approach to this classification problem. We are interested in the probability of an auto mobile with attributes $\mathbf{a}$ having risk rating $c$ i.e. $P(c \mid \mathbf{a})$. Using Bayes theorem we can rewrite this as:
 			\begin{equation}\label{bayes theorem}
 				P(c \mid \mathbf{a}) = \frac{P(c)P(\mathbf{a} \mid c)}{P(\mathbf{a})}
 			\end{equation}
-			We can use of the naivety assumption to simplify the problem.
+			We can use of the \defn{naivety assumption} to simplify the problem.
 			The naivety assumptions states that each attribute is conditionally independent given the class.
 			We can therefore write the probability of observing an object with attributes $a_1, \dots\ a_k$ given it has risk rating $c$ as:
 			\begin{equation} \label{naivety}
@@ -51,10 +58,11 @@
 				P(c \mid \mathbf{a}) \propto P(c)\prod_{i=1}^{k}P(a_i \mid c)
 			\end{equation}
 			One way to assign a risk rating to a vehicle with attributes $\mathbf{a}$ is to choose the rating which maximises $P(c \mid \mathbf{a})$:
+			
 			\begin{equation} \label{map_estimate}
 				\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
 			\end{equation}
-			This is known as the maximum a posteriori (MAP) estimate.
+			This is known as the \defn{maximum a posteriori estimate}.
 		\end{block}
 
 	\end{column}
@@ -111,7 +119,7 @@
 		\begin{block}{Estimating Probabilities}
 			To use the naive Bayes classifier we need to estimate the probabilities involved.\vspace{0.5em}
 
-			One way is by choosing the theta values which maximise the likelihood. These are the maximum likelihood estimates and are given by:
+			One way is by choosing the theta values which maximise the likelihood. These are the \defn{maximum likelihood estimates} and are given by:
 			\begin{equation}\label{mles}
 				\hat{\theta}_c = \frac{n(c)}{N} \qquad
 				\hat{\theta}_{a_i \mid c} = \frac{n(a_i, c)}{n(c)}
@@ -131,7 +139,7 @@
 			\begin{description}
 				\item[Accuracy] The percentage or correct risk assignments.
 				\item[Random Assignments] The percentage or objects for which $P(c \mid \mathbf{a}) = 0$ for all $c$, in these cases the classifier randomly assigns a class.
-				\item[Mean Squared Error] The average squared difference between the assigned class and true class; this metric indicates closeness.
+				\item[Mean Squared Error (MSE)] The average squared difference between the assigned class and true class; this metric indicates closeness.
 			\end{description}\vspace{0.5em}
 		\end{block}
 
