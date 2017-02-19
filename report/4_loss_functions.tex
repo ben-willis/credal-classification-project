@@ -66,22 +66,48 @@ Once again this assigns greater loss to risk ratings that are further away from 
 For this function the expected loss is:
 \begin{align}
 	E(L) & = \sum_{c \in \mathcal{C}} |c - \hat{c}|P(c \mid \mathbf{a}) \\
-	     & = \sum_{c < \hat{c}} (\hat{c} - c)P(c \mid \mathbf{a}) - \sum_{c > \hat{c}} (\hat{c} - c)P(c \mid \mathbf{a})
+	     & = \sum_{c \leq \hat{c}} (\hat{c} - c)P(c \mid \mathbf{a}) - \sum_{c \geq \hat{c}} (\hat{c} - c)P(c \mid \mathbf{a})
 \end{align}
 
 Differentiating this with respect to $\hat{c}$ gives:
 \begin{equation}
-	\frac{\partial}{\partial \hat{c}} E(L) = \sum_{c < \hat{c}} P(c \mid \mathbf{a}) - \sum_{c > \hat{c}} P(c \mid \mathbf{a})
+	\frac{\partial}{\partial \hat{c}} E(L) = \sum_{c \leq \hat{c}} P(c \mid \mathbf{a}) - \sum_{c \geq \hat{c}} P(c \mid \mathbf{a})
 \end{equation}
 Setting this equal to zero gives:
 \begin{align}
-	\sum_{c < \hat{c}} P(c \mid \mathbf{a}) & = \sum_{c > \hat{c}} P(c \mid \mathbf{a}) \\
-	P(c < \hat{c} \mid \mathbf{a}) & = P(c > \hat{c} \mid \mathbf{a})
+	\sum_{c \leq \hat{c}} P(c \mid \mathbf{a}) & = \sum_{c \geq \hat{c}} P(c \mid \mathbf{a}) \\
+	P(c \leq \hat{c} \mid \mathbf{a}) & = P(c \geq \hat{c} \mid \mathbf{a})
 \end{align}
-So the estimate for this loss function is the median value.
+So the estimate that minimizes expected loss for this loss function is the median value.
+This may be difficult to define on our data set.
+For example suppose class -3 had $P(C = -2 \mid \mathbf{a}) = 0.5 = P(C=3 \mid \mathbf{a})$ then any class could reasonably be considered the median and therefore minimize our expected loss.
+When more than one risk rating could be reasonably considered the median we will choose one at random.
 
 \section{Application}
 We will now apply these loss functions to our vehicle data set and measure accuracy and mean squared error.
 We will also investigate how often the assigned classes agree.
 
 Once again we discretize and discard vehicles with missing attributes.
+
+As the expected posterior estimates perform better than the maximum likelihood estimates we shall use these to estimate the required probabilities.
+We will also use the uniform hyper parameters and set $s=1$.
+
+\begin{center}
+\begin{tabular}{l|c c}
+	Loss Function       & Accuracy & MSE   \\
+	\hline
+	0-1                 & 68.59\%  & 0.642 \\
+	Squared Difference  & 67.48\%  & 0.594 \\
+	Absolute Difference & 68.34\%  & 0.635 \\
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{l|c c c}
+	Loss Function       & 0-1     & Squared Difference & Absolute Difference   \\
+	\hline
+	0-1                 & 100\% & 95.85\% & 99.48\% \\
+	Squared Difference  & - & 100\% & 96.37\%\\
+	Absolute Difference & - & - & 100\% \\
+\end{tabular}
+\end{center}
