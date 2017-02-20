@@ -84,13 +84,15 @@ For example suppose class -3 had $P(C = -2 \mid \mathbf{a}) = 0.5 = P(C=3 \mid \
 When more than one risk rating could be reasonably considered the median we will choose one at random.
 
 \section{Application}
-We will now apply these loss functions to our vehicle data set and measure accuracy and mean squared error.
+We will now apply these loss functions to our auto mobile data set and measure accuracy and mean squared error.
 We will also investigate how often the assigned classes agree.
 
 Once again we discretize and discard vehicles with missing attributes.
 
 As the expected posterior estimates perform better than the maximum likelihood estimates we shall use these to estimate the required probabilities.
 We will also use the uniform hyper parameters and set $s=1$.
+
+Using 10-fold cross validation our various loss functions perform as follow.
 
 \begin{center}
 \begin{tabular}{l|c c}
@@ -102,6 +104,10 @@ We will also use the uniform hyper parameters and set $s=1$.
 \end{tabular}
 \end{center}
 
+Note the similarity between the 0-1 loss function and the absolute difference loss function.
+The squared difference loss function performs slightly worse in the accuracy metric however scores better for MSE.
+
+We can also look at the percentage of time each loss function agrees:
 \begin{center}
 \begin{tabular}{l|c c c}
 	Loss Function       & 0-1     & Squared Difference & Absolute Difference   \\
@@ -111,3 +117,11 @@ We will also use the uniform hyper parameters and set $s=1$.
 	Absolute Difference & - & - & 100\% \\
 \end{tabular}
 \end{center}
+
+This confirms that the 0-1 loss function and absolute differences loss function assign classes in a very similar manner.
+This is due to their often being a $\hat{c} \in \mathcal{C}$ such that $P(\hat{c} \mid \mathbf{a})$ that is much greater than for other choices of $c$ other.
+When this is the case $\hat{c}$ is the choice for the 0-1 loss function.
+Additionaly if it is greater than 0.5, which is often the case, it is the only choice for the median of the data set and hence is the absolute difference loss functions choice.
+
+The squared difference loss function differs from these two slightly as it is more skewed by outliers.
+Consider the case $P(C=-2\mid \mathbf{a})=0.6, P(C=3\mid \mathbf{a})=0.4$ then the expectation for $C$ is $0$ while both the 0-1 and absolute loss functions will choose -2.

@@ -42,23 +42,36 @@ We want our prior to be as uninformative as possible and assign the same probabi
 	t(c) & = \frac{1}{|C|} \\
 	t(a_i, c) & = \frac{1}{|A_i||C|}
 \end{align}
-Falling Walley's recommendation \cite{Walley96}, we also set $s=1$.
+Following Walley's recommendation \cite{Walley96}, we also set $s=1$.
 
 Previously we've considered the accuracy of our classifier.
 An alternative metric is the mean squared error of our estimate.
 \begin{equation}
 	\text{MSE} = \frac{1}{n}\sum_{i=1}^n(\hat{c_i} - c_i)^2
 \end{equation}
+This indicates how close to the true class our classifications are.
 
+The accuracy, mean squared error and percentage of random classifications are shown below:
 \begin{center}
 	\begin{tabular}{ c|c c c c c c }
 		              & Accuracy & MSE   & Random Classifications\\
 		\hline
 		NBC           & 59.95\%  & 2.823 & 22.45\% \\
-		Corrected NBC & 68.17\%  & 0.689 & 0\%
+		Corrected NBC & 68.17\%  & 0.642 & 0\%
 	\end{tabular}
 \end{center}
 
-This again shows an improvement over the previous classifier.
-
 \section{Conclusions}
+Using posterior expectations instead of maximum likelihood estimates improves our classifier in all three metrics.
+
+Firstly introducing the prior distribution means that we no longer have random classifications as $P(c \mid \mathbf{a})$ will never be zero.
+We will investigate how sensitive our choice of classifications to changes in the prior hyper parameters.
+
+A proportion vehicles that were previously randomly classified are now classified correctly.
+This has led to an increase in the accuracy of our classifier.
+However we are still achieving an accuracy of less than 70\% which leaves great room for improvement.
+
+Additionally the mean square error has decreased dramatically.
+I'm not really sure why this is.
+Note that the loss function we are using to make our decision after estimating the probabilities does not take in to account how close our prediction is to the actual risk.
+An alternate loss function may reduce the MSE even further.

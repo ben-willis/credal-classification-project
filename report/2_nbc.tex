@@ -7,9 +7,9 @@ The study measured spectral information in the green, red and infrared wavelengt
 In total each observation has nine continuous attributes and falls in to one of four possible classes: Sugi forest, Hinoki forest, Mixed deciduous forest and other non-forest land.
 This data set was chosen as it contained a large number of observations and demonstrates a situation where this type of classifier works well.
 
-Formally, let us denote the class variable by $C$, taking values from the set $\{0,1,2,3,4\}$ for each of the four types of forest.
-We measure 9 features $A_1,\dots,A_9$ which we discretize so that they all take values from the set $\{0,\dots,9\}$.
-We denote observations of the observed values as $c$ and $a_1,\dots,a_9$ respectively.
+Formally, let us denote the class variable by $C$, taking values from the set $\mathcal{C} = \{0,1,2,3,4\}$ for each of the four types of forest.
+We measure 9 features $A_1,\dots,A_9$ which we discretize so that they all take values from the set $\mathcal{A} = \{0,\dots,9\}$.
+The observations of the variables are denoted by $c$ and $a_1,\dots,a_9$ respectively.
 
 We are interested in the probability of a forest being of type $c$ given sensor readings $\mathbf{a}$ i.e. $P(c \mid \mathbf{a})$.
 Using Bayes theorem we can rewrite this as:
@@ -20,6 +20,7 @@ Using Bayes theorem we can rewrite this as:
 Moreover we can make use of the naivety assumption.
 The naivety assumptions states that each attribute is conditionally independent given the class.
 In the context of this data set we are assuming the sensor readings are conditionally independent given the type of forest.
+This assumption may not necessarily be accurate however it greatly simplifies the problem.
 We can therefore write the probability of observing an object with attributes $a_1, \dots\ a_9$ given it is in class $c$ as:
 \begin{equation} \label{naivety}
 	P(\mathbf{a} \mid c) = \prod_{i=1}^9 P(a_i \mid c)
@@ -27,10 +28,10 @@ We can therefore write the probability of observing an object with attributes $a
 
 Note that $P(\mathbf{a})$ is independent of $c$ and is just a scaling constant. So by bringing together \cref{bayes,naivety} we can write:
 \begin{equation}
-	P(c \mid \mathbf{a}) \propto P(c)\prod_{i=1}^{k}P(a_i \mid c)
+	P(c \mid \mathbf{a}) \propto P(c)\prod_{i=1}^{9}P(a_i \mid c)
 \end{equation}
 
-To turn this into a classifier we need a way to make a decision for which class an object falls into based on the estimated probabilities.
+To turn this into a classifier we need a way to decide which class a forest falls into based on these probabilities.
 We can introduce a \textit{loss function} to allow us to choose the class.
 As standard choice is the 0-1 loss function we defined as:
 \begin{equation}\label{0-1_loss_function}
@@ -62,7 +63,7 @@ For example the number of observations of class $0$ is $158$ so $n(0) = 158$.
 Note that $\sum_{c \in \mathcal{C}}n(c) = N$ and $\sum_{a_i in \mathcal{A}_i}n(a_i, c) = n(c)$.
 We then consider the vector $\mathbf{n}$ which contains these frequencies.
 
-The likelihood function for the theta chances is:
+We can derive the likelihood function for these theta chances given the frequencies described above.
 \begin{align} \label{likelihood}
 	l(\mathbf{\theta} \mid \mathbf{n}) & =  \prod_{c \in \mathcal{C}} \prod_{\mathbf{a} \in \mathbf{\mathcal{A}}} \theta_{\mathbf{a}, c}^{n(\mathbf{a}, c)} \\
 	& = \prod_{c \in \mathcal{C}} \prod_{\mathbf{a} \in \mathbf{\mathcal{A}}} \left[ \theta_{c}^{n(\mathbf{a}, c)} \theta_{\mathbf{a} \mid c}^{n(\mathbf{a}, c)} \right] \\
