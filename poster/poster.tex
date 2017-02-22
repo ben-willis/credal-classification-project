@@ -7,8 +7,8 @@
 
 \newcommand{\defn}[1]{\textit{\color{ETH10}#1}}
 
-\title{Determining Insurance Risk}
-\author[Ben Willis]{Ben Willis\\\normalsize{ Supervised by: Dr Matthias Troffaes}}
+\title{Assessing Insurance Risk}
+\author[Ben Willis]{Ben Willis\\\normalsize{ Supervisor: Dr Matthias Troffaes}}
 \institute{Durham University}
 \date{\today}
 \begin{document}
@@ -19,17 +19,17 @@
 		\begin{block}{Insurance Data Set}
 
 			Classifiers have many applications in the finance industry ranging from financial trading to credit card fraud detection.
-			We will study the problem of determining the risk on insuring an auto mobile. \vspace{0.5em}
+			We will study the problem of assessing the risk of insuring an automobile. \vspace{0.5em}
 
 			\begin{center}
 				\includegraphics[width=.4\textwidth, keepaspectratio]{img/crash}
 			\end{center}
 
 			We will analyse a data set containing the technical attributes of 205 vehicles as well an expert's insurance risk rating.
-			This rating is on an integer scale of -2 to 3 with 3 be most risky and -2 being least risky \cite{Automobile}.
+			This rating is on an integer scale from -2 to 3 with 3 being most risky \cite{Automobile}.
 
 			\begin{center}
-				\begin{tabular}{l c c c c|c}
+				\begin{tabular}{l c c c c|r}
 					Make       & Length & $\dots$ & Horsepower & Price & Risk \\
 					\hline
 					Volvo      & 188.8  & $\dots$ & 114        & 12940 & -2   \\
@@ -43,119 +43,131 @@
 		\end{block}
 
 		\begin{block}{Naive Bayes Classifier}
-			The \defn{naive Bayes classifier} is a simple probabilistic approach to this classification problem. We are interested in the probability of an auto mobile with attributes $\mathbf{a}$ having risk rating $c$ i.e. $P(c \mid \mathbf{a})$. Using Bayes theorem we can rewrite this as:
-			\begin{equation}\label{bayes theorem}
-				P(c \mid \mathbf{a}) = \frac{P(c)P(\mathbf{a} \mid c)}{P(\mathbf{a})}
-			\end{equation}
-			We can use of the \defn{naivety assumption} to simplify the problem.
-			The naivety assumptions states that each attribute is conditionally independent given the class.
-			We can therefore write the probability of observing an object with attributes $a_1, \dots\ a_k$ given it has risk rating $c$ as:
-			\begin{equation} \label{naivety}
-				P(\mathbf{a} \mid c) = \prod_{i=1}^k P(a_i \mid c)
-			\end{equation}
-			Using \cref{bayes theorem,naivety} and noting $P(\mathbf{a})$ does not depend on $c$ we can write:
+			The \defn{naive Bayes classifier} is a simple probabilistic approach to this classification problem that naively assumes each attribute is conditionally independent given the class.
+			We are interested in $P(c \mid \mathbf{a})$, the probability of an automobile with attributes $\mathbf{a}$ having risk rating $c$.
+			We use \defn{Bayes theorem} and the \defn{naivety assumption} to rewrite this probability:
 			\begin{equation}
-				P(c \mid \mathbf{a}) \propto P(c)\prod_{i=1}^{k}P(a_i \mid c)
+				P(c \mid \mathbf{a}) \propto P(c)P(\mathbf{a} \mid c) = P(c)\prod_{i=1}^{k}P(a_i \mid c)
 			\end{equation}
 			One way to assign a risk rating to a vehicle with attributes $\mathbf{a}$ is to choose the rating which maximises $P(c \mid \mathbf{a})$:
-			
 			\begin{equation} \label{map_estimate}
-				\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
+				\arg\max_{c \in \mathcal{C}} P(c \mid \mathf{a}) = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
 			\end{equation}
-			This is known as the \defn{maximum a posteriori estimate}.
+			This is known as the \defn{maximum a posteriori (MAP) estimate} and minimizes expected 0-1 loss.
+
+			Alternatively, as our classes are numeric, we can choose the posterior expectation:
+			\begin{equation}
+				E(c \mid \mathbf{a}) = \sum_{c \in \mathcal{C}} c \cdot P(c \mid \mathf{a})
+			\end{equation}
+			This minimizes expected quadratic loss and is called the \defn{minimum mean square error (MMSE) estimate}.
+
 		\end{block}
 
 	\end{column}
 
-	\begin{column}{0.30\paperwidth}
+	\begin{column}{0.38\paperwidth}
 
 		\begin{block}{Likelihood Function}
-			Now that we have our decision mechanism we need to estimate the required probabilities. We parametrise these probabilities:
+			Now that we have our decision mechanism we need to estimate the required probabilities.
+			We parametrise these probabilities:
 			\begin{description}
-				\item[\theta_c] Chance of a vehicle having risk $c$
-				\item[\theta_{a_i \mid c}] Chance of a vehicle having attribute $a_i$ given that it has risk $c$
+				\item[\theta_c] Chance of a vehicle having risk rating $c$
+				\item[\theta_{a_i \mid c}] Chance of a vehicle having attribute $a_i$ given that it has risk rating $c$
 			\end{description}\vspace{0.5em}
 
 			Given $N$ observations we denote the observed frequencies:
 			\begin{description}
-				\item[n(c)] Number of vehicles with risk $c$
-				\item[n(a_i, c)] Number of vehicles with attribute $a_i$ and risk $c$
+				\item[n(c)] Number of vehicles with risk rating $c$
+				\item[n(a_i, c)] Number of vehicles with attribute $a_i$ and risk rating $c$
 			\end{description}
 			Note that $\sum_{c \in \mathcal{C}}n(c) = N$ and $\sum_{a_i \in \mathcal{A}_i}n(a_i, c) = n(c)$.\vspace{0.5em}
 
-			The likelihood function for these theta chances given our observations is given by \cite{Zaffalon01}:
+			The likelihood function for these theta chances given our observations is \cite{Zaffalon01}:
 			\begin{equation} \label{likelihood}
 				l(\mathbf{\theta} \mid \mathbf{n}) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{n(c)} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{n(a_i, c)} \right]
 			\end{equation}
 		\end{block}
 
 		\begin{block}{Prior Distribution}
-			We choose the following to be the prior distribution to our likelihood:
+			We choose the following to be the prior distribution for our probabilities:
 			\begin{equation} \label{prior}
-				f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(c, a_i) - 1} \right]
+				f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(a_i, c) - 1} \right]
 			\end{equation}
 			where $s>0$ and $t(\cdot)$ are such that:
 			\begin{equation}
 				\sum_{c \in \mathcal{C}} t(c) = 1 \qquad \sum_{a_i \in \mathcal{A}_i} t(a_i, c) = t(c)  \ \forall \  i, c \qquad t(a_i, c) & > 0  \ \forall  \ i, a_i, c
 			\end{equation}
-			This distribution is the conjugate prior for our likelihood so the posterior distribution is in the same form as the likelihood. If the prior has hyper parameters $st(\cdot)$ the posterior will have hyper parameters $st(\cdot) + n(\cdot)$.\vspace{0.5em}
+			This distribution is the conjugate prior for our likelihood so the posterior distribution is in the same form as the prior.
+			If the prior has hyperparameters $st(\cdot)$ the posterior will have hyperparameters $st(\cdot) + n(\cdot)$.\vspace{0.5em}
 
-			Note that $t(c)$ and $t(a_i , c)$ represent our prior beliefs about $P(c)$ and $P(a_i \mid c)$. We want our prior to be as uninformative as possible so we set it to be uniform \cite{laplace1812} by choosing parameters:
+			Our prior beliefs about $P(c)$ and $P(a_i \mid c)$ are represented by $t(c)$ and $t(a_i , c)$.
+			For now we want our prior to be indifferent towards each class so we set it to be uniform by choosing hyperparameters:
 			\begin{equation}
 				s = 1 \qquad t(c) = \frac{1}{|\mathcal{C}|} \qquad t(a_i, c) = \frac{1}{|\mathcal{A}_i||\mathcal{C}|}
 			\end{equation} 
+		\end{block}
+
+		\begin{block}{Estimating Probabilities}
+			One way to estimate the required probabilities is by choosing the theta values which maximise the likelihood.
+			These are the \defn{maximum likelihood estimates} and are given by:
+			\begin{equation}\label{mles}
+				\hat{\theta}_c = \frac{n(c)}{N} \qquad
+				\hat{\theta}_{a_i \mid c} = \frac{n(a_i, c)}{n(c)}
+			\end{equation}\vspace{0.5em}
+
+			Alternatively we multiply the likelihood by our prior and take the \defn{posterior expectation} \cite{Zaffalon01}:
+			\begin{equation}
+				E(\theta_c \mid \mathbf{n},s,\mathbf{t}) = \frac{n(c) + st(c)}{N + s} \qquad E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) = \frac{n(c) + st(a_i, c)}{N + st(c)}
+			\end{equation}
+		\end{block}
+
+		
+	\end{column}
+
+	\begin{column}{0.25\paperwidth}
+
+		\begin{block}{Application}
+			We first discretize continuous variables and, as we have no mechanism for dealing with missing values, we discard any vehicles which are missing attributes.\vspace{0.5em}
+
+			We will measure three metrics:
+			\begin{description}
+				\item[Accuracy] The percentage of correct risk rating assignments.
+				\item[Random Assignments] The percentage of vehicles for which the classifier randomly assigns a class (when $P(c \mid \mathbf{a}) = 0$ for all $c$).
+				\item[Mean Square Error] The average squared difference between the assigned class and true class; this measures closeness.
+			\end{description}\vspace{0.5em}
+		\end{block}
+
+		\begin{block}{Results}
+			Initially we use the MAP estimate for assigning a class and we compare the different estimates for the probabilities:
+			\begin{center}
+				\begin{tabular}{ l|c c }
+					                      & Accuracy & Random Assignments\\
+					\hline
+					Maximum Likelihood    & 59.95\%  & 22.45\% \\
+					Posterior Expectation & 68.17\%  & 0\%
+				\end{tabular}
+			\end{center}
+			Using the prior leads to more accurate classifications and never assigns classes at random.
+
+			Next we see how our method for assigning the risk rating affects the mean square error. We use the prior expectation for the probabilities to avoid random assignments
+			\begin{center}
+				\begin{tabular}{ l|c }
+					              & Mean Square Error   \\
+					\hline
+					MAP Estimate  & 0.642 \\
+					MMSE Estimate & 0.565
+				\end{tabular}
+			\end{center}
+			Minimizing the expected quadratic loss reduces the mean square error as expected however this estimate may not be an integer.
+
+			The next step is to investigate how sensitive our classifier is to changes in our prior distribution and consider whether our prior beliefs are really represented by indifference.
+			We could also explore more decision mechanisms for assigning the class as well as ways to deal with missing values.
 		\end{block}
 
 		\begin{block}{\small References}
 			{\footnotesize
 			\bibliography{refs}{}}
 			\bibliographystyle{abbrv}
-		\end{block}
-		
-	\end{column}
-
-	\begin{column}{0.30\paperwidth}
-
-		\begin{block}{Estimating Probabilities}
-			To use the naive Bayes classifier we need to estimate the probabilities involved.\vspace{0.5em}
-
-			One way is by choosing the theta values which maximise the likelihood. These are the \defn{maximum likelihood estimates} and are given by:
-			\begin{equation}\label{mles}
-				\hat{\theta}_c = \frac{n(c)}{N} \qquad
-				\hat{\theta}_{a_i \mid c} = \frac{n(a_i, c)}{n(c)}
-			\end{equation}\vspace{0.5em}
-
-			Alternatively we can multiply our likelihood by our prior and take the expectation of the posterior. These estimates are \cite{Zaffalon01}:
-			\begin{align}
-				E(\theta_c \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(c)}{N + s} = \hat{\theta}_c \\
-				E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(a_i, c)}{N + st(c)} = \hat{\theta}_{a_i \mid c}
-			\end{align}
-		\end{block}
-
-		\begin{block}{Application}
-			To apply our classifier to the insurance data set we must first discretize continuous variables. Also we have no mechanism for dealing with missing values so we must discard any vehicles which are missing technical information.\vspace{0.5em}
-
-			We will measure three metrics:
-			\begin{description}
-				\item[Accuracy] The percentage or correct risk assignments.
-				\item[Random Assignments] The percentage or objects for which $P(c \mid \mathbf{a}) = 0$ for all $c$, in these cases the classifier randomly assigns a class.
-				\item[Mean Squared Error (MSE)] The average squared difference between the assigned class and true class; this metric indicates closeness.
-			\end{description}\vspace{0.5em}
-		\end{block}
-
-		\begin{block}{Results}
-			The measurements for the three metrics for each estimate are given below.
-			\begin{center}
-				\begin{tabular}{ l|c c c c c c }
-					                      & Accuracy & MSE   & Random Assignments\\
-					\hline
-					Maximum Likelihood    & 59.95\%  & 2.823 & 22.45\% \\
-					Posterior Expectation & 68.17\%  & 0.689 & 0\%
-				\end{tabular}
-			\end{center}
-			Overall using the posterior expectation is more accurate than than using the maximum likelihood estimates. It also assigns risks which are closer to the true value and it never randomly assigns classes.\vspace{0.5em}
-
-			The next step is to consider how sensitive our classifier is to changes in our prior distribution. We could also look at other decision mechanisms for assigning risk and ways to deal with missing values.
 		\end{block}
 
 	\end{column}
