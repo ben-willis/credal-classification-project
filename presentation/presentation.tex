@@ -26,101 +26,137 @@
 		\end{tabular}
 	\end{center}
 	\begin{itemize}
-		\item Problem of determining the risk to an insurer of an auto mobile.
+		\item Problem of assessing the risk to an insurer of an auto mobile.
 		\item Data set contains technical information about 205 vehicles and an expert's assessment of their risk.
+		\item Risk rating on inter scale from -2 to 3
 	\end{itemize}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Naive Bayes Classifier}
-		\begin{block}{Probabilistic Interpretation}
-			Bayes theorem and the naivety assumption gives us:
-			\begin{equation}
-				P(c \mid \mathbf{a}) \propto P(c)\prod_{i=1}^{k}P(a_i \mid c)
-			\end{equation}
-		\end{block}
-		\begin{block}{Choosing the Risk}
-			\begin{equation}
-				\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
-			\end{equation}
-			This is known as the maximum a posteriori (MAP) estimate.
-		\end{block}
+	\begin{block}{Notation}
+		\begin{description}
+			\item[$c$] Observed Class (Risk Rating)
+			\item[$\mathbf{a} = (a_1,...,a_k)$] Observed Attributes
+		\end{description}
+	\end{block}
+	\begin{block}{Probabilistic Interpretation}
+		Bayes theorem and the naivety assumption gives us:
+		\begin{equation}
+			P(c \mid \mathbf{a}) \propto P(c)P(\mathbf{a} \mid c) = P(c)\prod_{i=1}^{k}P(a_i \mid c)
+		\end{equation}
+	\end{block}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Estimating Chances}
-	To estimate these probabilities we parametrise them.
+	\frametitle{Classifying an Object}
+	Choose class which minimizes expected loss
+	\begin{block}{0-1 Loss}
+		\begin{equation}
+			\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
+		\end{equation}
+		The maximum a posteriori (MAP) estimate.
+	\end{block}
+	\begin{block}{Quadratic Loss}
+		\begin{equation}
+			\hat c = E(c \mid \mathbf{a})
+		\end{equation}
+		The minimum mean square error (MMSE) estimate.
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Estimating Probabilities}
+	Parametrise the probabilities:
+	\begin{description}
+		\item[$\theta_c$] Chance of a vehicle having risk rating $c$
+		\item[$\theta_{a_i \mid c}$] Chance of a vehicle having attribute $a_i$ given that it has risk rating $c$
+	\end{description}\vspace{0.5em}
+
+	Denote the observed frequencies:
+	\begin{description}
+		\item[$n(c)$] Number of vehicles with risk rating $c$
+		\item[$n(a_i, c)$] Number of vehicles with attribute $a_i$ and risk rating $c$
+	\end{description}
+	Note that $\sum_{c \in \mathcal{C}}n(c) = N$ and $\sum_{a_i \in \mathcal{A}_i}n(a_i, c) = n(c)$.
+\end{frame}
+
+\begin{frame}
+	\frametitle{The Likelihood Function}
 	\begin{block}{The Likelihood Function}
 		\begin{equation}\label{likelihood function}
 			l(\mathbf{\theta} \mid \mathbf{n}) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{n(c)} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{n(a_i, c)} \right]
 		\end{equation}
-		\begin{description}
-			\item[$\theta_c, \theta_{a_i \mid c}$] Parameter for unknown $P(c), P(a_i \mid c)$
-			\item[$n(c), n(a_i, c)$] Number of times observed
-		\end{description}
-	\end{block}
-	\begin{block}{Maximum Likelihood Estimates}
-		\begin{equation}
-			\hat{\theta}_c = \frac{n(c)}{N} \qquad \hat{\theta}_{a_i \mid c} = \frac{n(a_i, c)}{n(c)}
-		\end{equation}
 	\end{block}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Application and Results}
-	\begin{itemize}
-		\item Discretize continuous variables
-		\item Discard objects with missing values
-		\item Estimate probabilities using maximum likelihood estimates
-		\item Assign class using MAP estimate
-		\item Accuracy of 59.95\% using 10-fold cross validation
-	\end{itemize}
-\end{frame}
-
-\begin{frame}
-	\frametitle{Introducing the Prior}
+	\frametitle{A Prior Distribution}
 	\begin{block}{Prior Distribution}
 		\begin{equation}
 			f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(c, a_i) - 1} \right]
 		\end{equation}
-		Hyper parameters $s>0$ and $\mathbf{t}$ such that:
+		Hyperparameters $s>0$ and $\mathbf{t}$ such that:
 		\begin{equation}
 			\sum_{c \in \mathcal{C}} t(c) = 1 \qquad \sum_{a_i \in \mathcal{A}_i} t(a_i \mid c) = t(c) \qquad t(a_i \mid c) > 0
 		\end{equation}
 	\end{block}
-	For uninformative prior set:
+	For indifference:
 	\begin{equation}
 		s = 1 \qquad t(c) = \frac{1}{|C|} \qquad t(a_i, c) = \frac{1}{|A_i||C|}
 	\end{equation}
 \end{frame}
 
 \begin{frame}
-	\frametitle{New Probability Estimates}
+	\frametitle{Estimating Probabilities}
+	\begin{block}{Maximum Likelihood Estimates}
+		\begin{equation}
+			\hat{\theta}_c = \frac{n(c)}{N} \qquad \hat{\theta}_{a_i \mid c} = \frac{n(a_i, c)}{n(c)}
+		\end{equation}
+	\end{block}
 	\begin{block}{Posterior Expectations}
 		\begin{align}
-			E(\theta_c \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(c)}{N + s} = \hat{\theta}_c \\ E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(a_i, c)}{N + st(c)} = \hat{\theta}_{a_i \mid c}
+			E(\theta_c \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(c)}{N + s} \\ E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(a_i, c)}{N + st(c)}
 		\end{align}
 	\end{block}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Reapplication}
-	\begin{itemize}
-		\item Measure Mean Squared Error (MSE)
-		\item Also measure random classifications
-	\end{itemize}
-	\begin{tabular}{ l|c c c }
-		              & Accuracy & MSE   & Random Classifications \\
-		\hline
-		Maximum Likelihood    & 59.95\%  & 2.823 & 22.45\%        \\
-		Posterior Expectation & 68.17\%  & 0.689 & 0\%
-	\end{tabular}
+	\frametitle{Application}
+	We first discretize continuous variables and, as we have no mechanism for dealing with missing values, we discard any vehicles which are missing attributes.\vspace{0.5em}
+
+	We will measure three metrics:
+	\begin{description}
+		\item[Accuracy] The percentage of correct risk rating assignments.
+		\item[Random Assignments] The percentage of vehicles for which the classifier randomly assigns a class (when $P(c \mid \mathbf{a}) = 0$ for all $c$).
+		\item[Mean Square Error] The average squared difference between the assigned class and true class; this measures closeness.
+	\end{description}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Results}
+	\begin{center}
+		\begin{tabular}{ l|c c }
+			                      & Accuracy & Random Assignments\\
+			\hline
+			Maximum Likelihood    & 59.95\%  & 22.45\% \\
+			Posterior Expectation & 68.17\%  & 0\%
+		\end{tabular}
+	\end{center}
+	\begin{center}
+		\begin{tabular}{ l|c }
+			              & Mean Square Error   \\
+			\hline
+			MAP Estimate  & 0.642 \\
+			MMSE Estimate & 0.565
+		\end{tabular}
+	\end{center}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Future Work}
 	\begin{itemize}
-		\item Investigate changes in hyper parameters
+		\item Investigate changes in hyperparameters
 		\item Test alternate decision methods
 		\item Make use of vehicles with missing values
 	\end{itemize}
