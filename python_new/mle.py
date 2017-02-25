@@ -3,6 +3,7 @@ import random, math
 
 from data import data
 from diagnostics import accuracy, mse, cross_validate, unclassified
+from lossfns import zero_one
 
 def transpose(M):
 	return [list(i) for i in zip(*M)]
@@ -38,16 +39,16 @@ def train_classifier(data, values, a_ids, c_id):
 				p_c_given_ais[c] = p_c_given_ais[c] * p_ai_given_cs[a_id][c][obj[a_id]]
 		if (p_c_given_ais) == [0]*len(values[c_id]):
 			return -1
-		return p_c_given_ais.index(max(p_c_given_ais))
+		return zero_one(p_c_given_ais)
 	return trained_classifier
 
 
 
 res = []
 se = 1000
-res.append(cross_validate(data, 24, train_classifier, unclassified, 5))
+res.append(cross_validate(data, 24, train_classifier, accuracy, 5))
 while(se/math.sqrt(len(res)) > 0.002):
-	res.append(cross_validate(data, 24, train_classifier, unclassified, 5))
+	res.append(cross_validate(data, 24, train_classifier, accuracy, 5))
 	mean = sum(res)/len(res)
 	se = math.sqrt( (1/(len(res)-1)) * sum([(x - mean)**2 for x in res]) )
 	print mean

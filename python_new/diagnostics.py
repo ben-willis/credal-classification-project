@@ -13,6 +13,18 @@ def unclassified(classifications):
 	results = [1 if obj[0]==-1 else 0 for obj in classifications]
 	return sum(results)/len(results)
 
+def compare(classifications):
+	n = len(classifications[0][0])
+	results = [[[],[],[]],[[],[],[]],[[],[],[]]]
+	for classification in classifications:
+		for i in range(n):
+			for j in range(n):
+				results[i][j].append(classification[0][i] == classification[0][j])
+	for i in range(n):
+		for j in range(n):
+			results[i][j] = sum(results[i][j])/len(results[i][j])
+	return results
+
 def split_data(data, k):
 	split_data = [[] for i in range(k)]
 	for i in range(len(data)):
