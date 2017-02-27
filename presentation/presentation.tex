@@ -4,7 +4,7 @@
 \usepackage{lmodern}
 \usetheme{metropolis}
  
-\title{Determining Auto Mobile Insurance Risk}
+\title{Determining Automobile Insurance Risk}
 \author[Ben Willis]{Ben Willis \\ \scriptsize{ Supervised by: Dr Matthias Troffaes}}
 \institute{Durham University}
 \date{2017}
@@ -26,9 +26,9 @@
 		\end{tabular}
 	\end{center}
 	\begin{itemize}
-		\item Problem of assessing the risk to an insurer of an auto mobile.
+		\item Problem of assessing the risk to an insurer of an automobile.
 		\item Data set contains technical information about 205 vehicles and an expert's assessment of their risk.
-		\item Risk rating on inter scale from -2 to 3
+		\item Risk rating on integer scale from -2 to 3
 	\end{itemize}
 \end{frame}
 
@@ -53,13 +53,13 @@
 	Choose class which minimizes expected loss
 	\begin{block}{0-1 Loss}
 		\begin{equation}
-			\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
+			\hat{c} = \arg\max_{c \in \mathcal{C}} P(c \mid \mathbf{a}) = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
 		\end{equation}
 		The maximum a posteriori (MAP) estimate.
 	\end{block}
 	\begin{block}{Quadratic Loss}
 		\begin{equation}
-			\hat c = E(c \mid \mathbf{a})
+			\hat{c} = E(c \mid \mathbf{a}) = \sum_{c \in \mathcal{C}} \left[ c \cdot P(c)\prod_{i=1}^{k}P(a_i \mid c) \right]
 		\end{equation}
 		The minimum mean square error (MMSE) estimate.
 	\end{block}
@@ -109,32 +109,36 @@
 
 \begin{frame}
 	\frametitle{Estimating Probabilities}
-	\begin{block}{Maximum Likelihood Estimates}
+	\begin{block}{Maximum Likelihood Estimate}
 		\begin{equation}
 			\hat{\theta}_c = \frac{n(c)}{N} \qquad \hat{\theta}_{a_i \mid c} = \frac{n(a_i, c)}{n(c)}
 		\end{equation}
 	\end{block}
-	\begin{block}{Posterior Expectations}
-		\begin{align}
-			E(\theta_c \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(c)}{N + s} \\ E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(a_i, c)}{N + st(c)}
-		\end{align}
+	\begin{block}{Posterior Expectation}
+		\begin{equation}
+			E(\theta_c \mid \mathbf{n},s,\mathbf{t}) = \frac{n(c) + st(c)}{N + s} \qquad E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) = \frac{n(c) + st(a_i, c)}{N + st(c)}
+		\end{equation}
 	\end{block}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Application}
-	We first discretize continuous variables and, as we have no mechanism for dealing with missing values, we discard any vehicles which are missing attributes.\vspace{0.5em}
+	\begin{itemize}
+		\item Discretize continuous variables
+		\item Discard vehicles with missing attributes
+	\end{itemize}
 
-	We will measure three metrics:
+	Measure three metrics:
 	\begin{description}
-		\item[Accuracy] The percentage of correct risk rating assignments.
-		\item[Random Assignments] The percentage of vehicles for which the classifier randomly assigns a class (when $P(c \mid \mathbf{a}) = 0$ for all $c$).
-		\item[Mean Square Error] The average squared difference between the assigned class and true class; this measures closeness.
+		\item[Accuracy] Percentage of correct classifications
+		\item[Random Assignments] Percentage of vehicles for which class randomly assigned ($P(c \mid \mathbf{a}) = 0$ for all $c$).
+		\item[Mean Square Error] Average squared difference of the assigned class and true class
 	\end{description}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Results}
+	Use MAP estimate for class and vary probability estimates:
 	\begin{center}
 		\begin{tabular}{ l|c c }
 			                      & Accuracy & Random Assignments\\
@@ -143,6 +147,15 @@
 			Posterior Expectation & 68.17\%  & 0\%
 		\end{tabular}
 	\end{center}
+	\begin{itemize}
+		\item Maximum likelihood estimates lead to less accurate classifications
+		\item Use of prior means class never randomly assigned
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Results}
+	Use posterior expectation for probability estimates and vary decision mechanism:
 	\begin{center}
 		\begin{tabular}{ l|c }
 			              & Mean Square Error   \\
@@ -151,6 +164,10 @@
 			MMSE Estimate & 0.565
 		\end{tabular}
 	\end{center}
+	\begin{itemize}
+		\item MMSE estimate closer to true risk rating
+		\item MMSE estimate may not be an integer
+	\end{itemize}
 \end{frame}
 
 \begin{frame}
