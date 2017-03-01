@@ -26,8 +26,8 @@
 		\end{tabular}
 	\end{center}
 	\begin{itemize}
-		\item Problem of assessing the risk to an insurer of an automobile.
-		\item Data set contains technical information about 205 vehicles and an expert's assessment of their risk.
+		\item Problem of assessing the risk to an insurer of an automobile
+		\item Data set contains technical information about 205 vehicles and an expert's assessment of their risk
 		\item Risk rating on integer scale from -2 to 3
 	\end{itemize}
 \end{frame}
@@ -59,7 +59,7 @@
 	\end{block}
 	\begin{block}{Quadratic Loss}
 		\begin{equation}
-			\hat{c} = E(c \mid \mathbf{a}) = \sum_{c \in \mathcal{C}} \left[ c \cdot P(c)\prod_{i=1}^{k}P(a_i \mid c) \right]
+			\hat{c} = E(C \mid \mathbf{a}) = \sum_{c \in \mathcal{C}} \left[ c \cdot P(c)\prod_{i=1}^{k}P(a_i \mid c) \right]
 		\end{equation}
 		The minimum mean square error (MMSE) estimate.
 	\end{block}
@@ -94,16 +94,16 @@
 	\frametitle{A Prior Distribution}
 	\begin{block}{Prior Distribution}
 		\begin{equation}
-			f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(c, a_i) - 1} \right]
+			f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(a_i, c) - 1} \right]
 		\end{equation}
 		Hyperparameters $s>0$ and $\mathbf{t}$ such that:
 		\begin{equation}
-			\sum_{c \in \mathcal{C}} t(c) = 1 \qquad \sum_{a_i \in \mathcal{A}_i} t(a_i \mid c) = t(c) \qquad t(a_i \mid c) > 0
+			\sum_{c \in \mathcal{C}} t(c) = 1 \qquad \sum_{a_i \in \mathcal{A}_i} t(a_i, c) = t(c) \qquad t(a_i, c) > 0
 		\end{equation}
 	\end{block}
-	For indifference:
+	Let $s=1$ and for indifference:
 	\begin{equation}
-		s = 1 \qquad t(c) = \frac{1}{|C|} \qquad t(a_i, c) = \frac{1}{|A_i||C|}
+		t(c) = \frac{1}{|\mathcal{C}|} \qquad t(a_i, c) = \frac{1}{|\mathcal{A}_i||\mathcal{C}|}
 	\end{equation}
 \end{frame}
 
@@ -116,7 +116,7 @@
 	\end{block}
 	\begin{block}{Posterior Expectation}
 		\begin{equation}
-			E(\theta_c \mid \mathbf{n},s,\mathbf{t}) = \frac{n(c) + st(c)}{N + s} \qquad E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) = \frac{n(c) + st(a_i, c)}{N + st(c)}
+			E(\theta_c \mid \mathbf{n},s,\mathbf{t}) = \frac{n(c) + st(c)}{N + s} \qquad E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) = \frac{n(a_i, c) + st(a_i, c)}{n(c) + st(c)}
 		\end{equation}
 	\end{block}
 \end{frame}
@@ -173,10 +173,21 @@
 \begin{frame}
 	\frametitle{Future Work}
 	\begin{itemize}
-		\item Investigate changes in hyperparameters
+		\item Investigate sensitivity to changes in hyperparameters
 		\item Test alternate decision methods
 		\item Make use of vehicles with missing values
 	\end{itemize}
+\end{frame}
+
+\begin{frame}[standout]
+	Questions?
+\end{frame}
+
+\begin{frame}[allowframebreaks]{References}
+
+  \bibliography{demo}
+  \bibliographystyle{abbrv}
+
 \end{frame}
  
 \end{document}
