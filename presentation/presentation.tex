@@ -4,7 +4,7 @@
 \usepackage{lmodern}
 \usetheme{metropolis}
  
-\title{Determining Auto Mobile Insurance Risk}
+\title{Determining Automobile Insurance Risk}
 \author[Ben Willis]{Ben Willis \\ \scriptsize{ Supervised by: Dr Matthias Troffaes}}
 \institute{Durham University}
 \date{2017}
@@ -26,104 +26,168 @@
 		\end{tabular}
 	\end{center}
 	\begin{itemize}
-		\item Problem of determining the risk to an insurer of an auto mobile.
-		\item Data set contains technical information about 205 vehicles and an expert's assessment of their risk.
+		\item Problem of assessing the risk to an insurer of an automobile
+		\item Data set contains technical information about 205 vehicles and an expert's assessment of their risk
+		\item Risk rating on integer scale from -2 to 3
 	\end{itemize}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Naive Bayes Classifier}
-		\begin{block}{Probabilistic Interpretation}
-			Bayes theorem and the naivety assumption gives us:
-			\begin{equation}
-				P(c \mid \mathbf{a}) \propto P(c)\prod_{i=1}^{k}P(a_i \mid c)
-			\end{equation}
-		\end{block}
-		\begin{block}{Choosing the Risk}
-			\begin{equation}
-				\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
-			\end{equation}
-			This is known as the maximum a posteriori (MAP) estimate.
-		\end{block}
+	\begin{block}{Notation}
+		\begin{description}
+			\item[$c$] Observed Class (Risk Rating)
+			\item[$\mathbf{a} = (a_1,...,a_k)$] Observed Attributes
+		\end{description}
+	\end{block}
+	\begin{block}{Probabilistic Interpretation}
+		Bayes theorem and the naivety assumption gives us:
+		\begin{equation}
+			P(c \mid \mathbf{a}) \propto P(c)P(\mathbf{a} \mid c) = P(c)\prod_{i=1}^{k}P(a_i \mid c)
+		\end{equation}
+	\end{block}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Estimating Chances}
-	To estimate these probabilities we parametrise them.
+	\frametitle{Classifying an Object}
+	Choose class which minimizes expected loss
+	\begin{block}{0-1 Loss}
+		\begin{equation}
+			\hat{c} = \arg\max_{c \in \mathcal{C}} P(c \mid \mathbf{a}) = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
+		\end{equation}
+		The maximum a posteriori (MAP) estimate.
+	\end{block}
+	\begin{block}{Quadratic Loss}
+		\begin{equation}
+			\hat{c} = E(C \mid \mathbf{a}) = \sum_{c \in \mathcal{C}} \left[ c \cdot P(c)\prod_{i=1}^{k}P(a_i \mid c) \right]
+		\end{equation}
+		The minimum mean square error (MMSE) estimate.
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Estimating Probabilities}
+	Parametrise the probabilities:
+	\begin{description}
+		\item[$\theta_c$] Chance of a vehicle having risk rating $c$
+		\item[$\theta_{a_i \mid c}$] Chance of a vehicle having attribute $a_i$ given that it has risk rating $c$
+	\end{description}\vspace{0.5em}
+
+	Denote the observed frequencies:
+	\begin{description}
+		\item[$n(c)$] Number of vehicles with risk rating $c$
+		\item[$n(a_i, c)$] Number of vehicles with attribute $a_i$ and risk rating $c$
+	\end{description}
+	Note that $\sum_{c \in \mathcal{C}}n(c) = N$ and $\sum_{a_i \in \mathcal{A}_i}n(a_i, c) = n(c)$.
+\end{frame}
+
+\begin{frame}
+	\frametitle{The Likelihood Function}
 	\begin{block}{The Likelihood Function}
 		\begin{equation}\label{likelihood function}
 			l(\mathbf{\theta} \mid \mathbf{n}) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{n(c)} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{n(a_i, c)} \right]
 		\end{equation}
-		\begin{description}
-			\item[$\theta_c, \theta_{a_i \mid c}$] Parameter for unknown $P(c), P(a_i \mid c)$
-			\item[$n(c), n(a_i, c)$] Number of times observed
-		\end{description}
-	\end{block}
-	\begin{block}{Maximum Likelihood Estimates}
-		\begin{equation}
-			\hat{\theta}_c = \frac{n(c)}{N} \qquad \hat{\theta}_{a_i \mid c} = \frac{n(a_i, c)}{n(c)}
-		\end{equation}
 	\end{block}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Application and Results}
-	\begin{itemize}
-		\item Discretize continuous variables
-		\item Discard objects with missing values
-		\item Estimate probabilities using maximum likelihood estimates
-		\item Assign class using MAP estimate
-		\item Accuracy of 59.95\% using 10-fold cross validation
-	\end{itemize}
-\end{frame}
-
-\begin{frame}
-	\frametitle{Introducing the Prior}
+	\frametitle{A Prior Distribution}
 	\begin{block}{Prior Distribution}
 		\begin{equation}
-			f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(c, a_i) - 1} \right]
+			f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(a_i, c) - 1} \right]
 		\end{equation}
-		Hyper parameters $s>0$ and $\mathbf{t}$ such that:
+		Hyperparameters $s>0$ and $\mathbf{t}$ such that:
 		\begin{equation}
-			\sum_{c \in \mathcal{C}} t(c) = 1 \qquad \sum_{a_i \in \mathcal{A}_i} t(a_i \mid c) = t(c) \qquad t(a_i \mid c) > 0
+			\sum_{c \in \mathcal{C}} t(c) = 1 \qquad \sum_{a_i \in \mathcal{A}_i} t(a_i, c) = t(c) \qquad t(a_i, c) > 0
 		\end{equation}
 	\end{block}
-	For uninformative prior set:
+	Let $s=1$ and for indifference:
 	\begin{equation}
-		s = 1 \qquad t(c) = \frac{1}{|C|} \qquad t(a_i, c) = \frac{1}{|A_i||C|}
+		t(c) = \frac{1}{|\mathcal{C}|} \qquad t(a_i, c) = \frac{1}{|\mathcal{A}_i||\mathcal{C}|}
 	\end{equation}
 \end{frame}
 
 \begin{frame}
-	\frametitle{New Probability Estimates}
-	\begin{block}{Posterior Expectations}
-		\begin{align}
-			E(\theta_c \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(c)}{N + s} = \hat{\theta}_c \\ E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(a_i, c)}{N + st(c)} = \hat{\theta}_{a_i \mid c}
-		\end{align}
+	\frametitle{Estimating Probabilities}
+	\begin{block}{Maximum Likelihood Estimate}
+		\begin{equation}
+			\hat{\theta}_c = \frac{n(c)}{N} \qquad \hat{\theta}_{a_i \mid c} = \frac{n(a_i, c)}{n(c)}
+		\end{equation}
+	\end{block}
+	\begin{block}{Posterior Expectation}
+		\begin{equation}
+			E(\theta_c \mid \mathbf{n},s,\mathbf{t}) = \frac{n(c) + st(c)}{N + s} \qquad E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) = \frac{n(a_i, c) + st(a_i, c)}{n(c) + st(c)}
+		\end{equation}
 	\end{block}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Reapplication}
+	\frametitle{Application}
 	\begin{itemize}
-		\item Measure Mean Squared Error (MSE)
-		\item Also measure random classifications
+		\item Discretize continuous variables
+		\item Discard vehicles with missing attributes
 	\end{itemize}
-	\begin{tabular}{ l|c c c }
-		              & Accuracy & MSE   & Random Classifications \\
-		\hline
-		Maximum Likelihood    & 59.95\%  & 2.823 & 22.45\%        \\
-		Posterior Expectation & 68.17\%  & 0.689 & 0\%
-	\end{tabular}
+
+	Measure three metrics:
+	\begin{description}
+		\item[Accuracy] Percentage of correct classifications
+		\item[Random Assignments] Percentage of vehicles for which class randomly assigned ($P(c \mid \mathbf{a}) = 0$ for all $c$).
+		\item[Mean Square Error] Average squared difference of the assigned class and true class
+	\end{description}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Results}
+	Use MAP estimate for class and vary probability estimates:
+	\begin{center}
+		\begin{tabular}{ l|c c }
+			                      & Accuracy & Random Assignments\\
+			\hline
+			Maximum Likelihood    & 59.95\%  & 22.45\% \\
+			Posterior Expectation & 68.17\%  & 0\%
+		\end{tabular}
+	\end{center}
+	\begin{itemize}
+		\item Maximum likelihood estimates lead to less accurate classifications
+		\item Use of prior means class never randomly assigned
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Results}
+	Use posterior expectation for probability estimates and vary decision mechanism:
+	\begin{center}
+		\begin{tabular}{ l|c }
+			              & Mean Square Error   \\
+			\hline
+			MAP Estimate  & 0.642 \\
+			MMSE Estimate & 0.565
+		\end{tabular}
+	\end{center}
+	\begin{itemize}
+		\item MMSE estimate closer to true risk rating
+		\item MMSE estimate may not be an integer
+	\end{itemize}
 \end{frame}
 
 \begin{frame}
 	\frametitle{Future Work}
 	\begin{itemize}
-		\item Investigate changes in hyper parameters
+		\item Investigate sensitivity to changes in hyperparameters
 		\item Test alternate decision methods
 		\item Make use of vehicles with missing values
 	\end{itemize}
+\end{frame}
+
+\begin{frame}[standout]
+	Questions?
+\end{frame}
+
+\begin{frame}[allowframebreaks]{References}
+
+  \bibliography{demo}
+  \bibliographystyle{abbrv}
+
 \end{frame}
  
 \end{document}
