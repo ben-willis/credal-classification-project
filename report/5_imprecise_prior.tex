@@ -1,0 +1,104 @@
+\chapter{Imprecise Prior}
+
+When estimating the probabilities for our classifier we take in to account our prior beliefs for them and the likelihood given a set of observations.
+
+When we initially chose our prior distribution we chose the parameters \cref{initial prior} to represent our indifference towards the classes and attributes.
+However this prior is still informative and does not truly represent our lack of prior knowledge about the parameters.
+We need a way to represent this lack of knowledge.
+
+The imprecise Dirichlet model is a model for this lack of knowledge.
+Instead of using a single prior distribution to represent our beliefs about the unknown parameters we use a set of prior distributions.
+In the imprecise Dirichlet models the prior distributions are Dirichlet distribution however we will use a set of the distributions in \cref{prior} for a fixed value of $s$.
+The parameter s represents the strength of our prior beliefs and determines how quickly our classifier learns.
+
+Using this model we can find the upper and lower bounds for each posterior expectation based on different prior distributions.
+We can then take these to be upper and lower estimates for the probabilities.
+For our distributions the upper and lower bounds are given by:
+\begin{align}
+	\overline{E}(\theta_c \mid s, \mathbf{n}) & = \frac{n(c) + s}{N+s} = \overline{P}(c) \\
+	\underline{E}(\theta_c \mid s, \mathbf{n}) & = \frac{n(c)}{N+s} = \underline{P}(c)
+\end{align}
+These occur when we use the prior distributions with $t(c) = 0$ and $t(c) = 1$ respectively.
+
+Similarly we have:
+\begin{align}
+	\overline{E}(\theta_{a_i \mid c} \mid s, \mathbf{n}) & = \frac{n(a_i, c) + s}{n(c)+s} = \overline{P}(a_i \mid c) \\
+	\underline{E}(\theta_{a_i \mid c} \mid s, \mathbf{n}) & = \frac{n(a_i, c)}{n(c)+s} = \underline{P}(a_i \mid c)
+\end{align}
+These occur when we use the prior distrPibutions with $t(c) = 1$, $t(a_i, c)=1$ and $t(c) = 1$, $t(a_i, c)=0$ respectively.
+
+Now that we have intervals for these probabilities we need a decision mechanism to assign a risk rating to a vehicle.
+Let's start by comparing how our classifier behaves if we assume the true probability is at each end of the interval.
+We will use the 0-1 loss function for the actual classification and estimate each probability $P(\cdot)$ to be either the upper or lower probability of our interval.
+We will measure accuracy and random classifications as before.
+
+\begin{center}
+	\begin{tabular}{l|c c}
+	                & Accuracy & Random Assignments \\
+	\hline
+	Lower Estimates & 62.17\%  & 20.02\%            \\
+	Upper Estimates & 10.88\%  & 0\%                \\
+	\end{tabular}
+\end{center}
+
+Neither of these offer a sufficient classification.
+The lower estimates randomly assign classes too often and the upper estimates have a terrible accuracy.
+
+Alternatively we can turn our classifier into a credal classifier.
+A credal classifier assigns a set of classes as opposed to a single class to an object.
+We will call the set of classes that are returned the credal set.
+To use these intervals to create a credal classifier we look at the intervals created by the upper and lower estimates:
+\begin{equation}
+	\left[ \underline{P}(c)\prod_{i=1}^k \underline{P}(a_i \mid c), \ \overline{P}(c)\prod_{i=1}^k \overline{P}(a_i \mid c) \right]
+\end{equation}
+For each $c \in \mathcal{C}$.
+We say that a class $c$ is dominated if it's interval's upper bound is smaller than another class's interval's lower bound.
+For example consider the following intervals:
+
+\begin{center}
+	\begin{tabular}{l|c c}
+	Risk Rating & Lower Bound & Upper Bound \\
+	\hline
+	-2          & 0           & 3.12e-9        \\
+	-1          & 0           & 8.91e-16       \\
+	0           & 3.81e-15    & 2.30e-13       \\
+	1           & 2.19e-09    & 2.34e-8        \\
+	2           & 1.88e-13    & 6.22e-11       \\
+	3           & 0           & 5.82e-17       \\
+	\end{tabular}
+\end{center}
+We can see the classes -1, 0, 2 and 3 are dominated by 1.
+However the risk rating of -2 is not dominated by 1 as $3.12e-9 > 2.19e-09$.
+Hence our credal classifier returns the set or risk ratings $\{-2, 1\}$.
+Note that in this particular example the true risk rating was 1 so our credal classifer was correct to include it in the set of possible classes.
+
+We now need a way to test this classifier.
+We cannot use our previous measure of accuracy as this classifier may not return a single class.
+Instead there are a few metrics we can use for our diagnostics:
+\begin{description}
+	\item[A\%] Accuracy of the credal classifier when a single class is returned
+	\item[B\%] Percentage of objects for which the true class is in the credal set
+	\item[C\%] Percentage of objects for which the credal set is more than one class
+\end{description}
+
+We will vary the choice of the hyper parameter s when measuring these three statistics.
+\begin{center}
+\begin{tabular}{l|c c c}
+        & A\%     & B\%     & C\%     \\
+\hline
+s = 0.5 & 77.50\% & 88.08\% & 57.51\% \\
+s = 1   & 77.70\% & 90.67\% & 81.35\% \\
+s = 2   & 75.00\% & 94.30\% & 96.89\% \\
+s = 5   & -       & 97.92\% & 100\%   \\
+\end{tabular}
+\end{center}
+
+We see that the accuracy of our classifier when a single class is returned remains almost constant for the different s parameters.
+We also note that this accuracy is greater than the accuracy of our corrected naive Bayes classifier on the same data set.
+However we notice that varying the s parameter has an effect on the other two metrics.
+Increasing the value of s increases the percentage of objects for which the credal set contains more than one class.
+It also increases the percentage of objects for which the true class is in the credal set.
+
+This effect can be easily explained.
+Increasing the s value increases the upper bound and decreases the lower bound on each of the probabilities being estimated.
+Hence increasing the value of s increases the size of the interval and increasing the size of the interval leads to less intervals being dominated and less classes being excluded.

@@ -145,9 +145,9 @@ The seconds is failed classifications, this is percentage of objects with no MAP
 To properly estimate these metrics we carry out the cross validation repeatedly until the standard error of the mean is less than 0.2\%.
 The accuracy of the classifier is 81.77\% and the percentage of unclassified objects is 2.04\% on the forest data set, using 5-fold cross validation.
 
-\section{Application to Auto Mobile Data set}
+\section{Application to Automobile Data set}
 
-To make our auto mobile data appropriate for this method we discretize the continuous variables into $10$ bins with an equal frequency.
+To make our automobile data appropriate for this method we discretize the continuous variables into $10$ bins with an equal frequency.
 
 Unlike in the trees data set, in this data set we have objects with missing values for attributes.
 We have no mechanism for considering these so we must discard these observations for now.
@@ -164,12 +164,12 @@ For a single iteration of cross-validation these are the class probabilities est
 We can see that almost a third of the observations in our data set fall in to $0$ class.
 
 As before we repeatedly carry out $5$-fold cross validation until we have a standard error of less that 0.2\%.
-The accuracy of our classifier is 59.95\% on the auto mobile data set.
+The accuracy of our classifier is 59.95\% on the automobile data set.
 This is considerably worse than the example forest data set, moreover 22.45\% of the objects were not classified.
 
 \section{Conclusions}
 
-Clearly the classifier performs better on the forest type dataset than on the auto mobile data set.
+Clearly the classifier performs better on the forest type dataset than on the automobile data set.
 There are also general failings in our classifier we can fix to improve its accuracy for both data sets.
 
 Firstly our classifier falls down if there are no observations with attribute $a_j$ and class $c$ in our training set.
@@ -178,11 +178,11 @@ This estimate leads to $P(c \mid \mathbf{a}) = 0$ and would rule out assigning a
 This is especially problematic for small sets of data and contributes to the large percentage of failed classifications we was.
 We can tackle this by introducing prior probabilities for the theta chances.
 
-One thing that the auto mobile data set has that the forest type data set doesn't is missing values.
+One thing that the automobile data set has that the forest type data set doesn't is missing values.
 By discarding the objects with missing values we throw away $20$ observations from an already small data set.
 If we could make use of these incomplete observation we should be able to improve our classifier.
 
-We can also make use of the structure in the auto mobile data set's ordered classes.
+We can also make use of the structure in the automobile data set's ordered classes.
 The accuracy metric does not take into account how close the classification is.
 For example if the true class is 2 an assigned class of 1 should be considered better than an assigned class of -2.
 The 0-1 loss function also does not take this into account and a better choice of loss function may prove beneficial.
