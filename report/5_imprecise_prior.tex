@@ -1,3 +1,5 @@
+\newcommand{\sn}[2]{\ensuremath{{#1}\times 10^{#2}}}
+
 \chapter{Imprecise Prior}
 
 When estimating the probabilities for our classifier we take in to account our prior beliefs for them and the likelihood given a set of observations.
@@ -5,6 +7,8 @@ When estimating the probabilities for our classifier we take in to account our p
 When we initially chose our prior distribution we chose the parameters \cref{initial prior} to represent our indifference towards the classes and attributes.
 However this prior is still informative and does not truly represent our lack of prior knowledge about the parameters.
 We need a way to represent this lack of knowledge.
+
+\section{Imprecise Dirichlet Model}
 
 The imprecise Dirichlet model is a model for this lack of knowledge.
 Instead of using a single prior distribution to represent our beliefs about the unknown parameters we use a set of prior distributions.
@@ -25,7 +29,7 @@ Similarly we have:
 	\overline{E}(\theta_{a_i \mid c} \mid s, \mathbf{n}) & = \frac{n(a_i, c) + s}{n(c)+s} = \overline{P}(a_i \mid c) \\
 	\underline{E}(\theta_{a_i \mid c} \mid s, \mathbf{n}) & = \frac{n(a_i, c)}{n(c)+s} = \underline{P}(a_i \mid c)
 \end{align}
-These occur when we use the prior distrPibutions with $t(c) = 1$, $t(a_i, c)=1$ and $t(c) = 1$, $t(a_i, c)=0$ respectively.
+These occur when we use the prior distributions with $t(c) = 1$, $t(a_i, c)=1$ and $t(c) = 1$, $t(a_i, c)=0$ respectively.
 
 Now that we have intervals for these probabilities we need a decision mechanism to assign a risk rating to a vehicle.
 Let's start by comparing how our classifier behaves if we assume the true probability is at each end of the interval.
@@ -44,31 +48,38 @@ We will measure accuracy and random classifications as before.
 Neither of these offer a sufficient classification.
 The lower estimates randomly assign classes too often and the upper estimates have a terrible accuracy.
 
+\section{Simple Credal Classifier}
+
 Alternatively we can turn our classifier into a credal classifier.
 A credal classifier assigns a set of classes as opposed to a single class to an object.
 We will call the set of classes that are returned the credal set.
-To use these intervals to create a credal classifier we look at the intervals created by the upper and lower estimates:
+
+To use the bounds for the probabilities to create a credal classifier we look at the intervals created by the upper and lower estimates:
 \begin{equation}
 	\left[ \underline{P}(c)\prod_{i=1}^k \underline{P}(a_i \mid c), \ \overline{P}(c)\prod_{i=1}^k \overline{P}(a_i \mid c) \right]
 \end{equation}
 For each $c \in \mathcal{C}$.
-We say that a class $c$ is dominated if it's interval's upper bound is smaller than another class's interval's lower bound.
-For example consider the following intervals:
 
+Recall the MAP estimate for the risk rating of a vehicle given by \cref{map}.
+If we use this decision mechanism we can use the above intervals to create a simple credal classifier.
+We say that a class $c'$ is dominated by $c''$ if it's interval's upper bound is smaller than $c''$ interval's lower bound.
+This is because when the MAP estimate for the class will always choose $c''$ over $c'$ regardless of which prior is used.
+
+For and example consider the following intervals:
 \begin{center}
 	\begin{tabular}{l|c c}
 	Risk Rating & Lower Bound & Upper Bound \\
 	\hline
-	-2          & 0           & 3.12e-9        \\
-	-1          & 0           & 8.91e-16       \\
-	0           & 3.81e-15    & 2.30e-13       \\
-	1           & 2.19e-09    & 2.34e-8        \\
-	2           & 1.88e-13    & 6.22e-11       \\
-	3           & 0           & 5.82e-17       \\
+	-2          & $0$              & $\sn{3.12}{-9}$  \\
+	-1          & $0$              & $\sn{8.91}{-16}$ \\
+	0           & $\sn{3.81}{-15}$ & $\sn{2.30}{-13}$ \\
+	1           & $\sn{2.19}{-9}$  & $\sn{2.34}{-8}$  \\
+	2           & $\sn{1.88}{-13}$ & $\sn{6.22}{-11}$ \\
+	3           & $0$              & $\sn{5.82}{-17}$ \\
 	\end{tabular}
 \end{center}
 We can see the classes -1, 0, 2 and 3 are dominated by 1.
-However the risk rating of -2 is not dominated by 1 as $3.12e-9 > 2.19e-09$.
+However the risk rating of -2 is not dominated by 1 as $\sn{3.12}{-9} > \sn{2.19}{-9}$.
 Hence our credal classifier returns the set or risk ratings $\{-2, 1\}$.
 Note that in this particular example the true risk rating was 1 so our credal classifer was correct to include it in the set of possible classes.
 
@@ -78,7 +89,7 @@ Instead there are a few metrics we can use for our diagnostics:
 \begin{description}
 	\item[A\%] Accuracy of the credal classifier when a single class is returned
 	\item[B\%] Percentage of objects for which the true class is in the credal set
-	\item[C\%] Percentage of objects for which the credal set is more than one class
+	\item[C\%] Percentage of objects for which the credal set contains more than one class
 \end{description}
 
 We will vary the choice of the hyper parameter s when measuring these three statistics.
