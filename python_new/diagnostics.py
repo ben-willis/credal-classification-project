@@ -10,7 +10,7 @@ def mse(classifications):
 	return sum(results)/len(results)
 
 def unclassified(classifications):
-	results = [1 if obj[0]==-1 else 0 for obj in classifications]
+	results = [1 if obj[1]==-1 else 0 for obj in classifications]
 	return sum(results)/len(results)
 
 def compare(classifications):
@@ -24,6 +24,25 @@ def compare(classifications):
 		for j in range(n):
 			results[i][j] = sum(results[i][j])/len(results[i][j])
 	return results
+
+def credal_accuracy(classifications):
+	results = []
+	for classification in classifications:
+		if len(classification[1]) != 1:
+			continue;
+		if classification[0] == classification[1][0]:
+			results.append(1)
+		else:
+			results.append(0)
+	return sum(results)/len(results)
+
+def credal_size(classifications):
+	results = [1 if len(classification[1]) > 1 else 0 for classification in classifications]
+	return sum(results)/len(results)
+
+def in_credal_set(classifications):
+	results = [1 if obj[0] in obj[1] else 0 for obj in classifications]
+	return sum(results)/len(results)
 
 def split_data(data, k):
 	split_data = [[] for i in range(k)]
@@ -52,5 +71,5 @@ def cross_validate(data, c_id, train_classifier, metric, k):
 	for i in range(k):
 		training_data = merge_datas(datas[:i] + datas[i+1:])
 		classifier = train_classifier(training_data, values, range(c_id), c_id)
-		classifications = classifications + [(classifier(obj), obj[c_id]) for obj in datas[i]]
+		classifications = classifications + [(obj[c_id], classifier(obj)) for obj in datas[i]]
 	return metric(classifications)
