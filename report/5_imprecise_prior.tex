@@ -49,23 +49,34 @@ Neither of these offer a sufficient classification.
 The lower estimates randomly assign classes too often and the upper estimates have a terrible accuracy.
 
 \section{Simple Credal Classifier}
-
 Alternatively we can turn our classifier into a credal classifier.
 A credal classifier assigns a set of classes as opposed to a single class to an object.
 We will call the set of classes that are returned the credal set.
 
-To use the bounds for the probabilities to create a credal classifier we look at the intervals created by the upper and lower estimates:
+Recall the MAP estimate for the risk rating of a vehicle given by \cref{map}.
+We say that a class $c'$ is dominated by $c''$ if:
+\begin{equation}\label{Credal Dominance}
+P(c' \mid \mathbf{a}) < P(c' \mid \mathbf{a})
+\end{equation}
+for all values of $\mathbf{t}$ in our prior model.
+This is because the MAP estimate for the class will always choose $c''$ over $c'$ regardless of which prior is used.
+Note that this is equivalent to $P(c', \mathbf{a}) < P(c', \mathbf{a})$ as $P(\mathbf{a})$ is just a normalizing constant.
+
+We can't estimate $P(c, \mathbf{a})$ for every possible value of $\mathbf{t}$.
+However we can use the bounds for the probabilities we found earlier to create an interval it must like in. 
+
+If we look at the intervals created by the upper and lower estimates we achieve:
 \begin{equation}
-	\left[ \underline{P}(c)\prod_{i=1}^k \underline{P}(a_i \mid c), \ \overline{P}(c)\prod_{i=1}^k \overline{P}(a_i \mid c) \right]
+	P(c, \mathbf{a}) \in \left[ \underline{P}(c)\prod_{i=1}^k \underline{P}(a_i \mid c), \overline{P}(c)\prod_{i=1}^k \overline{P}(a_i \mid c) \right]
 \end{equation}
 For each $c \in \mathcal{C}$.
+This is true because:
+\begin{equation}
+\underline{P}(c)\prod_{i=1}^k \underline{P}(a_i \mid c) < \underline{P}(c, \mathbf{a}) < P(c, \mathbf{a}) < \overline{P}(c, \mathbf{a}) < \overline{P}(c)\prod_{i=1}^k \overline{P}(a_i \mid c)
+\end{equation}
+We can use the above intervals to create a simple credal classifier.
 
-Recall the MAP estimate for the risk rating of a vehicle given by \cref{map}.
-If we use this decision mechanism we can use the above intervals to create a simple credal classifier.
-We say that a class $c'$ is dominated by $c''$ if it's interval's upper bound is smaller than $c''$ interval's lower bound.
-This is because when the MAP estimate for the class will always choose $c''$ over $c'$ regardless of which prior is used.
-
-For and example consider the following intervals:
+For an example consider the following intervals:
 \begin{center}
 	\begin{tabular}{l|c c}
 	Risk Rating & Lower Bound & Upper Bound \\
@@ -113,3 +124,27 @@ It also increases the percentage of objects for which the true class is in the c
 This effect can be easily explained.
 Increasing the s value increases the upper bound and decreases the lower bound on each of the probabilities being estimated.
 Hence increasing the value of s increases the size of the interval and increasing the size of the interval leads to less intervals being dominated and less classes being excluded.
+
+\section{Alternate Credal Classifier}
+In the simple credal classifier we estimated each probabilities lower and upper bounds separately using our imprecise prior model.
+We then used these separate estimates to make inferences about the true probability of interest $P(c \mid \mathbf{a})$.
+
+However an alternate method for credal classification.
+We can rewrite our original definition of credal dominance \cref{Credal Dominance} as:
+\begin{equation}
+	\frac{P(c' \mid \mathbf{a})}{P(c'' \mid \mathbf{a})} = \frac{P(c')\prod_{i=1}^{k}P(a_i \mid c')}{P(c'')\prod_{i=1}^{k}P(a_i \mid c'')} > 1
+\end{equation}
+Note that the equality holds because the constant $P(\mathbf{a})$ is cancelled.
+
+If we plug in the posterior expectation for our parametrisation as an estimate for the probabilities we arrive at:
+\begin{equation}
+	\frac{n(c')+st(c')}{n(c'')+st(c'')} \prod_{i=1}^k \frac{n(a_i, c') + st(a_i , c')}{n(c'') + st(c'')} \frac{n(c'') + st(c'')}{n(a_i, c') + st(a_i , c')} > 1
+\end{equation}
+
+When we use our imprecise prior determining whether this inequality holds we can solve the optimization problem:
+\begin{align}
+	\min & \left[ \frac{n(c'')+st(c'')}{n(c)+st(c')} \right]^{k-1} \prod_{i=1}^k \frac{n(a_i, c') + st(a_i , c')}{n(a_i, c'') + st(a_i , c'')} \\
+	s.t. & \sum_{c \in \mathcal{C}} t(c) = 1 \\
+	& 0 < t(a_i \mid c) < t(c)
+\end{align}
+Then compare the answer to 1.
