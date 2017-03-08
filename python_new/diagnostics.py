@@ -69,6 +69,7 @@ def cross_validate(data, c_id, train_classifier, metric, k):
 	datas = split_data(data, k)
 	classifications = []
 	for i in range(k):
+		print (k-i)
 		training_data = merge_datas(datas[:i] + datas[i+1:])
 		classifier = train_classifier(training_data, values, range(c_id), c_id)
 		classifications = classifications + [(obj[c_id], classifier(obj)) for obj in datas[i]]
