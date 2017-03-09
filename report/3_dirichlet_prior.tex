@@ -1,4 +1,4 @@
-\chapter{Corrected NBC with Dirichlet Prior}
+\chapter{Corrected NBC}
 
 \section{Theory}
 
@@ -22,23 +22,25 @@ $s > 0$ is a fixed constant and we have the following constraints on $t(\cdot):$
 	\sum_{a_i \in \mathcal{A}_i} t(a_i, c) & = t(c) && \forall i, c \\
 	t(a_i, c) & > 0 && \forall i, a_i, c
 \end{align}
+These constraints retain the structure seen for the frequencies in our likelihood.
 
 This distribution is the conjugate prior for the likelihood function \cref{likelihood}.
 When we multiply our likelihood by this prior density we get a posterior in the same family as this prior.
 If the prior has hyper parameters $st(\cdot)$ the posterior will have hyper parameters $st(\cdot) + n(\cdot)$.
 
-We can now estimate the parameters by taking the posterior expectation e.g.
+We can now estimate the parameters by taking the posterior expectation:
 \begin{align}
 	E(\theta_c \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(c)}{N + s} = \hat{\theta}_c \\
-	E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(a_i, c)}{N + st(c)} = \hat{\theta}_{a_i \mid c}
+	E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(a_i, c) + st(a_i, c)}{n(c) + st(c)} = \hat{\theta}_{a_i \mid c}
 \end{align}
 
 \section{Application}
 
 To apply this classifier to our data set we need to choose the hyper parameters of the prior distribution.
-We note that $s$ affects the speed at which our classifier learns and $t(\cdot)$ represents our beliefs for $\theta_\cdot$.
-We want our prior to be as uninformative as possible and assign the same probabilities to each chance\cite{laplace1812}. Therefore we set:
-\begin{align}
+We note that $s$ affects the speed at which our classifier learns and $t(\cdot)$ represents our beliefs for the probabilities.
+We want our prior to be as indifferent as possible \cite{laplace1812} to represent out lack of information.
+We want assign the same probabilities to each chance so we set:
+\begin{align}\label{initial prior}
 	t(c) & = \frac{1}{|C|} \\
 	t(a_i, c) & = \frac{1}{|A_i||C|}
 \end{align}

@@ -27,7 +27,7 @@ The expected loss is:
 \end{equation}
 
 So to minimize our expected loss we choose:
-\begin{equation}
+\begin{equation}\label{map}
 	\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
 \end{equation}
 This is known as the maximum a posteriori (MAP) estimate.
@@ -84,7 +84,7 @@ For example suppose class -3 had $P(C = -2 \mid \mathbf{a}) = 0.5 = P(C=3 \mid \
 When more than one risk rating could be reasonably considered the median we will choose one at random.
 
 \section{Application}
-We will now apply these loss functions to our auto mobile data set and measure accuracy and mean squared error.
+We will now apply these loss functions to our automobile data set and measure accuracy and mean squared error.
 We will also investigate how often the assigned classes agree.
 
 Once again we discretize and discard vehicles with missing attributes.
@@ -119,9 +119,12 @@ We can also look at the percentage of time each loss function agrees:
 \end{center}
 
 This confirms that the 0-1 loss function and absolute differences loss function assign classes in a very similar manner.
-This is due to their often being a $\hat{c} \in \mathcal{C}$ such that $P(\hat{c} \mid \mathbf{a})$ that is much greater than for other choices of $c$ other.
-When this is the case $\hat{c}$ is the choice for the 0-1 loss function.
-Additionaly if it is greater than 0.5, which is often the case, it is the only choice for the median of the data set and hence is the absolute difference loss functions choice.
+This is due to there often being a $\hat{c} \in \mathcal{C}$ with a much greater $P(c \mid \mathbf{a})$.
+When this is the case $\hat{c}$ is the choice for both the 0-1 loss function and the absolute difference loss functions.
 
-The squared difference loss function differs from these two slightly as it is more skewed by outliers.
-Consider the case $P(C=-2\mid \mathbf{a})=0.6, P(C=3\mid \mathbf{a})=0.4$ then the expectation for $C$ is $0$ while both the 0-1 and absolute loss functions will choose -2.
+The squared difference loss function differs from these two slightly as it is affected more by outliers.
+
+\section{Further Loss Functions}
+Here we have considered three common choices for the loss function however there are other options available.
+We could even choose a loss function that is tailored to the problem at hand.
+For example we could consider the loss function which assigns greater loss if we underestimate the risk rating of vehicle.
