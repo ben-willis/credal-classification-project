@@ -4,7 +4,7 @@
 
 When estimating the probabilities for our classifier we take in to account our prior beliefs for them and the likelihood given a set of observations.
 
-When we initially chose our prior distribution we chose the parameters \cref{initial prior} to represent our indifference towards the classes and attributes.
+When we initially chose our prior distribution we chose the parameters in \cref{initial prior} to represent our indifference towards the classes and attributes.
 However this prior is still informative and does not truly represent our lack of prior knowledge about the parameters.
 We need a way to represent this lack of knowledge.
 
@@ -13,7 +13,7 @@ We need a way to represent this lack of knowledge.
 The imprecise Dirichlet model is a model for this lack of knowledge.
 Instead of using a single prior distribution to represent our beliefs about the unknown parameters we use a set of prior distributions.
 In the imprecise Dirichlet models the prior distributions are Dirichlet distribution however we will use a set of the distributions in \cref{prior} for a fixed value of $s$.
-The parameter s represents the strength of our prior beliefs and determines how quickly our classifier learns.
+The parameter $s$ represents the strength of our prior beliefs and determines how quickly our classifier learns.
 
 Using this model we can find the upper and lower bounds for each posterior expectation based on different prior distributions.
 We can then take these to be upper and lower estimates for the probabilities.
@@ -56,24 +56,24 @@ We will call the set of classes that are returned the credal set.
 Recall the MAP estimate for the risk rating of a vehicle given by \cref{map}.
 We say that a class $c'$ is dominated by $c''$ if:
 \begin{equation}\label{Credal Dominance}
-P(c' \mid \mathbf{a}) < P(c' \mid \mathbf{a})
+P(c' \mid \mathbf{a}) < P(c'' \mid \mathbf{a})
 \end{equation}
 for all values of $\mathbf{t}$ in our prior model.
 This is because the MAP estimate for the class will always choose $c''$ over $c'$ regardless of which prior is used.
-Note that this is equivalent to $P(c', \mathbf{a}) < P(c', \mathbf{a})$ as $P(\mathbf{a})$ is just a normalizing constant.
+Note that this is equivalent to $P(c', \mathbf{a}) < P(c'', \mathbf{a})$ as $P(\mathbf{a})$ is just a normalizing constant.
 
-We can't estimate $P(c, \mathbf{a})$ for every possible value of $\mathbf{t}$.
-However we can use the bounds for the probabilities we found earlier to create an interval it must like in. 
+We can use the bounds for the probabilities we found earlier to create an interval $P(c, \mathbf{a})$ must lie in. 
 
 If we look at the intervals created by the upper and lower estimates we achieve:
 \begin{equation}
 	P(c, \mathbf{a}) \in \left[ \underline{P}(c)\prod_{i=1}^k \underline{P}(a_i \mid c), \overline{P}(c)\prod_{i=1}^k \overline{P}(a_i \mid c) \right]
 \end{equation}
-For each $c \in \mathcal{C}$.
+for each $c \in \mathcal{C}$.
 This is true because:
 \begin{equation}
 \underline{P}(c)\prod_{i=1}^k \underline{P}(a_i \mid c) < \underline{P}(c, \mathbf{a}) < P(c, \mathbf{a}) < \overline{P}(c, \mathbf{a}) < \overline{P}(c)\prod_{i=1}^k \overline{P}(a_i \mid c)
 \end{equation}
+for all choices of $\mathbf{t}$
 We can use the above intervals to create a simple credal classifier.
 
 For an example consider the following intervals:
@@ -118,7 +118,7 @@ s = 5   & -       & 97.92\% & 100\%   \\
 We see that the accuracy of our classifier when a single class is returned remains almost constant for the different s parameters.
 We also note that this accuracy is greater than the accuracy of our corrected naive Bayes classifier on the same data set.
 However we notice that varying the s parameter has an effect on the other two metrics.
-Increasing the value of s increases the percentage of objects for which the credal set contains more than one class.
+Increasing the value of $s$ increases the percentage of objects for which the credal set contains more than one class.
 It also increases the percentage of objects for which the true class is in the credal set.
 
 This effect can be easily explained.
@@ -126,25 +126,36 @@ Increasing the s value increases the upper bound and decreases the lower bound o
 Hence increasing the value of s increases the size of the interval and increasing the size of the interval leads to less intervals being dominated and less classes being excluded.
 
 \section{Alternate Credal Classifier}
-In the simple credal classifier we estimated each probabilities lower and upper bounds separately using our imprecise prior model.
+In the simple credal classifier we estimated the lower and upper bounds for each probability separately using our imprecise prior model.
 We then used these separate estimates to make inferences about the true probability of interest $P(c \mid \mathbf{a})$.
 
-However an alternate method for credal classification.
+% However an alternate method for credal classification.
 We can rewrite our original definition of credal dominance \cref{Credal Dominance} as:
 \begin{equation}
 	\frac{P(c' \mid \mathbf{a})}{P(c'' \mid \mathbf{a})} = \frac{P(c')\prod_{i=1}^{k}P(a_i \mid c')}{P(c'')\prod_{i=1}^{k}P(a_i \mid c'')} > 1
 \end{equation}
 Note that the equality holds because the constant $P(\mathbf{a})$ is cancelled.
 
-If we plug in the posterior expectation for our parametrisation as an estimate for the probabilities we arrive at:
+If we plug in the posterior expectation for our parametrisation as an estimate for the probabilities then we arrive at:
 \begin{equation}
 	\frac{n(c')+st(c')}{n(c'')+st(c'')} \prod_{i=1}^k \frac{n(a_i, c') + st(a_i , c')}{n(c'') + st(c'')} \frac{n(c'') + st(c'')}{n(a_i, c') + st(a_i , c')} > 1
 \end{equation}
 
 When we use our imprecise prior determining whether this inequality holds we can solve the optimization problem:
 \begin{align}
-	\min & \left[ \frac{n(c'')+st(c'')}{n(c)+st(c')} \right]^{k-1} \prod_{i=1}^k \frac{n(a_i, c') + st(a_i , c')}{n(a_i, c'') + st(a_i , c'')} \\
+	\min & \left[ \frac{n(c'')+st(c'')}{n(c')+st(c')} \right]^{k-1} \prod_{i=1}^k \frac{n(a_i, c') + st(a_i , c')}{n(a_i, c'') + st(a_i , c'')} \\
 	s.t. & \sum_{c \in \mathcal{C}} t(c) = 1 \\
-	& 0 < t(a_i \mid c) < t(c)
+	& 0 < t(a_i, c) < t(c)
 \end{align}
 Then compare the answer to 1.
+This is the same optimization problem as described by Zaffalon \cite{Zaffalon01}.
+
+It is possible to manipulate this problem into an easier to solve form.
+Firstly note that the minimum is achieved when each $t(a_i, c') \rightarrow 0$ and $t(a_i, c'') \rightarrow t(c'')$ so we can use these values in the objective function.
+Furthermore, at the minimum, we have $t(c') = 1 - t(c'')$.
+To simplify the problem set $t(c'') = x$ then our optimization problem becomes a problem in a single variable:
+\begin{align}
+	\min \quad & \left[ \frac{n(c'') + sx}{n(c')+s - sx} \right]^{k-1} \prod_{i=1}^k \frac{n(a_i, c')}{n(a_i, c'') + sx} \\
+	\text{s.t.} \quad & 0 < x < 1
+\end{align}
+As a reminder we say the class $c'$ dominates the class $c''$ if this minimum is greater than 1.
