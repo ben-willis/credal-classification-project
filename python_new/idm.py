@@ -2,7 +2,7 @@ from __future__ import division
 import random, math
 
 from data import data
-from diagnostics import accuracy, mse, unclassified, cross_validate, compare, in_credal_set, credal_accuracy, credal_size
+from diagnostics import accuracy, mse, unclassified, cross_validate, compare, set_accuracy, single_accuracy, indeterminate_output_size, determinacy
 from lossfns import zero_one, squared_diff,  absolute_diff, credal, upper, lower
 
 def transpose(M):
@@ -42,14 +42,14 @@ def train_classifier(data, values, a_ids, c_id):
 				p_c_given_ais_lower[c] = p_c_given_ais_lower[c] * p_ai_given_cs[a_id][c][obj[a_id]][0]
 				p_c_given_ais_upper[c] = p_c_given_ais_upper[c] * p_ai_given_cs[a_id][c][obj[a_id]][1]
 		p_c_given_ais_intervals = zip(p_c_given_ais_lower, p_c_given_ais_upper)
-		print "-------"
-		for p_c_given_ais in p_c_given_ais_intervals:
-			c = p_c_given_ais_intervals.index(p_c_given_ais)
-			if obj[c_id] == c:
-				print str(c) + "*: [" + str(p_c_given_ais[0]) + ", " + str(p_c_given_ais[1]) + "]"
-			else:
-				print str(c) + " : [" + str(p_c_given_ais[0]) + ", " + str(p_c_given_ais[1]) + "]"
+		# print "-------"
+		# for p_c_given_ais in p_c_given_ais_intervals:
+		# 	c = p_c_given_ais_intervals.index(p_c_given_ais)
+		# 	if obj[c_id] == c:
+		# 		print str(c) + "*: [" + str(p_c_given_ais[0]) + ", " + str(p_c_given_ais[1]) + "]"
+		# 	else:
+		# 		print str(c) + " : [" + str(p_c_given_ais[0]) + ", " + str(p_c_given_ais[1]) + "]"
 		return credal(p_c_given_ais_intervals)
 	return trained_classifier
 
-print cross_validate(data, 24, train_classifier, credal_accuracy, 10)
+cross_validate(data, 24, train_classifier, [single_accuracy, set_accuracy, indeterminate_output_size, determinacy], 10)

@@ -5,7 +5,7 @@ import random
 # import matplotlib.pyplot as plt
 
 from data import data
-from diagnostics import cross_validate, in_credal_set, credal_accuracy, credal_size
+from diagnostics import cross_validate, single_accuracy, set_accuracy, indeterminate_output_size, determinacy
 
 
 def transpose(M):
@@ -70,7 +70,8 @@ def get_classes(M, col_id):
 	M_t = transpose(M)
 	return list(set(M_t[col_id]))
 
-print cross_validate(data, 24, train_classifier, credal_size, 10)
+while True:
+	cross_validate(data, 24, train_classifier, [single_accuracy, set_accuracy, indeterminate_output_size, determinacy], 10)
 
 	# x = np.arange(0.01,1,0.01)
 	# axes = plt.gca()
