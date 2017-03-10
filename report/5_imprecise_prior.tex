@@ -110,24 +110,24 @@ Instead there are a few metrics we can use for our diagnostics \cite{Antonucci11
 
 We will vary the choice of the hyper parameter s when measuring these three statistics.
 \begin{center}
-\begin{tabular}{l|c c c}
-        & A\%     & B\%     & D\%     \\
+\begin{tabular}{l|c c c c}
+        & A\%     & B\%     & C    & D\%     \\
 \hline
-s = 0.5 & 77.50\% & 88.08\% & 42.49\% \\
-s = 1   & 77.70\% & 90.67\% & 18.65\% \\
-s = 2   & 75.00\% & 94.30\% & 3.11\% \\
-s = 5   & -       & 97.92\% & 0\%   \\
+s = 0.5 & 77.33\% & 88.08\% & 3.61 & 38.36\% \\
+s = 1   & 76.92\% & 90.67\% & 3.75 & 20.20\% \\
+s = 2   & 75.00\% & 94.30\% & 4.04 & 3.11\% \\
+s = 5   & -       & 97.92\% & 5.22 & 0\%   \\
 \end{tabular}
 \end{center}
 
-We see that the single accuracy of our classifier remains almost constant for the different s parameters.
+We see that the single accuracy of our classifier remains almost constant for the different $s$ parameters.
 We also note that this single accuracy is greater than the accuracy of our corrected naive Bayes classifier on the same data set.
-However we notice that varying the s parameter has an effect on the other two metrics.
+However we notice that varying the $s$ parameter has an effect on the other two metrics.
 Increasing the value of $s$ decreases determinacy and increases the set accuracy.
 
 This effect can be easily explained.
-Increasing the s value increases the upper bound and decreases the lower bound on each of the probabilities being estimated.
-Hence increasing the value of s increases the size of the interval and increasing the size of the interval leads to less intervals being dominated and less classes being excluded.
+Increasing the $s$ value increases the upper bound and decreases the lower bound on each of the probabilities being estimated.
+Hence increasing the value of $s$ increases the size of the interval and increasing the size of the interval leads to less intervals being dominated and less classes being excluded.
 
 \section{Alternate Credal Classifier}
 In the simple credal classifier we estimated the lower and upper bounds for each probability separately using our imprecise prior model.
@@ -185,3 +185,21 @@ There are three cases for finding the minimum:
 	\item[$\frac{d\ln f(s)}{dx} \leq 0$] then the minimum is achieved for $x>s$ and hence the minimum in this interval is $f(s)$
 	\item[Otherwise] the minimum is located within this interval and we can approximate it numerically
 \end{itemize}
+
+We will measure the same metrics as previously for this new classifier.
+The results from 10-fold cross validation with varying $s$ values are as follow:
+\begin{center}
+\begin{tabular}{l|c c c c}
+        & A\%     & B\%     & C    & D\%     \\
+\hline
+s = 0.5 & 78.82\% & 88.60\% & 3.82 & 43.01\% \\
+s = 1   & 79.06\% & 90.15\% & 3.79 & 22.27\% \\
+s = 2   & 81.81\% & 91.71\% & 3.86 & 5.70\% \\
+s = 5   & -       & 94.30\% & 4.79 & 0\%   \\
+\end{tabular}
+\end{center}
+
+We observe the same trends in the metrics as with out previous credal classifier.
+We also observe that the naive credal classifier either matches or outperforms the interval based credal classifier.
+
+The NCC has greater determinacy for all values of $s$ however it still does not return a single class output for any vehicles when $s=5$.
