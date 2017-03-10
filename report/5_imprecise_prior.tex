@@ -6,7 +6,7 @@ When estimating the probabilities for our classifier we take in to account our p
 
 When we initially chose our prior distribution we chose the parameters in \cref{initial prior} to represent our indifference towards the classes and attributes.
 However this prior is still informative and does not truly represent our lack of prior knowledge about the parameters.
-We need a way to represent this lack of knowledge.
+We need a way to represent this lack of knowledge and acknowledge that our estimates for the probabilities depend on this prior.
 
 \section{Imprecise Dirichlet Model}
 
@@ -16,18 +16,23 @@ In the imprecise Dirichlet models the prior distributions are Dirichlet distribu
 The parameter $s$ represents the strength of our prior beliefs and determines how quickly our classifier learns.
 
 Using this model we can find the upper and lower bounds for each posterior expectation based on different prior distributions.
-We can then take these to be upper and lower estimates for the probabilities.
+Recall that we estimate the probabilities by taking the expectation of the posterior distribution and that these estimates depend on $\mathbf{t}$ i.e.:
+\begin{align}
+	P_t(c) & = E(\theta_c \mid \mathbf{n},s,\mathbf{t}) = \frac{n(c) + st(c)}{N + s} \\
+	P_t(a_i \mid c) & = E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) = \frac{n(a_i, c) + st(a_i, c)}{n(c) + st(c)}
+\end{align}
+We can then take these to be upper and lower estimates for the probabilities over all values of $\mathbf{t}$ in our prior model.
 For our distributions the upper and lower bounds are given by:
 \begin{align}
-	\overline{E}(\theta_c \mid s, \mathbf{n}) & = \frac{n(c) + s}{N+s} = \overline{P}(c) \\
-	\underline{E}(\theta_c \mid s, \mathbf{n}) & = \frac{n(c)}{N+s} = \underline{P}(c)
+	\overline{P_t}(c) & = \frac{n(c) + s}{N+s} \\
+	\underline{P_t}(c) & = \frac{n(c)}{N+s}
 \end{align}
 These occur when we use the prior distributions with $t(c) = 0$ and $t(c) = 1$ respectively.
 
 Similarly we have:
 \begin{align}
-	\overline{E}(\theta_{a_i \mid c} \mid s, \mathbf{n}) & = \frac{n(a_i, c) + s}{n(c)+s} = \overline{P}(a_i \mid c) \\
-	\underline{E}(\theta_{a_i \mid c} \mid s, \mathbf{n}) & = \frac{n(a_i, c)}{n(c)+s} = \underline{P}(a_i \mid c)
+	\overline{P_t}(a_i \mid c) & = \frac{n(a_i, c) + s}{n(c)+s} \\
+	\underline{P_t}(a_i \mid c) & = \frac{n(a_i, c)}{n(c)+s}
 \end{align}
 These occur when we use the prior distributions with $t(c) = 1$, $t(a_i, c)=1$ and $t(c) = 1$, $t(a_i, c)=0$ respectively.
 
@@ -51,29 +56,28 @@ The lower estimates randomly assign classes too often and the upper estimates ha
 \section{Simple Credal Classifier}
 Alternatively we can turn our classifier into a credal classifier.
 A credal classifier assigns a set of classes as opposed to a single class to an object.
-We will call the set of classes that are returned the credal set.
 
 Recall the MAP estimate for the risk rating of a vehicle given by \cref{map}.
 We say that a class $c'$ is dominated by $c''$ if:
 \begin{equation}\label{Credal Dominance}
-P(c' \mid \mathbf{a}) < P(c'' \mid \mathbf{a})
+	P_t(c' \mid \mathbf{a}) < P_t(c'' \mid \mathbf{a})
 \end{equation}
 for all values of $\mathbf{t}$ in our prior model.
 This is because the MAP estimate for the class will always choose $c''$ over $c'$ regardless of which prior is used.
-Note that this is equivalent to $P(c', \mathbf{a}) < P(c'', \mathbf{a})$ as $P(\mathbf{a})$ is just a normalizing constant.
+Note that this is equivalent to $P_t(c', \mathbf{a}) < P_t(c'', \mathbf{a})$ as $P(\mathbf{a})$ does not depend on $c$.
 
 We can use the bounds for the probabilities we found earlier to create an interval $P(c, \mathbf{a})$ must lie in. 
 
 If we look at the intervals created by the upper and lower estimates we achieve:
 \begin{equation}
-	P(c, \mathbf{a}) \in \left[ \underline{P}(c)\prod_{i=1}^k \underline{P}(a_i \mid c), \overline{P}(c)\prod_{i=1}^k \overline{P}(a_i \mid c) \right]
+	P_t(c, \mathbf{a}) \in \left[ \underline{P_t}(c)\prod_{i=1}^k \underline{P_t}(a_i \mid c), \overline{P_t}(c)\prod_{i=1}^k \overline{P_t}(a_i \mid c) \right]
 \end{equation}
 for each $c \in \mathcal{C}$.
 This is true because:
 \begin{equation}
-\underline{P}(c)\prod_{i=1}^k \underline{P}(a_i \mid c) < \underline{P}(c, \mathbf{a}) < P(c, \mathbf{a}) < \overline{P}(c, \mathbf{a}) < \overline{P}(c)\prod_{i=1}^k \overline{P}(a_i \mid c)
+\underline{P_t}(c)\prod_{i=1}^k \underline{P_t}(a_i \mid c) \leq \underline{P_t}(c, \mathbf{a}) \leq P_t(c, \mathbf{a}) \leq \overline{P_t}(c, \mathbf{a}) \leq \overline{P_t}(c)\prod_{i=1}^k \overline{P_t}(a_i \mid c)
 \end{equation}
-for all choices of $\mathbf{t}$
+for all choices of $\mathbf{t}$.
 We can use the above intervals to create a simple credal classifier.
 
 For an example consider the following intervals:
@@ -96,30 +100,30 @@ Note that in this particular example the true risk rating was 1 so our credal cl
 
 We now need a way to test this classifier.
 We cannot use our previous measure of accuracy as this classifier may not return a single class.
-Instead there are a few metrics we can use for our diagnostics:
+Instead there are a few metrics we can use for our diagnostics \cite{Antonucci11}:
 \begin{description}
-	\item[A\%] Accuracy of the credal classifier when a single class is returned
-	\item[B\%] Percentage of objects for which the true class is in the credal set
-	\item[C\%] Percentage of objects for which the credal set contains more than one class
+	\item[Single Accuracy (A\%)] Accuracy of the credal classifier when a single class is returned
+	\item[Set Accuracy (B\%)] Percentage of objects for which the true class is in the returned set
+	\item[Indeterminate Output Size (C)] Average set size for returned sets containing more than one class
+	\item[Determinacy (D\%)] Percentage of objects for which the returned set contains one class
 \end{description}
 
 We will vary the choice of the hyper parameter s when measuring these three statistics.
 \begin{center}
 \begin{tabular}{l|c c c}
-        & A\%     & B\%     & C\%     \\
+        & A\%     & B\%     & D\%     \\
 \hline
-s = 0.5 & 77.50\% & 88.08\% & 57.51\% \\
-s = 1   & 77.70\% & 90.67\% & 81.35\% \\
-s = 2   & 75.00\% & 94.30\% & 96.89\% \\
-s = 5   & -       & 97.92\% & 100\%   \\
+s = 0.5 & 77.50\% & 88.08\% & 42.49\% \\
+s = 1   & 77.70\% & 90.67\% & 18.65\% \\
+s = 2   & 75.00\% & 94.30\% & 3.11\% \\
+s = 5   & -       & 97.92\% & 0\%   \\
 \end{tabular}
 \end{center}
 
-We see that the accuracy of our classifier when a single class is returned remains almost constant for the different s parameters.
-We also note that this accuracy is greater than the accuracy of our corrected naive Bayes classifier on the same data set.
+We see that the single accuracy of our classifier remains almost constant for the different s parameters.
+We also note that this single accuracy is greater than the accuracy of our corrected naive Bayes classifier on the same data set.
 However we notice that varying the s parameter has an effect on the other two metrics.
-Increasing the value of $s$ increases the percentage of objects for which the credal set contains more than one class.
-It also increases the percentage of objects for which the true class is in the credal set.
+Increasing the value of $s$ decreases determinacy and increases the set accuracy.
 
 This effect can be easily explained.
 Increasing the s value increases the upper bound and decreases the lower bound on each of the probabilities being estimated.
@@ -132,7 +136,7 @@ We then used these separate estimates to make inferences about the true probabil
 % However an alternate method for credal classification.
 We can rewrite our original definition of credal dominance \cref{Credal Dominance} as:
 \begin{equation}
-	\frac{P(c' \mid \mathbf{a})}{P(c'' \mid \mathbf{a})} = \frac{P(c')\prod_{i=1}^{k}P(a_i \mid c')}{P(c'')\prod_{i=1}^{k}P(a_i \mid c'')} > 1
+	\frac{P_t(c' \mid \mathbf{a})}{P_t(c'' \mid \mathbf{a})} = \frac{P_t(c')\prod_{i=1}^{k}P_t(a_i \mid c')}{P_t(c'')\prod_{i=1}^{k}P_t(a_i \mid c'')} > 1
 \end{equation}
 Note that the equality holds because the constant $P(\mathbf{a})$ is cancelled.
 
@@ -141,10 +145,10 @@ If we plug in the posterior expectation for our parametrisation as an estimate f
 	\frac{n(c')+st(c')}{n(c'')+st(c'')} \prod_{i=1}^k \frac{n(a_i, c') + st(a_i , c')}{n(c'') + st(c'')} \frac{n(c'') + st(c'')}{n(a_i, c') + st(a_i , c')} > 1
 \end{equation}
 
-When we use our imprecise prior determining whether this inequality holds we can solve the optimization problem:
+To determine whether this inequality holds we can solve the optimization problem:
 \begin{align}
 	\min & \left[ \frac{n(c'')+st(c'')}{n(c')+st(c')} \right]^{k-1} \prod_{i=1}^k \frac{n(a_i, c') + st(a_i , c')}{n(a_i, c'') + st(a_i , c'')} \\
-	s.t. & \sum_{c \in \mathcal{C}} t(c) = 1 \\
+	\text{s.t.} & \sum_{c \in \mathcal{C}} t(c) = 1 \\
 	& 0 < t(a_i, c) < t(c)
 \end{align}
 Then compare the answer to 1.
@@ -153,9 +157,31 @@ This is the same optimization problem as described by Zaffalon \cite{Zaffalon01}
 It is possible to manipulate this problem into an easier to solve form.
 Firstly note that the minimum is achieved when each $t(a_i, c') \rightarrow 0$ and $t(a_i, c'') \rightarrow t(c'')$ so we can use these values in the objective function.
 Furthermore, at the minimum, we have $t(c') = 1 - t(c'')$.
-To simplify the problem set $t(c'') = x$ then our optimization problem becomes a problem in a single variable:
+To simplify the problem set $st(c'') = x$ then our optimization problem becomes a problem in a single variable:
 \begin{align}
-	\min \quad & \left[ \frac{n(c'') + sx}{n(c')+s - sx} \right]^{k-1} \prod_{i=1}^k \frac{n(a_i, c')}{n(a_i, c'') + sx} \\
-	\text{s.t.} \quad & 0 < x < 1
+	\min \quad & f(x) = \left[ \frac{n(c'') + x}{n(c') + 1 - x} \right]^{k-1} \prod_{i=1}^k \frac{n(a_i, c')}{n(a_i, c'') + x} \\
+	\text{s.t.} \quad & 0 < x < s
 \end{align}
-As a reminder we say the class $c'$ dominates the class $c''$ if this minimum is greater than 1.
+
+Before we solve this optimization problem we can rule out an edge case.
+If $n(a_i, c')=0$ for any $a_i$ then the $c'$ does not dominate $c''$.
+
+Next step is to figure out what the objective function looks like.
+Note that it's always positive so if we take the log of $f$ and differentiate we get:
+\begin{equation}
+	\frac{d\ln(f)}{dx} = \frac{k-1}{n(c'')+x} + \frac{k-1}{n(c')+1-x} - \sum_{i-1}^k \frac{1}{n(a_i, c'') + x}
+\end{equation}
+Differentiating again gives:
+\begin{equation}
+	\frac{d^2\ln(f)}{dx^2} = -\frac{k-1}{(n(c'') + x)^2} + \frac{k-1}{(n(c')+1-x)^2} + \sum_{i=1}^k \frac{1}{(n(a_i, c'') + x)^2}
+\end{equation}
+This is always positive hence the objective function is log concave.
+As the logarithm is monotone it follows that $f(x)$ is also concave and hence has a single minimum.
+
+If we remove the edge case described above we can compute $f(x)$ for any $x \in [0, s]$.
+There are three cases for finding the minimum:
+\begin{itemize}
+	\item[$\frac{d\ln f(0)}{dx} \geq 0$] then the minimum is achieved for $x<0$ and hence the minimum in this interval is $f(0)$
+	\item[$\frac{d\ln f(s)}{dx} \leq 0$] then the minimum is achieved for $x>s$ and hence the minimum in this interval is $f(s)$
+	\item[Otherwise] the minimum is located within this interval and we can approximate it numerically
+\end{itemize}
