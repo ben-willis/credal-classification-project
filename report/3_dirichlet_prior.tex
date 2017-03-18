@@ -1,9 +1,12 @@
-\chapter{Corrected NBC}
+\section{Corrected NBC}
 
-\section{Theory}
+In the previous section we considered a frequentist approach to estimating the probabilities required for the NBC.
+We saw that our classifier falls down if there are no observations with attribute $a_j$ and class $c$ in our training set.
+If we take a Bayesian approach to the problem and introduce a prior distribution for these probabilities we can avoid this situation.
+
 
 We return to our likelihood function \cref{likelihood} for our theta variables.
-We can introduce a prior distribution for these parameters and then consider the posterior distribution.
+We will introduce a prior distribution for these parameters and then consider the posterior distribution.
 
 The Dirichlet distribution is the multinomial extension of the beta distribution for $\theta_1,\dots,\theta_k$ where $\theta_i \in (0,1)$ and $\sum_{i=1}^k \theta_i = 1$ with probability density function:
 \begin{equation} \label{dirichlet_pdf}
@@ -24,7 +27,7 @@ $s > 0$ is a fixed constant and we have the following constraints on $t(\cdot):$
 \end{align}
 These constraints retain the structure seen for the frequencies in our likelihood.
 
-This distribution is the conjugate prior for the likelihood function \cref{likelihood}.
+This family of distributions is a conjugate prior for the likelihood function \cref{likelihood}.
 When we multiply our likelihood by this prior density we get a posterior in the same family as this prior.
 If the prior has hyper parameters $st(\cdot)$ the posterior will have hyper parameters $st(\cdot) + n(\cdot)$.
 
@@ -34,11 +37,15 @@ We can now estimate the parameters by taking the posterior expectation:
 	E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(a_i, c) + st(a_i, c)}{n(c) + st(c)} = \hat{\theta}_{a_i \mid c}
 \end{align}
 
-\section{Application}
+\section{Reapplication}
 
 To apply this classifier to our data set we need to choose the hyper parameters of the prior distribution.
 We note that $s$ affects the speed at which our classifier learns and $t(\cdot)$ represents our beliefs for the probabilities.
-We want our prior to be as indifferent as possible \cite{laplace1812} to represent out lack of information.
+Initially we have no information regarding what these probabilities are and Laplace tells us \cite{laplace1812} the best way to represent this in through indifference.
+This is referred to as ``The Principal of Indifference'' by Keynes \cite{Keynes21} who criticised it as a representation of a lack of information.
+He presented several situations where this principal leads to paradoxes.
+In this section we will follow the principal of indifference when selecting our prior distribution however we will return to this problem in chapter 4 where we introduce the imprecise prior.
+
 We want assign the same probabilities to each chance so we set:
 \begin{align}\label{initial prior}
 	t(c) & = \frac{1}{|C|} \\
@@ -53,27 +60,25 @@ An alternative metric is the mean squared error of our estimate.
 \end{equation}
 This indicates how close to the true class our classifications are.
 
-The accuracy, mean squared error and percentage of random classifications are shown below:
+The accuracy, mean squared error and percentage of indeterminate classifications are shown below:
 \begin{center}
 	\begin{tabular}{ c|c c c c c c }
-		              & Accuracy & MSE   & Random Classifications\\
+		              & Accuracy & MSE   & Indeterminate Classifications\\
 		\hline
 		NBC           & 59.95\%  & 2.823 & 22.45\% \\
 		Corrected NBC & 68.17\%  & 0.642 & 0\%
 	\end{tabular}
 \end{center}
 
-\section{Conclusions}
 Using posterior expectations instead of maximum likelihood estimates improves our classifier in all three metrics.
 
-Firstly introducing the prior distribution means that we no longer have random classifications as $P(c \mid \mathbf{a})$ will never be zero.
+Firstly introducing the prior distribution means that we no longer have indeterminate classifications as $P(c \mid \mathbf{a})$ will never be zero.
 We will investigate how sensitive our choice of classifications to changes in the prior hyper parameters.
 
-A proportion vehicles that were previously randomly classified are now classified correctly.
+A proportion of vehicles that previously had indeterminate classifications are now classified correctly.
 This has led to an increase in the accuracy of our classifier.
 However we are still achieving an accuracy of less than 70\% which leaves great room for improvement.
 
 Additionally the mean square error has decreased dramatically.
-I'm not really sure why this is.
 Note that the loss function we are using to make our decision after estimating the probabilities does not take in to account how close our prediction is to the actual risk.
 An alternate loss function may reduce the MSE even further.

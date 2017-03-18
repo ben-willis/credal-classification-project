@@ -44,4 +44,4 @@ def train_classifier(data, values, a_ids, c_id):
 		return zero_one(p_c_given_ais)
 	return trained_classifier
 
-print cross_validate(data, 24, train_classifier, accuracy, 10)
+print cross_validate(data, 24, train_classifier, accuracy, 10, seed)

@@ -1,5 +1,14 @@
-from __future__ import division
+from __future__ import division, print_function
 import random
+
+def remove_row(M, j):
+	return M[:j] + M[j+1:]
+
+def remove_rows_with_missing_values(M):
+	for j in range(len(M)-1, -1, -1):
+		if -1 in M[j]:
+			M = remove_row(M, j)
+	return M
 
 def accuracy(classifications):
 	results = [1 if (obj[0]==obj[1]) else 0 for obj in classifications]
@@ -25,7 +34,7 @@ def compare(classifications):
 			results[i][j] = sum(results[i][j])/len(results[i][j])
 	return results
 
-def credal_accuracy(classifications):
+def single_accuracy(classifications):
 	results = []
 	for classification in classifications:
 		if len(classification[1]) != 1:
@@ -34,15 +43,42 @@ def credal_accuracy(classifications):
 			results.append(1)
 		else:
 			results.append(0)
-	return sum(results)/len(results)
+	return {
+		"result": sum(results)/len(results),
+		"name": "Single Accuracy"
+	}
 
-def credal_size(classifications):
-	results = [1 if len(classification[1]) > 1 else 0 for classification in classifications]
-	return sum(results)/len(results)
+def indeterminate_output_size(classifications):
+	results = []
+	for classification in classifications:
+		if len(classification[1]) == 1:
+			continue;
+		results.append(len(classification[1]))
+	return {
+		"result": sum(results)/len(results),
+		"name": "Indeterminate Output Size"
+	}
 
-def in_credal_set(classifications):
-	results = [1 if obj[0] in obj[1] else 0 for obj in classifications]
-	return sum(results)/len(results)
+def set_accuracy(classifications):
+	results = []
+	for classification in classifications:
+		if len(classifications[1]) == 1:
+			continue;
+		if classification[0] in classification[1]:
+			results.append(1)
+		else:
+			results.append(0)
+	return {
+		"result": sum(results)/len(results),
+		"name": "Set Accuracy"
+	}
+
+def determinacy(classifications):
+	results = [1 if len(classification[1]) == 1 else 0 for classification in classifications]
+	return {
+		"result": sum(results)/len(results),
+		"name": "Determinacy"
+	}
 
 def split_data(data, k):
 	split_data = [[] for i in range(k)]
@@ -63,14 +99,19 @@ def get_classes(M, col_id):
 	M_t = transpose(M)
 	return list(set(M_t[col_id]))
 
-def cross_validate(data, c_id, train_classifier, metric, k):
+def cross_validate(data, c_id, train_classifier, metrics, k, seed):
 	values = [range(max(get_classes(data, col_id))+1) for col_id in range(c_id+1)]
-	random.shuffle(data)
+	random.shuffle(data, seed)
 	datas = split_data(data, k)
 	classifications = []
 	for i in range(k):
-		print (k-i)
+		print(k-i, end="... ")
 		training_data = merge_datas(datas[:i] + datas[i+1:])
+		test_data = remove_rows_with_missing_values(datas[i])
 		classifier = train_classifier(training_data, values, range(c_id), c_id)
-		classifications = classifications + [(obj[c_id], classifier(obj)) for obj in datas[i]]
-	return metric(classifications)
+		classifications = classifications + [(obj[c_id], classifier(obj)) for obj in test_data]
+	print()
+	for metric in metrics:
+		res = metric(classifications)
+		print(res['name'], end=": ")
+		print(res['result'])
