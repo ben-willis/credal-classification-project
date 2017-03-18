@@ -1,6 +1,15 @@
 from __future__ import division, print_function
 import random
 
+def remove_row(M, j):
+	return M[:j] + M[j+1:]
+
+def remove_rows_with_missing_values(M):
+	for j in range(len(M)-1, -1, -1):
+		if -1 in M[j]:
+			M = remove_row(M, j)
+	return M
+
 def accuracy(classifications):
 	results = [1 if (obj[0]==obj[1]) else 0 for obj in classifications]
 	return sum(results)/len(results)
@@ -90,16 +99,17 @@ def get_classes(M, col_id):
 	M_t = transpose(M)
 	return list(set(M_t[col_id]))
 
-def cross_validate(data, c_id, train_classifier, metrics, k):
+def cross_validate(data, c_id, train_classifier, metrics, k, seed):
 	values = [range(max(get_classes(data, col_id))+1) for col_id in range(c_id+1)]
-	random.shuffle(data)
+	random.shuffle(data, seed)
 	datas = split_data(data, k)
 	classifications = []
 	for i in range(k):
 		print(k-i, end="... ")
 		training_data = merge_datas(datas[:i] + datas[i+1:])
+		test_data = remove_rows_with_missing_values(datas[i])
 		classifier = train_classifier(training_data, values, range(c_id), c_id)
-		classifications = classifications + [(obj[c_id], classifier(obj)) for obj in datas[i]]
+		classifications = classifications + [(obj[c_id], classifier(obj)) for obj in test_data]
 	print()
 	for metric in metrics:
 		res = metric(classifications)

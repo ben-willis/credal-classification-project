@@ -44,9 +44,9 @@ def train_classifier(data, values, a_ids, c_id):
 
 res = []
 se = 1000
-res.append(cross_validate(data, 24, train_classifier, unclassified, 10))
+res.append(cross_validate(data, 24, train_classifier, unclassified, 10, seed))
 while(se/math.sqrt(len(res)) > 0.005):
-	res.append(cross_validate(data, 24, train_classifier, unclassified, 10))
+	res.append(cross_validate(data, 24, train_classifier, unclassified, 10, seed))
 	mean = sum(res)/len(res)
 	se = math.sqrt( (1/(len(res)-1)) * sum([(x - mean)**2 for x in res]) )
 print mean

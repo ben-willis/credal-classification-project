@@ -4,8 +4,8 @@
 
 When estimating the probabilities for our classifier we take in to account our prior beliefs for them and the likelihood given a set of observations.
 
-When we initially chose our prior distribution we chose the parameters in \cref{initial prior} to represent our indifference towards the classes and attributes.
-However this prior is still informative and does not truly represent our lack of prior knowledge about the parameters.
+When we initially chose our prior distribution we chose the parameters in \cref{initial prior} such that they follow the principal of indifference.
+However as previously mentioned this prior does not truly represent our lack of prior knowledge about the parameters.
 We need a way to represent this lack of knowledge and acknowledge that our estimates for the probabilities depend on this prior.
 
 \section{Imprecise Dirichlet Model}
@@ -113,7 +113,7 @@ We will vary the choice of the hyper parameter s when measuring these three stat
 \begin{tabular}{l|c c c c}
         & A\%     & B\%     & C    & D\%     \\
 \hline
-s = 0.5 & 77.33\% & 88.08\% & 3.61 & 38.36\% \\
+s = 0.5 & 77.02\% & 87.05\% & 3.71 & 38.34\% \\
 s = 1   & 76.92\% & 90.67\% & 3.75 & 20.20\% \\
 s = 2   & 75.00\% & 94.30\% & 4.04 & 3.11\% \\
 s = 5   & -       & 97.92\% & 5.22 & 0\%   \\
@@ -129,12 +129,12 @@ This effect can be easily explained.
 Increasing the $s$ value increases the upper bound and decreases the lower bound on each of the probabilities being estimated.
 Hence increasing the value of $s$ increases the size of the interval and increasing the size of the interval leads to less intervals being dominated and less classes being excluded.
 
-\section{Alternate Credal Classifier}
+\section{The Naive Credal Classifier}
 In the simple credal classifier we estimated the lower and upper bounds for each probability separately using our imprecise prior model.
 We then used these separate estimates to make inferences about the true probability of interest $P(c \mid \mathbf{a})$.
 
 % However an alternate method for credal classification.
-We can rewrite our original definition of credal dominance \cref{Credal Dominance} as:
+Alternatively we can rewrite our original definition of credal dominance \cref{Credal Dominance} as:
 \begin{equation}
 	\frac{P_t(c' \mid \mathbf{a})}{P_t(c'' \mid \mathbf{a})} = \frac{P_t(c')\prod_{i=1}^{k}P_t(a_i \mid c')}{P_t(c'')\prod_{i=1}^{k}P_t(a_i \mid c'')} > 1
 \end{equation}
@@ -158,7 +158,7 @@ It is possible to manipulate this problem into an easier to solve form.
 Firstly note that the minimum is achieved when each $t(a_i, c') \rightarrow 0$ and $t(a_i, c'') \rightarrow t(c'')$ so we can use these values in the objective function.
 Furthermore, at the minimum, we have $t(c') = 1 - t(c'')$.
 To simplify the problem set $st(c'') = x$ then our optimization problem becomes a problem in a single variable:
-\begin{align}
+\begin{align} \label{Credal Dominance Test}
 	\min \quad & f(x) = \left[ \frac{n(c'') + x}{n(c') + 1 - x} \right]^{k-1} \prod_{i=1}^k \frac{n(a_i, c')}{n(a_i, c'') + x} \\
 	\text{s.t.} \quad & 0 < x < s
 \end{align}
@@ -192,7 +192,7 @@ The results from 10-fold cross validation with varying $s$ values are as follow:
 \begin{tabular}{l|c c c c}
         & A\%     & B\%     & C    & D\%     \\
 \hline
-s = 0.5 & 78.82\% & 88.60\% & 3.82 & 43.01\% \\
+s = 0.5 & 77.33\% & 88.60\% & 3.82 & 43.01\% \\
 s = 1   & 79.06\% & 90.15\% & 3.79 & 22.27\% \\
 s = 2   & 81.81\% & 91.71\% & 3.86 & 5.70\% \\
 s = 5   & -       & 94.30\% & 4.79 & 0\%   \\
@@ -202,4 +202,4 @@ s = 5   & -       & 94.30\% & 4.79 & 0\%   \\
 We observe the same trends in the metrics as with out previous credal classifier.
 We also observe that the naive credal classifier either matches or outperforms the interval based credal classifier.
 
-The NCC has greater determinacy for all values of $s$ however it still does not return a single class output for any vehicles when $s=5$.
+The NCC has greater determinacy for all values of $s$ however it still does not return a single class output for any vehicle when $s=5$.

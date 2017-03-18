@@ -9,6 +9,8 @@ The 0-1 loss function assigns a loss of 1 to any risk rating that is not the tru
 We will test alternate choices for the loss function by measuring the accuracy and mean squared error.
 We will use the expected posterior estimates with the uniform prior as described in the previous chapter.
 
+Our selection of loss functions are based on those found in Lee \cite{Lee12}.
+
 \section{The Loss Functions}
 \subsection{0-1 Loss Function}
 Previously we considered the 0-1 loss function.
@@ -66,13 +68,14 @@ Once again this assigns greater loss to risk ratings that are further away from 
 For this function the expected loss is:
 \begin{align}
 	E(L) & = \sum_{c \in \mathcal{C}} |c - \hat{c}|P(c \mid \mathbf{a}) \\
-	     & = \sum_{c \leq \hat{c}} (\hat{c} - c)P(c \mid \mathbf{a}) - \sum_{c \geq \hat{c}} (\hat{c} - c)P(c \mid \mathbf{a})
+	     & = \sum_{c < \hat{c}} (\hat{c} - c)P(c \mid \mathbf{a}) - \sum_{c \geq \hat{c}} (\hat{c} - c)P(c \mid \mathbf{a})
 \end{align}
 
 Differentiating this with respect to $\hat{c}$ gives:
-\begin{equation}
-	\frac{\partial}{\partial \hat{c}} E(L) = \sum_{c \leq \hat{c}} P(c \mid \mathbf{a}) - \sum_{c \geq \hat{c}} P(c \mid \mathbf{a})
-\end{equation}
+\begin{align}
+	\frac{\partial}{\partial \hat{c}} E(L) & = \sum_{c < \hat{c}} P(c \mid \mathbf{a}) - \sum_{c \geq \hat{c}} P(c \mid \mathbf{a}) \\
+	& = \sum_{c \leq \hat{c}} P(c \mid \mathbf{a}) - \sum_{c \geq \hat{c}} P(c \mid \mathbf{a})
+\end{align}
 Setting this equal to zero gives:
 \begin{align}
 	\sum_{c \leq \hat{c}} P(c \mid \mathbf{a}) & = \sum_{c \geq \hat{c}} P(c \mid \mathbf{a}) \\
@@ -87,7 +90,7 @@ When more than one risk rating could be reasonably considered the median we will
 We will now apply these loss functions to our automobile data set and measure accuracy and mean squared error.
 We will also investigate how often the assigned classes agree.
 
-Once again we discretize and discard vehicles with missing attributes.
+Once again we discretize and discard vehicles with missing values.
 
 As the expected posterior estimates perform better than the maximum likelihood estimates we shall use these to estimate the required probabilities.
 We will also use the uniform hyper parameters and set $s=1$.

@@ -1,7 +1,7 @@
 from __future__ import division
 import random, math
 
-from data import data
+from data import seed, data_cleaned as data
 from diagnostics import accuracy, mse, unclassified, cross_validate, compare, set_accuracy, single_accuracy, indeterminate_output_size, determinacy
 from lossfns import zero_one, squared_diff,  absolute_diff, credal, upper, lower
 
@@ -12,13 +12,13 @@ def filter_by_row(M, row_id, row_val):
 	return [row for row in M if row[row_id]==row_val]
 
 def p_c_estimates(M, col_id, col_values):
-	s = 2
+	s = 0.5
 	M_t = transpose(M)
 	vals = M_t[col_id]
 	return [((vals.count(a))/(len(vals) + s), (vals.count(a)+s)/(len(vals) + s)) for a in col_values]
 
 def p_ai_given_c_estimates(M, a_id, c_id, a_values, c_values):
-	s = 2
+	s = 0.5
 	probs = []
 	for c in c_values:
 		M_filtered = filter_by_row(M, c_id, c)
@@ -52,4 +52,4 @@ def train_classifier(data, values, a_ids, c_id):
 		return credal(p_c_given_ais_intervals)
 	return trained_classifier
 
-cross_validate(data, 24, train_classifier, [single_accuracy, set_accuracy, indeterminate_output_size, determinacy], 10)
+cross_validate(data, 24, train_classifier, [single_accuracy, set_accuracy, indeterminate_output_size, determinacy], 10, seed)
