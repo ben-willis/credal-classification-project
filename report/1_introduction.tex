@@ -2,19 +2,53 @@
 
 Classifiers have many applications in the finance industry ranging from financial trading \cite{Gerlein16} to credit card fraud detection \cite{Pozzolo15}.
 We will study the problem of determining the risk to an insurer of a vehicle.
-Initially we will learn from an experts classification of risk.
-We will then examine how both the expert's and our classifications compare to the actual normalised loss to the insurer of each vehicle.
 
 Classification is the problem of identifying which class an object belongs to.
 Each object can be distinguished by a set of properties know as features and each object belongs to a single class.
 A classifier is an algorithm which, given previous observations and their classes, can determine which class a new observation belongs to \cite{Theodoridis03}.
 There are many applications of classifiers including image recognition, sentiment analysis and medical diagnosis.
 
-A credal classifier is a special type of classifier.
-Instead of returning a single class for a new observation it returns a set of classes.
+There are also many different approaches to the classification problem.
+Firstly there are two types of classifier; supervised and unsupervised.
+Supervised classifier require a training data set where as unsupervised classifiers do not.
+Some examples of classifiers include:
+\begin{description}
+	\item[Neural Networks] Designed to mimic the human brain it is a collection of artificial neurons which mimic the brain's axons. These neurons are then connected to each other and an input into one neuron can lead to outputs in other neurons \cite{Michie94}.
+	\item[Support Vector Machines] An SVM is a supervised classifier which plots the training data in space. It then constructs planes between the classes in the data set and uses these planes to classify new observations.
+	\item[Decision Trees] A decision tree is a rooted tree where each leaf represents a class and at each node is a decision is made about an object. An object flows through the tree until it reaches the end of a branch and is then assigned the corresponding class. 
+\end{description}
+
+In the first section we formulate the naive Bayes classifier described in Manning \cite{Manning08} - chapter 13.
+
+Naive Bayes classifier have been shown to be highly effective in many different situation and comparible in performance to more complex classifiers \cite{Ashari13}.
+In one study \cite{Dumitru09} images of breast mass for patients who had previously suffered from breast cancer were analysed.
+The naive Bayes classifier used attributes of the cells in the image such as radius and symmetry to determine whether the cancer was recurrent or non-recurrent.
+In this study the classifier achieved an accuracy of 74.24\% which is consistent with the best results of other classifiers.
+However this same study indicates there is room for improvement.
+The sensitivity of the classifier was only 27.78\% meaning a large proportion of sick patients were not correctly diagnosed.
+
+We will start by applying the NBC to a data set it performs well on before applying it to the insurance problem.
+
+Next we will investigate the choice of decision mechanism used in the naive Bayes classifier.
+We will investigate different options that take in to account the structure of our problem.
+
+For the rest of the report we will expand this classifier to create Zaffalon's \cite{Zaffalon01} naive Credal classifier.
+A credal classifier is a special type of classifier, instead of returning a single class for a new observation it returns a set of classes.
+Zaffalon applied the classifier to multiple data sets including letter image recognition and credit ratings.
+He showed that the NCC can have a greater accuracy than then NBC when it returned a single class.
+He also showed that the NBC can have a significantly lower accuracy when classifying objects the NCC was indeterminate about.
+We will look to see if we achieve similar results with our data set.
+
+\section{Data Set}
 
 The data set we will be analysing contains vehicular information from 205 automobiles.
 Its features include dimensions, engine specifications and vehicle characteristics.
 It also contains an expert's assessed risk to the insurer of the vehicle on an integer scale of -2 to 3 with 3 being most risky and -2 being least risky.
 In addition to the technical information and the experts assessment, the data set also contains the normalized loss to the insurer.
 This ranges from 65 to 256 and is normalized for all vehicles within a particular size classification (two-door small, station wagons, etc.) and represents the average loss per car per year \cite{Automobile}.
+
+To simplify this data set we will discretize the continuous variables.
+There are methods to model these variables, for example using normal distributions \cite{Dumitru09}.
+We split the continuous variables into 10 categories with equal frequency.
+
+Previous Work on data set.

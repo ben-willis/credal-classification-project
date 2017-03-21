@@ -12,15 +12,27 @@ def remove_rows_with_missing_values(M):
 
 def accuracy(classifications):
 	results = [1 if (obj[0]==obj[1]) else 0 for obj in classifications]
-	return sum(results)/len(results)
+	return {
+		"result": 100*sum(results)/len(results),
+		"name": "Accuracy"
+	}
 
 def mse(classifications):
-	results = [(obj[0]-obj[1])**2 for obj in classifications]
-	return sum(results)/len(results)
+	results = []
+	for classification in classifications:
+		if classification[1] != -1:
+			results.append((classification[0]-classification[1])**2)
+	return {
+		"result": sum(results)/len(results),
+		"name": "MSE"
+	}
 
 def unclassified(classifications):
 	results = [1 if obj[1]==-1 else 0 for obj in classifications]
-	return sum(results)/len(results)
+	return {
+		"result": sum(results)/len(results),
+		"name": "Unclassified"
+	}
 
 def compare(classifications):
 	n = len(classifications[0][0])
@@ -44,7 +56,7 @@ def single_accuracy(classifications):
 		else:
 			results.append(0)
 	return {
-		"result": sum(results)/len(results),
+		"result": "null" if (len(results)==0) else 100*sum(results)/len(results),
 		"name": "Single Accuracy"
 	}
 
@@ -69,14 +81,14 @@ def set_accuracy(classifications):
 		else:
 			results.append(0)
 	return {
-		"result": sum(results)/len(results),
+		"result": 100*sum(results)/len(results),
 		"name": "Set Accuracy"
 	}
 
 def determinacy(classifications):
 	results = [1 if len(classification[1]) == 1 else 0 for classification in classifications]
 	return {
-		"result": sum(results)/len(results),
+		"result": 100*sum(results)/len(results),
 		"name": "Determinacy"
 	}
 
@@ -99,18 +111,15 @@ def get_classes(M, col_id):
 	M_t = transpose(M)
 	return list(set(M_t[col_id]))
 
-def cross_validate(data, c_id, train_classifier, metrics, k, seed):
+def cross_validate(data, c_id, train_classifier, metrics, k, s):
 	values = [range(max(get_classes(data, col_id))+1) for col_id in range(c_id+1)]
-	random.shuffle(data, seed)
 	datas = split_data(data, k)
 	classifications = []
 	for i in range(k):
-		print(k-i, end="... ")
 		training_data = merge_datas(datas[:i] + datas[i+1:])
 		test_data = remove_rows_with_missing_values(datas[i])
-		classifier = train_classifier(training_data, values, range(c_id), c_id)
+		classifier = train_classifier(training_data, values, range(c_id), c_id, s)
 		classifications = classifications + [(obj[c_id], classifier(obj)) for obj in test_data]
-	print()
 	for metric in metrics:
 		res = metric(classifications)
 		print(res['name'], end=": ")

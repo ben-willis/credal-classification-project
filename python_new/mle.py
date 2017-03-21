@@ -1,8 +1,6 @@
 from __future__ import division
 import random, math
 
-from data import data
-from diagnostics import accuracy, mse, unclassified, cross_validate, compare
 from lossfns import zero_one
 
 def transpose(M):
@@ -39,14 +37,3 @@ def train_classifier(data, values, a_ids, c_id):
 				p_c_given_ais[c] = p_c_given_ais[c] * p_ai_given_cs[a_id][c][obj[a_id]]
 		return zero_one(p_c_given_ais)
 	return trained_classifier
-
-
-
-res = []
-se = 1000
-res.append(cross_validate(data, 24, train_classifier, unclassified, 10, seed))
-while(se/math.sqrt(len(res)) > 0.005):
-	res.append(cross_validate(data, 24, train_classifier, unclassified, 10, seed))
-	mean = sum(res)/len(res)
-	se = math.sqrt( (1/(len(res)-1)) * sum([(x - mean)**2 for x in res]) )
-print mean

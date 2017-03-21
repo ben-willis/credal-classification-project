@@ -1,7 +1,7 @@
 from __future__ import division
 import random, math
 
-from data import seed, data_cleaned as data
+from data import data_cleaned as data
 from diagnostics import accuracy, mse, unclassified, cross_validate, compare, set_accuracy, single_accuracy, indeterminate_output_size, determinacy
 from lossfns import zero_one, squared_diff,  absolute_diff, credal, upper, lower
 
@@ -11,14 +11,12 @@ def transpose(M):
 def filter_by_row(M, row_id, row_val):
 	return [row for row in M if row[row_id]==row_val]
 
-def p_c_estimates(M, col_id, col_values):
-	s = 0.5
+def p_c_estimates(M, col_id, col_values, s):
 	M_t = transpose(M)
 	vals = M_t[col_id]
 	return [((vals.count(a))/(len(vals) + s), (vals.count(a)+s)/(len(vals) + s)) for a in col_values]
 
-def p_ai_given_c_estimates(M, a_id, c_id, a_values, c_values):
-	s = 0.5
+def p_ai_given_c_estimates(M, a_id, c_id, a_values, c_values, s):
 	probs = []
 	for c in c_values:
 		M_filtered = filter_by_row(M, c_id, c)
@@ -29,9 +27,9 @@ def p_ai_given_c_estimates(M, a_id, c_id, a_values, c_values):
 		probs.append([((vals.count(a))/(len(vals) + s), (vals.count(a) + s)/(len(vals)+s))  for a in a_values])
 	return probs
 
-def train_classifier(data, values, a_ids, c_id):
-	p_cs = p_c_estimates(data, c_id, values[c_id])
-	p_ai_given_cs = [p_ai_given_c_estimates(data, a_id, c_id, values[a_id], values[c_id]) for a_id in a_ids]
+def train_classifier(data, values, a_ids, c_id, s):
+	p_cs = p_c_estimates(data, c_id, values[c_id],s)
+	p_ai_given_cs = [p_ai_given_c_estimates(data, a_id, c_id, values[a_id], values[c_id],s) for a_id in a_ids]
 	def trained_classifier(obj):
 		p_c_given_ais_lower = [0] * len(values[c_id])
 		p_c_given_ais_upper = [0] * len(values[c_id])
@@ -51,5 +49,3 @@ def train_classifier(data, values, a_ids, c_id):
 		# 		print str(c) + " : [" + str(p_c_given_ais[0]) + ", " + str(p_c_given_ais[1]) + "]"
 		return credal(p_c_given_ais_intervals)
 	return trained_classifier
-
-cross_validate(data, 24, train_classifier, [single_accuracy, set_accuracy, indeterminate_output_size, determinacy], 10, seed)

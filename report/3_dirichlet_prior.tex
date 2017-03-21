@@ -1,9 +1,13 @@
-\section{Corrected NBC}
+\chapter{Corrected NBC}
 
 In the previous section we considered a frequentist approach to estimating the probabilities required for the NBC.
 We saw that our classifier falls down if there are no observations with attribute $a_j$ and class $c$ in our training set.
 If we take a Bayesian approach to the problem and introduce a prior distribution for these probabilities we can avoid this situation.
+In literature this is often called ``additive smoothing'' or ``Laplace smoothing'' and is presented as simply adding a pseudocount to each of the observed frequencies \cite{Manning08}.
+This is often done without properly considering the prior distribution that is being used.
+In this chapter we will offer a rigorous definition of our prior distribution which will form the basis for the naive Credal classifier we discuss later.
 
+\section{Introducing a Prior}
 
 We return to our likelihood function \cref{likelihood} for our theta variables.
 We will introduce a prior distribution for these parameters and then consider the posterior distribution.
@@ -13,8 +17,9 @@ The Dirichlet distribution is the multinomial extension of the beta distribution
 	f(\theta_1,\dots,\theta_k \mid s, t(1),\dots,t(k)) \propto \prod_{i=1}^k \theta_i^{st(i) - 1}
 \end{equation}
 where $s > 0$ and each $t(i)>0$ such that $\sum_{i=1}^{k}t(i) = 1$.
+The family of Dirichlet distributions is a conjugate prior for the multinomial distribution.
 
-We introduce a distribution that is similar to our likelihood as our prior density:
+We introduce a distribution that has similar properties to the Dirichlet distribution and has a similar structure to our likelihood as our prior density:
 \begin{equation} \label{prior}
 	f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(c, a_i) - 1} \right]
 \end{equation}
@@ -37,36 +42,38 @@ We can now estimate the parameters by taking the posterior expectation:
 	E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(a_i, c) + st(a_i, c)}{n(c) + st(c)} = \hat{\theta}_{a_i \mid c}
 \end{align}
 
-\section{Reapplication}
+\section{Hyper Parameters}
 
 To apply this classifier to our data set we need to choose the hyper parameters of the prior distribution.
-We note that $s$ affects the speed at which our classifier learns and $t(\cdot)$ represents our beliefs for the probabilities.
+
+We note that $s$ represents the strength of our prior distribution when calculating the posterior and hence determines how quickly our classifier learns from the observed data.
+As $s \rightarrow 0$ we simply get the maximum likelihood estimates.
+On the other hand if $s$ is extremely large the observed frequencies are dominated by our prior beliefs.
+Walley recommends setting $s=1$ or $s=2$ \cite{Walley96}.
+When comparing the NBC to the corrected NBC we will set $s=1$ then we will look at the sensitivity of the corrected NBC with respect to the $s$ value.
+
+The other hyperparameters $t(\cdot)$ represent our prior beliefs for $P(\cdot)$.
 Initially we have no information regarding what these probabilities are and Laplace tells us \cite{laplace1812} the best way to represent this in through indifference.
-This is referred to as ``The Principal of Indifference'' by Keynes \cite{Keynes21} who criticised it as a representation of a lack of information.
+This is referred to as ``The Principal of Indifference'' by Keynes \cite{Keynes21} who criticised it as a representation of a lack of prior information.
 He presented several situations where this principal leads to paradoxes.
 In this section we will follow the principal of indifference when selecting our prior distribution however we will return to this problem in chapter 4 where we introduce the imprecise prior.
-
-We want assign the same probabilities to each chance so we set:
+Hence we set:
 \begin{align}\label{initial prior}
-	t(c) & = \frac{1}{|C|} \\
+	t(c)      & = \frac{1}{|C|} \\
 	t(a_i, c) & = \frac{1}{|A_i||C|}
 \end{align}
-Following Walley's recommendation \cite{Walley96}, we also set $s=1$.
+These assignments obey the constraints given in \cref{prior_constraints}.
 
-Previously we've considered the accuracy of our classifier.
-An alternative metric is the mean squared error of our estimate.
-\begin{equation}
-	\text{MSE} = \frac{1}{n}\sum_{i=1}^n(\hat{c_i} - c_i)^2
-\end{equation}
-This indicates how close to the true class our classifications are.
 
-The accuracy, mean squared error and percentage of indeterminate classifications are shown below:
+\section{Application}
+
+The accuracy and percentage of indeterminate classifications are shown below:
 \begin{center}
-	\begin{tabular}{ c|c c c c c c }
-		              & Accuracy & MSE   & Indeterminate Classifications\\
+	\begin{tabular}{ c|c c }
+		              & Accuracy & Indeterminate Classifications\\
 		\hline
-		NBC           & 59.95\%  & 2.823 & 22.45\% \\
-		Corrected NBC & 68.17\%  & 0.642 & 0\%
+		NBC           & 63.73\%  & 20.21\% \\
+		Corrected NBC & 72.02\%  & 0\%
 	\end{tabular}
 \end{center}
 
@@ -79,6 +86,47 @@ A proportion of vehicles that previously had indeterminate classifications are n
 This has led to an increase in the accuracy of our classifier.
 However we are still achieving an accuracy of less than 70\% which leaves great room for improvement.
 
-Additionally the mean square error has decreased dramatically.
-Note that the loss function we are using to make our decision after estimating the probabilities does not take in to account how close our prediction is to the actual risk.
-An alternate loss function may reduce the MSE even further.
+We now look at the sensitivity of the accuracy of the corrected NBC to changes in the $s$ hyper-parameter.
+If we choose $s$ values log uniformly between $10^{-4}$ and $10^{6}$ and plot these against the accuracy of the corrected NBC using these s values we get the following plot:
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    title={Accuracy},
+    xlabel={$s$},
+    ylabel={\%},
+   	xmode = log,
+    ymin=40, ymax=80,
+    ymajorgrids=true,
+    xmajorgrids=true,
+    grid style=dashed,
+]
+
+\addplot[
+	mark=o,
+    color=black,
+    ]
+    coordinates {
+    (0.001,74.09)
+    (0.01,74.61)
+    (0.1,73.58)
+    (1,72.02)
+    (10,70.47)
+    (100,67.36)
+    (1000,49.22)
+    (10000,44.04)
+    (100000, 44.56)
+    };
+ 
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+The most obvious feature is the significant drop in accuracy between $s=100$ and $s=1000$.
+This is where the prior dominates the likelihood and the posterior expectations for the probabilities become uniform.
+For $s>1000$ our classifier assigns classes at random uniformly.
+
+On the other side of the graph, for $s \leq 1$ we see a fairly consistent classifier with accuracy greater than 70\%.
+
+We've seen that the corrected NBC has a greater accuracy than the normal NBC and never returns indeterminate classifications.
+We've also seen the effect varying the hyperparameter $s$ has on this classifier.
+In the next section we'll look at our choice of loss function in the origonal formulation of the NBC.

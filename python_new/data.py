@@ -1,7 +1,6 @@
 import os, csv
 
-def seed():
-	return 0.51
+from collections import Counter
 
 def import_data(path):
 	data = []
@@ -30,4 +29,5 @@ def remove_rows_with_missing_values(M):
 
 data = import_data('../data/automobile_discretized.csv')
 data = remove_column(data, 0)
+
 data_cleaned = remove_rows_with_missing_values(data)
