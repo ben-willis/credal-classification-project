@@ -4,12 +4,44 @@ Previously we had no method for classifying or using the vehicles in our data se
 However there are methods we can apply to overcome this issue which we will discuss in this chapter.
 Note that in our data set the class is never missing from a vehicle so we only have to deal with missing technical attributes.
 
+So far we have been removing the vehicles with missing attributes from our data set.
+This is known as \textit{Listwise Deletion}.
+
+\section{Types of missing data}
+
+Missing data can be considered to be one of three types \cite{Olinsky02}:
+\begin{description}
+	\item[MCAR] The data is missing completely at random if the missing attributes are independent of all other observable and unobservable attributes
+	\item[MAR] The data is missing at random if the missing attributes are independent of the actual attribute but not necessarily some other attribute e.g. some cars with two doors might be missing engine specifications but this has nothing to do with the specifications
+	\item[MNAR] The data is missing not at random if the attribute is missing due to value of the attribute e.g. vehicles with a high price are missing their price
+\end{description}
+
+\section{Feature Model Reduction}
+
+One approach to missing data is to change the model being used to one that only uses the attributes without missing values \cite{Saar-Tsechansky07}.
+For our data set this is easy to implement; we simple remove the attributes with missing values (Price, Number of doors, Bore, Stroke, Horsepower, Peak RPM) from our classifier.
+In practice this means we reduce the number of available attributes from 24 to 18.
+
+We can then apply the NCC for $s=1$ in a similar manner:
+\begin{center}
+\begin{tabular}{l|c c c c}
+	                        &   A\%   &   B\%   &  C   &   D\%   \\
+	\hline
+	Without missing values  & 73.68\% & 88.60\% & 3.63 & 19.69\% \\
+	Without missing columns & 74.51\% & 82.44\% & 3.33 & 24.88\% \\
+\end{tabular}
+\end{center}
+
+We see a small rise in single accuracy but a large decrease in set accuracy.
+We also observe a large increase in determinacy this indicates that the NCC is able to use the extra vehicles we are now considering to eliminate more classes.
+However the decrease in attributes is causing the classifier to be less accurate overall.
+
 \section{NCC Approach}
 
-One such method builds upon our test for credal dominance in \cref{Credal Dominance}.
+Another method builds upon our test for credal dominance in \cref{Credal Dominance}.
 We can factor in our our uncertainty of the frequencies by giving lower and upper bounds for them:
 \begin{align}
-	\min \quad & f(x) = \left[ \frac{n(c'') + x}{\underline{n}(c') + 1 - x} \right]^{k-1} \prod_{i=1}^k \frac{n(a_i, c')}{\overline{n}(a_i, c'') + x} \\
+	\min \quad & f(x) = \left[ \frac{n(c'') + x}{n(c') + 1 - x} \right]^{k-1} \prod_{i=1}^k \frac{\underline{n}(a_i, c')}{\overline{n}(a_i, c'') + x} \\
 	\text{s.t.} \quad & 0 < x < s
 \end{align}
 These lower and upper bounds for $n(a_i \mid c)$ are found by considering all possibilities for the missing attributes.
@@ -21,14 +53,19 @@ As before we will measure four metrics: Single Accuracy (A\%), Set Accuracy (B\%
 
 \begin{center}
 \begin{tabular}{l|c c c c}
-                       & A\%     & B\%     & C    & D\%     \\
-\hline
-Without missing values & 79.06\% & 90.15\% & 3.79 & 22.27\% \\
-With missing values    & 78.94\% & 89.76\% & 3.56 & 19.02\% \\
+	                       & A\%     & B\%     & C    & D\%     \\
+	\hline
+	Without missing values & 73.68\% & 88.60\% & 3.63 & 19.69\% \\
+	With missing values    & 78.57\% & 89.12\% & 3.66 & 21.76\% \\
 \end{tabular}
 \end{center}
 
-We see similar results for single and set accuracy which is a positive sign considering we are not classifying objects are missing attributes.
+We see similar results for single and set accuracy which is a positive sign considering we are not classifying objects that are missing attributes.
 However there is a small drop in determinacy when using vehicles with missing attributes.
 This could be due to the uncertainty in our frequency counts leading to less classes being dominated.
 This would also explain the decrease in indeterminate output size.
+
+\section{Conclusions}
+
+The NCC offers a convenient system for taking into account missing values with introducing bias.
+Removing the attributes with missing values allows us to use more of the vehicles in our data set but at the expense of accuracy.

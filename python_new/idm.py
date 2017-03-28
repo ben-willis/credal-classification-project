@@ -1,7 +1,6 @@
 from __future__ import division
 import random, math
 
-from data import data_cleaned as data
 from diagnostics import accuracy, mse, unclassified, cross_validate, compare, set_accuracy, single_accuracy, indeterminate_output_size, determinacy
 from lossfns import zero_one, squared_diff,  absolute_diff, credal, upper, lower
 

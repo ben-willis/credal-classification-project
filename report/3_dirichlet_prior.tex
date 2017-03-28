@@ -77,6 +77,24 @@ The accuracy and percentage of indeterminate classifications are shown below:
 	\end{tabular}
 \end{center}
 
+In addition we can consider the confusion matrix:
+\begin{center}
+    \begin{tabular}{c c c c c c c c}
+    \hline
+                       &    & \multicolumn{6}{c}{Predicted Class}                   \\
+    \hline
+                       &    & -2      & 1       & 0       & 1       & 2       & 3   \\
+    \hline
+    \multirow{4}{*}{Actual Class} & -2 & \textbf{0.0\%}  & 1.55\% & 0.0\%   & 0.0\%   & 0.0\%  & 0.0\%  \\
+                       & -1 & 1.55\% & \textbf{5.7\%}  & 3.63\%  & 0.52\%  & 0.0\%  & 0.0\%  \\
+                       & 0  & 0.0\%  & 1.55\% & \textbf{24.87\%} & 4.66\%  & 1.55\% & 0.0\%  \\
+                       & 1  & 0.0\%  & 2.59\% & 2.07\%  & \textbf{19.17\%} & 1.04\% & 1.55\% \\
+                       & 2  & 0.0\%  & 0.0\%  & 1.55\%  & 2.07\%  & \textbf{11.4\%} & 1.04\% \\
+                       & 3  & 0.0\%  & 0.0\%  & 0.52\%  & 0.52\%  & 2.07\% & \textbf{8.81\%} \\
+    \hline
+    \end{tabular}
+\end{center}
+
 Using posterior expectations instead of maximum likelihood estimates improves our classifier in all three metrics.
 
 Firstly introducing the prior distribution means that we no longer have indeterminate classifications as $P(c \mid \mathbf{a})$ will never be zero.
@@ -129,4 +147,4 @@ On the other side of the graph, for $s \leq 1$ we see a fairly consistent classi
 
 We've seen that the corrected NBC has a greater accuracy than the normal NBC and never returns indeterminate classifications.
 We've also seen the effect varying the hyperparameter $s$ has on this classifier.
-In the next section we'll look at our choice of loss function in the origonal formulation of the NBC.
+In the next section we'll look at our choice of loss function in the original formulation of the NBC.

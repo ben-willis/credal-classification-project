@@ -34,6 +34,21 @@ def unclassified(classifications):
 		"name": "Unclassified"
 	}
 
+def confussion(classifications):
+	results = [[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]
+	for classification in classifications:
+		results[classification[0]][classification[1]] = results[classification[0]][classification[1]] + 1
+	total = sum([sum(row) for row in results])
+	results = [[item/total for item in row] for row in results]
+	for row in results:
+		for item in row:
+			print(str(round(item*100, 2)) + "\%", end=" & ")
+		print("\n ----------------------------")
+	return {
+		"result": results,
+		"name": "Confusion"
+	}
+
 def compare(classifications):
 	n = len(classifications[0][0])
 	results = [[[],[],[]],[[],[],[]],[[],[],[]]]
@@ -83,6 +98,20 @@ def set_accuracy(classifications):
 	return {
 		"result": 100*sum(results)/len(results),
 		"name": "Set Accuracy"
+	}
+
+def dual_accuracy(classifications):
+	results = []
+	for classification in classifications:
+		if len(classifications[1]) != 2:
+			continue;
+		if classification[0] in classification[1]:
+			results.append(1)
+		else:
+			results.append(0)
+	return {
+		"result": 100*sum(results)/len(results),
+		"name": "Dual Accuracy"
 	}
 
 def determinacy(classifications):

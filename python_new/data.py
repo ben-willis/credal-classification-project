@@ -27,7 +27,17 @@ def remove_rows_with_missing_values(M):
 			M = remove_row(M, j)
 	return M
 
-data = import_data('../data/automobile_discretized.csv')
-data = remove_column(data, 0)
+unclean_data = import_data('../data/automobile_discretized.csv')
+unclean_data = remove_column(unclean_data, 0)
 
-data_cleaned = remove_rows_with_missing_values(data)
+# for j in range(len(data)-1, -1, -1):
+# 	if data[j][-1] == 0:
+# 		data = remove_row(data, j)
+# 	else:
+# 		data[j][-1] = data[j][-1]-1
+
+reduced_data = transpose(unclean_data)
+reduced_data = remove_rows_with_missing_values(reduced_data)
+reduced_data = transpose(reduced_data)
+
+clean_data = remove_rows_with_missing_values(unclean_data)

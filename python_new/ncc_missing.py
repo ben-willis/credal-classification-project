@@ -1,7 +1,6 @@
 from __future__ import division
 import random
 
-from data import data
 from diagnostics import cross_validate, single_accuracy, set_accuracy, indeterminate_output_size, determinacy
 
 s=1
@@ -66,6 +65,3 @@ def train_classifier(data, values, a_ids, c_id):
 def get_classes(M, col_id):
 	M_t = transpose(M)
 	return list(set(M_t[col_id]))
-
-while True:
-	cross_validate(data, 24, train_classifier, [single_accuracy, set_accuracy, indeterminate_output_size, determinacy], 10)

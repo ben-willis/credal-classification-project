@@ -1,9 +1,11 @@
 \chapter{Naive Bayes Classifier}
 
-To begin with we will define a simple probabilistic classifier known as the naive Bayes classifier.
-This classifier forms the basis for the rest of the analysis in this report.
-The naive Bayes classifier which we will study in this chapter has it's roots in information retrieval \cite{Lewis98}.
-Since then it has been successfully applied to many other problems including breast cancer diagnosis \cite{Dumitru09} and text analysis \cite{Nigam98}.
+The naive Bayes classifier have been shown to be highly effective in many different situation and comparable in performance to more complex classifiers \cite{Ashari13}.
+In one study \cite{Dumitru09} images of breast mass for patients who had previously suffered from breast cancer were analysed.
+The naive Bayes classifier used attributes of the cells in the image such as radius and symmetry to determine whether the cancer was recurrent or non-recurrent.
+In this study the classifier achieved an accuracy of 74.24\% which is consistent with the best results of other classifiers.
+However this same study indicates there is room for improvement.
+The sensitivity of the classifier was only 27.78\% meaning a large proportion of sick patients were not correctly diagnosed.
 
 
 \section{Basic Classifier}
@@ -42,7 +44,7 @@ So by bringing together \cref{bayes,naivety} we can write:
 
 To turn this into a classifier we need a way to decide which class a forest falls into based on these probabilities.
 We can introduce a \textit{loss function} to allow us to choose the class.
-The standard choice for the naive Bayes classifier is the 0-1 loss function \cite{Need} defined as:
+The standard choice for the naive Bayes classifier is the 0-1 loss function \cite{Rish01} defined as:
 \begin{equation}\label{0-1_loss_function}
 	L(c, \hat{c}) = 
 	\begin{cases}

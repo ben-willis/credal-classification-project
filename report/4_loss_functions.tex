@@ -95,54 +95,67 @@ We will also use the uniform hyper parameters and set $s=1$.
 
 Using 10-fold cross validation our various loss functions perform as follow.
 
-\begin{figure}
-	\centering
-	\begin{subfigure}{.5\textwidth}
-		\begin{tikzpicture}
-		\begin{axis}[
-		    xlabel={Loss Function},
-		    ylabel={\%},
-		    width=\textwidth,
-		    bar width=20pt,
-		    symbolic x coords={0-1,Squared Difference,Absolute Difference},
-		    ymin=60, ymax=80,
-		    ymajorgrids=true,
-		    grid style=dashed,
-		    nodes near coords,
-		    xtick=data]
-		    \addplot[ybar,fill=blue] coordinates {
-		        (0-1,69.99)
-		        (Squared Difference,67.88)
-		        (Absolute Difference,69.99)
-		    };
-		\end{axis}
-		\end{tikzpicture}
-		\caption{Accuracy}
-	\end{subfigure}%
-	\begin{subfigure}{.5\textwidth}
-		\begin{tikzpicture}
-		\begin{axis}[
-		    xlabel={Loss Function},
-		    width=\textwidth,
-		    bar width=20pt,
-		    ymin=0.5, ymax=0.6,
-		    ymajorgrids=true,
-		    grid style=dashed,
-		    nodes near coords,
-		    symbolic x coords={0-1,Squared Difference (Rounded), Squared Difference (Not Rounded),Absolute Difference},
-		    xtick=data,
-		    x tick label style={text width=4cm}]
-		    \addplot[ybar,fill=blue] coordinates {
-		        (0-1,0.59)
-		        (Squared Difference (Rounded),0.58)
-		        (Squared Difference (Not Rounded), 0.55)
-		        (Absolute Difference,0.59)
-		    };
-		\end{axis}
-		\end{tikzpicture}
-		\caption{MSE}
-	\end{subfigure}
-\end{figure}
+\begin{center}
+	\begin{tabular}{l r r}
+		\hline
+		Loss Function                & Accuracy & MSE  \\
+		\hline
+		0-1                          & 69.99\%  & 0.59 \\
+		Squared Difference           & -        & 0.55 \\
+		Squared Difference (Rounded) & 67.88\%  & 0.58 \\
+		Absolute Difference          & 69.99\%  & 0.59 \\
+		\hline
+	\end{tabular}
+\end{center}
+
+% \begin{figure}
+% 	\centering
+% 	\begin{subfigure}{.5\textwidth}
+% 		\begin{tikzpicture}
+% 		\begin{axis}[
+% 		    xlabel={Loss Function},
+% 		    ylabel={\%},
+% 		    width=\textwidth,
+% 		    bar width=20pt,
+% 		    symbolic x coords={0-1,Squared Difference,Absolute Difference},
+% 		    ymin=60, ymax=80,
+% 		    ymajorgrids=true,
+% 		    grid style=dashed,
+% 		    nodes near coords,
+% 		    xtick=data]
+% 		    \addplot[ybar,fill=blue] coordinates {
+% 		        (0-1,69.99)
+% 		        (Squared Difference,67.88)
+% 		        (Absolute Difference,69.99)
+% 		    };
+% 		\end{axis}
+% 		\end{tikzpicture}
+% 		\caption{Accuracy}
+% 	\end{subfigure}%
+% 	\begin{subfigure}{.5\textwidth}
+% 		\begin{tikzpicture}
+% 		\begin{axis}[
+% 		    xlabel={Loss Function},
+% 		    width=\textwidth,
+% 		    bar width=20pt,
+% 		    ymin=0.5, ymax=0.6,
+% 		    ymajorgrids=true,
+% 		    grid style=dashed,
+% 		    nodes near coords,
+% 		    symbolic x coords={0-1,Squared Difference (Rounded), Squared Difference (Not Rounded),Absolute Difference},
+% 		    xtick=data,
+% 		    x tick label style={text width=4cm}]
+% 		    \addplot[ybar,fill=blue] coordinates {
+% 		        (0-1,0.59)
+% 		        (Squared Difference (Rounded),0.58)
+% 		        (Squared Difference (Not Rounded), 0.55)
+% 		        (Absolute Difference,0.59)
+% 		    };
+% 		\end{axis}
+% 		\end{tikzpicture}
+% 		\caption{MSE}
+% 	\end{subfigure}
+% \end{figure}
 
 Note that the 0-1 loss function and the absolute difference loss function perform the same.
 The squared difference loss function performs slightly worse in the accuracy metric however scores better for MSE.

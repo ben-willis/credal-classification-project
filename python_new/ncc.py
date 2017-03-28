@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 
 from scipy.optimize import fminbound
 
-from data import data_cleaned as data
 from diagnostics import cross_validate, single_accuracy, set_accuracy, indeterminate_output_size, determinacy
 
 def transpose(M):
@@ -28,7 +27,7 @@ def n_ai_c(M, a_id, c_id, a_values, c_values):
 			vals = transpose(M_filtered)[a_id]
 		except IndexError as e:
 			vals = []
-		counts.append([vals.count(a) for a in a_values])
+		counts.append([(vals.count(a), vals.count(a)+vals.count(-1)) for a in a_values])
 	return counts
 
 def create_obj_function(data, values, a_ids, c_id, s):
@@ -41,7 +40,7 @@ def create_obj_function(data, values, a_ids, c_id, s):
 				return 0
 			if (n_ai_cs[a_id][c2][obj[a_id]]== 0 and x==0):
 				return 10
-			res = res * (n_ai_cs[a_id][c1][obj[a_id]])/(n_ai_cs[a_id][c2][obj[a_id]] + x)
+			res = res * (n_ai_cs[a_id][c1][obj[a_id]][0])/(n_ai_cs[a_id][c2][obj[a_id]][1] + x)
 		return res
 	return obj_function
 
