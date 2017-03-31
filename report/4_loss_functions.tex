@@ -1,17 +1,28 @@
 \chapter{Alternate Loss Functions}
 
-In chapter two we introduced the idea of a loss function.
-We used the 0-1 loss function to make decision of which class to place an object in given its attributes.
+In chapter two we discussed the need for a decision rule to allocate an object to a class.
+We used the 0-1 loss function to do this.
 In this chapter we will investigate some alternate loss functions that make better use of the structure of the insurance problem.
 
 When classifying the insurance risk of a vehicle we return a class on an integer of scale of -2 to 3.
-The 0-1 loss function assigns a loss of 1 to any risk rating that is not the true risk rating, regardless of how close it is.
-We will test alternate choices for the loss function by measuring the accuracy and mean squared error.
-We will use the expected posterior estimates with the uniform prior as described in the previous chapter.
+We know that it describes order and that a vehicle with a lower risk rating is of more risk to an insurer than a vehicle with a higher risk rating.
+However we do not know whether the intervals between the different risk ratings are equal.
+This would depend on how the insurer decides premiums for the vehicles involved.
+If we assume the differences are not equal then the problem can be described as \textit{ordinal classification}.
 
-Our selection of loss functions are based on those found in Lee \cite{Lee12}.
+Loss functions have applications in game theory and are often known as cost functions.
+The inverse of a loss function is the utility and then rather than minimizing expected loss we can aim to maximumize expected utility.
+Expected loss is sometimes called risk.
 
-\section{The Loss Functions}
+% Stevens \cite{Stevens46} argued that the only statistics it is permissible to use when dealing with ordinal data are percentiles and the median.
+
+\section{Common Loss Functions}
+
+In this section we outline some common loss functions based on those found in Berger \cite{Berger85}.
+
+We'll start with the 0-1 loss function as described in chapter two and then we will test alternate choices that take into account how close our estimate is to the true value.
+We will use a uniform prior and take the posterior expectations to estimate the required probabilities as in the previous chapter.
+
 \subsection{0-1 Loss Function}
 Previously we considered the 0-1 loss function.
 To recap this is defined by:
@@ -84,16 +95,16 @@ Setting this equal to zero gives:
 So the estimate that minimizes expected loss for this loss function is the median value.
 This may be difficult to define on our data set.
 For example suppose class -3 had $P(C = -2 \mid \mathbf{a}) = 0.5 = P(C=3 \mid \mathbf{a})$ then any class could reasonably be considered the median and therefore minimize our expected loss.
-When more than one risk rating could be reasonably considered the median we will choose one at random.
+When more than one risk rating could be reasonably considered the median we will choose the one with the largest probability and then at random.
 
 \section{Application}
 We will now apply these loss functions to our automobile data set and measure accuracy and mean squared error.
 We will also investigate how often the assigned classes agree.
 
 As the expected posterior estimates perform better than the maximum likelihood estimates we shall use these to estimate the required probabilities.
-We will also use the uniform hyper parameters and set $s=1$.
+We will also use the uniform hyperparameters and set $s=1$.
 
-Using 10-fold cross validation our various loss functions perform as follow.
+Using 10-fold cross validation our various loss functions perform as follow:
 
 \begin{center}
 	\begin{tabular}{l r r}
@@ -108,57 +119,8 @@ Using 10-fold cross validation our various loss functions perform as follow.
 	\end{tabular}
 \end{center}
 
-% \begin{figure}
-% 	\centering
-% 	\begin{subfigure}{.5\textwidth}
-% 		\begin{tikzpicture}
-% 		\begin{axis}[
-% 		    xlabel={Loss Function},
-% 		    ylabel={\%},
-% 		    width=\textwidth,
-% 		    bar width=20pt,
-% 		    symbolic x coords={0-1,Squared Difference,Absolute Difference},
-% 		    ymin=60, ymax=80,
-% 		    ymajorgrids=true,
-% 		    grid style=dashed,
-% 		    nodes near coords,
-% 		    xtick=data]
-% 		    \addplot[ybar,fill=blue] coordinates {
-% 		        (0-1,69.99)
-% 		        (Squared Difference,67.88)
-% 		        (Absolute Difference,69.99)
-% 		    };
-% 		\end{axis}
-% 		\end{tikzpicture}
-% 		\caption{Accuracy}
-% 	\end{subfigure}%
-% 	\begin{subfigure}{.5\textwidth}
-% 		\begin{tikzpicture}
-% 		\begin{axis}[
-% 		    xlabel={Loss Function},
-% 		    width=\textwidth,
-% 		    bar width=20pt,
-% 		    ymin=0.5, ymax=0.6,
-% 		    ymajorgrids=true,
-% 		    grid style=dashed,
-% 		    nodes near coords,
-% 		    symbolic x coords={0-1,Squared Difference (Rounded), Squared Difference (Not Rounded),Absolute Difference},
-% 		    xtick=data,
-% 		    x tick label style={text width=4cm}]
-% 		    \addplot[ybar,fill=blue] coordinates {
-% 		        (0-1,0.59)
-% 		        (Squared Difference (Rounded),0.58)
-% 		        (Squared Difference (Not Rounded), 0.55)
-% 		        (Absolute Difference,0.59)
-% 		    };
-% 		\end{axis}
-% 		\end{tikzpicture}
-% 		\caption{MSE}
-% 	\end{subfigure}
-% \end{figure}
-
 Note that the 0-1 loss function and the absolute difference loss function perform the same.
-The squared difference loss function performs slightly worse in the accuracy metric however scores better for MSE.
+The squared difference loss function performs slightly worse in the accuracy metric after rounding however scores better for MSE.
 
 The 0-1 loss function and absolute differences loss function assign classes in a very similar manner.
 This is due to there often being a $\hat{c} \in \mathcal{C}$ with a much greater $P(c \mid \mathbf{a})$.
@@ -166,7 +128,85 @@ When this is the case $\hat{c}$ is the choice for both the 0-1 loss function and
 
 The squared difference loss function differs from these two slightly as it is affected more by outliers.
 
-\section{Further Loss Functions}
+\section{Custom Loss Matrix}
 Here we have considered three common choices for the loss function however there are other options available.
-We could even choose a loss function that is tailored to the problem at hand.
-For example we could consider the loss function which assigns greater loss if we underestimate the risk rating of vehicle.
+
+If we knew how the true cost to the insurer of misclassifying a vehicle we could construct a specific loss function
+As an example consider the following loss matrix:
+\begin{equation}
+	L = 
+		\begin{bmatrix}
+			0   & 1  & 1  & 1  & 1  & 1 \\
+			10  & 0  & 1  & 1  & 1  & 1 \\
+			20  & 10 & 0  & 1  & 1  & 1 \\
+			50  & 25 & 10 & 0  & 1  & 1 \\
+			80  & 40 & 20 & 10 & 0  & 1 \\
+			100 & 50 & 30 & 20 & 10 & 0 \\
+		\end{bmatrix}
+\end{equation}
+then we can define a loss function as $L(c, \hat{c}) = L_{c,\hat{c}}$.
+In this example we assign increasing loss for underestimating the risk rating of a vehicle (as this would cause the insurer to offer lower premiums despite a possibly high chance of payout) and a consistent loss of one for overestimating the risk.
+This should cause our decision rule to underestimate the risk rating.
+The expected loss would then be calculated as:
+\begin{equation}
+	E(L) = \sum_{c \in \mathcal{C}} L_{c,\hat{c}}P(c \mid \mathbf{a})
+\end{equation}
+The estimate that minimizes this expectation can then be chosen providing our decision rule.
+
+If we apply use this particular loss function and compare it to the zero loss one we get:
+\begin{center}
+	\begin{tabular}{l r r}
+		\hline
+		Loss Function & Accuracy & MSE  \\
+		\hline
+		0-1           & 69.43\%  & 0.59 \\
+		Custom        & 65.28\%  & 0.70 \\
+		\hline
+	\end{tabular}
+\end{center}
+
+Note that this custom loss function has a lower accuracy and a greater mean squared error.
+However if we compare the two confusions matrices:
+
+Zero-One:
+
+\begin{tabular}{l l r r r r r r}
+    \hline
+                       &    & \multicolumn{6}{c}{Predicted Class}                   \\
+    \hline
+                       &    & -2      & -1    & 0       & 1       & 2       & 3     \\
+    \hline
+\multirow{6}{*}{Actual Class} & -2 & 0.52\% & 1.04\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% \\
+& -1 & 1.55\% & 5.7\% & 3.63\% & 0.52\% & 0.0\% & 0.0\% \\
+& 0 & 0.0\% & 1.55\% & 24.87\% & 4.66\% & 1.55\% & 0.0\% \\
+& 1 & 0.0\% & 2.07\% & 2.59\% & 17.62\% & 3.11\% & 1.04\% \\
+& 2 & 0.0\% & 0.0\% & 1.04\% & 2.07\% & 11.92\% & 1.04\% \\
+& 3 & 0.0\% & 0.52\% & 0.0\% & 0.52\% & 2.07\% & 8.81\% \\
+\end{tabular}
+
+Custom Matrix:
+
+\begin{tabular}{l l r r r r r r}
+    \hline
+                       &    & \multicolumn{6}{c}{Predicted Class}                   \\
+    \hline
+                       &    & -2      & -1    & 0       & 1       & 2       & 3     \\
+    \hline
+\multirow{6}{*}{Actual Class} & -2 & 0.0\% & 1.55\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% \\
+& -1 & 0.52\% & 5.7\% & 4.66\% & 0.52\% & 0.0\% & 0.0\% \\
+& 0 & 0.0\% & 1.04\% & 21.76\% & 5.7\% & 4.15\% & 0.0\% \\
+& 1 & 0.0\% & 1.55\% & 1.55\% & 17.1\% & 4.66\% & 1.55\% \\
+& 2 & 0.0\% & 0.0\% & 1.04\% & 2.07\% & 11.92\% & 1.04\% \\
+& 3 & 0.0\% & 0.52\% & 0.0\% & 0.52\% & 2.07\% & 8.81\% \\
+\end{tabular}
+
+We see that our custom loss function is much less likely to underestimate the risk rating of a vehicle.
+This may be more beneficial to an insurer than a more accurate classifier that is less cautious.
+
+\section{Alternative Approaches}
+
+An alternate approach to ordinal classification was described by Frank and Hall \cite{Frank01}.
+They proposed reducing the classification to a series of binary classifications.
+For our insurance problems this would amount to asking is the vehicle greater than each risk rating.
+Then after making each of these judgements we are able to assign a class.
+They showed this method can lead to a more accurate classifier when handling ordinal classes.

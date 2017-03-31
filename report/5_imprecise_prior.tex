@@ -4,9 +4,9 @@
 
 When estimating the probabilities for our classifier we take in to account our prior beliefs for them and the likelihood given a set of observations.
 
-When we initially chose our prior distribution we chose the parameters in \cref{initial prior} such that they follow the principal of indifference.
-However as previously mentioned this prior does not truly represent our lack of prior knowledge about the parameters.
-We need a way to represent this lack of knowledge and acknowledge that our estimates for the probabilities depend on this prior.
+When we initially chose our prior distribution we chose the hyperparameters in \cref{initial prior} such that they follow the principal of indifference.
+However as previously mentioned this prior does not truly represent a lack of prior knowledge.
+We need a way to represent this lack of knowledge and acknowledge that our estimates for the probabilities depend on our choice prior distribution.
 
 \section{Imprecise Dirichlet Model}
 
@@ -42,7 +42,11 @@ The parameter $s$ represents the strength of our prior beliefs and determines ho
 
 \section{Imprecise Probabilities}
 
-Using this model we can find the upper and lower bounds for each posterior expectation based on different prior distributions.
+Imprecise probabilities is a general term for all models which do not assign definite numerical probabilities to events \cite{Walley91}.
+Imprecise probabilities have other applications in artificial intelligence and can better represent an experts knowledge \cite{}.
+One such approach is to use upper and lower bounds for a probability.
+Using the model of imprecise priors we can find the upper and lower bounds for each posterior expectation based on different prior distributions.
+
 Recall that we estimate the probabilities by taking the expectation of the posterior distribution and that these estimates depend on $\mathbf{t}$ i.e.:
 \begin{align}
 	P_t(c) & = E(\theta_c \mid \mathbf{n},s,\mathbf{t}) = \frac{n(c) + st(c)}{N + s} \\
@@ -64,7 +68,7 @@ Similarly we have:
 These occur when we use the prior distributions with $t(c) \rightarrow 1$, $t(a_i, c)\rightarrow1$ and $t(c) \rightarrow 1$, $t(a_i, c)\rightarrow0$ respectively.
 
 Let's start by comparing how our classifier behaves if we assume the true probability is at each end of the interval.
-We will use the 0-1 loss function for the decision method and estimate each probability $P(\cdot)$ to be either the upper or lower probability of our interval.
+We will use the 0-1 loss function for the decision method and estimate each probability $P(\cdot)$ by either the upper or lower probability of our interval.
 We will measure accuracy and indeterminate classifications as before.
 
 \begin{center}
@@ -78,7 +82,7 @@ We will measure accuracy and indeterminate classifications as before.
 
 Neither of these offer a sufficient classification.
 There are often no observations of an attribute with a particular class which is why the lower estimates returns indeterminate classifications despite a reasonable accuracy for this data set.
-On the other had the upper estimates have a terrible accuracy.
+On the other hand when using the upper estimates our classifier has a terrible accuracy.
 
 \section{Simple Credal Classifier}
 Alternatively we can turn our classifier into a credal classifier.
@@ -130,7 +134,7 @@ We cannot use our previous measure of accuracy as this classifier may not return
 Instead there are a few metrics we can use for our diagnostics \cite{Antonucci11}:
 \begin{description}
 	\item[Single Accuracy (A\%)] Accuracy of the credal classifier when a single class is returned
-	\item[Set Accuracy (B\%)] Percentage of objects for which the true class is in the returned set
+	\item[Set Accuracy (B\%)] Percentage of objects for which the true class is in the returned set when the set has size larger than one
 	\item[Indeterminate Output Size (C)] Average set size for returned sets containing more than one class
 	\item[Determinacy (D\%)] Percentage of objects for which the returned set contains one class
 \end{description}
@@ -161,7 +165,7 @@ In the simple credal classifier we estimated the lower and upper bounds for each
 We then used these separate estimates to make inferences about the true probability of interest: $P(c \mid \mathbf{a})$.
 
 However an alternate method for credal classification was proposed by Zaffalon \cite{Zaffalon01} which we will outline in this section.
-This classifier is known as the naive Credal classifier (NCC).
+This classifier is known as the naive Credal classifier (NCC) and can be more determinate than the simple credal classifier we studied earlier.
 
 Zaffalon has provided multiple examples of this classifier in action.
 

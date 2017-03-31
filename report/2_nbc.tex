@@ -1,16 +1,19 @@
 \chapter{Naive Bayes Classifier}
 
-The naive Bayes classifier have been shown to be highly effective in many different situation and comparable in performance to more complex classifiers \cite{Ashari13}.
+A Bayesian approach to artificial intelligence has been used since the 1960s, especially in a medical setting \cite{Russell03}.
+The naive Bayes classifier as previously mentioned has been shown to be highly effective in many different situations and comparable in performance to more complex classifiers \cite{Ashari13}.
 In one study \cite{Dumitru09} images of breast mass for patients who had previously suffered from breast cancer were analysed.
 The naive Bayes classifier used attributes of the cells in the image such as radius and symmetry to determine whether the cancer was recurrent or non-recurrent.
 In this study the classifier achieved an accuracy of 74.24\% which is consistent with the best results of other classifiers.
 However this same study indicates there is room for improvement.
 The sensitivity of the classifier was only 27.78\% meaning a large proportion of sick patients were not correctly diagnosed.
+In this chapter we'll use Manning's \cite{Manning08} formulation of the NBC and apply it to our insurance problem.
 
 
 \section{Basic Classifier}
 
 To help explain how the naive Bayes classifier works we will introduce a new data set from a remote sensing study.
+This study aimed to identify the type of forest based on satellite readings.
 The study measured spectral information in the green, red and infrared wavelengths on three separate dates of $523$ different areas of forest in Japan.
 In total each observation has nine continuous attributes and falls in to one of four possible classes: Sugi forest, Hinoki forest, Mixed deciduous forest and other non-forest land.
 This data set was chosen as it contained a large number of observations and demonstrates a situation where this type of classifier works well.
@@ -24,11 +27,11 @@ Using Bayes theorem we can rewrite this as:
 \begin{equation} \label{bayes}
 	P(c \mid \mathbf{a}) = \frac{P(c)P(\mathbf{a} \mid c)}{P(\mathbf{a})}
 \end{equation}
-Bayes theorem was first described in Thomas Bayes' posthumous work ``An Essay towards solving a Problem in the Doctrine of Chances'' \cite{Bayes63} and a Bayesian approach to artificial intelligence has been used since the 1960s, especially in a medical setting \cite{Russell03}.
+Bayes theorem was first described in Thomas Bayes' posthumous work ``An Essay towards solving a Problem in the Doctrine of Chances'' \cite{Bayes63}.
 
 Next we introduce the naivety assumption.
-The naivety assumptions states that the attributes are conditionally independent given the class.
-When the NBC was originally used for information retrieval this assumption referred to the the terms in a document appearing independently on one another in the document's index \cite{Maron60}.
+The naivety assumptions states that the attributes of an object are conditionally independent given the class.
+When the NBC was originally used for information retrieval this assumption referred to the terms in a document appearing independently of one another in the document's index \cite{Maron60}.
 In the context of this data set we are assuming the sensor readings are conditionally independent given the type of forest.
 This assumption may not necessarily be accurate however it simplifies the problem by making the probabilities easier to estimate.
 We can therefore write the probability of observing an object with attributes $a_1, \dots\ a_9$ given it is in class $c$ as:
@@ -42,7 +45,7 @@ So by bringing together \cref{bayes,naivety} we can write:
 	P(c \mid \mathbf{a}) \propto P(c)\prod_{i=1}^{9}P(a_i \mid c)
 \end{equation}
 
-To turn this into a classifier we need a way to decide which class a forest falls into based on these probabilities.
+To turn this into a classifier we need a \textit{decision rule} to decide which class a forest falls into based on these probabilities.
 We can introduce a \textit{loss function} to allow us to choose the class.
 The standard choice for the naive Bayes classifier is the 0-1 loss function \cite{Rish01} defined as:
 \begin{equation}\label{0-1_loss_function}
@@ -62,6 +65,7 @@ So to minimize our expected loss we choose:
 	\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
 \end{equation}
 This is known as the maximum a posteriori (MAP) estimate.
+Note that when using this loss function our estimates for the probabilities do not necessarily have to be accurate, they just have to be ordered correctly.
 We will investigate other options for the loss function later on in this report.
 
 Now that we have our method for making our decision we need to estimate the required probabilities.
@@ -168,6 +172,10 @@ Now we've seen an application of the NBC to a straightforward data set we want t
 Unlike in the trees data set, in this data set we have objects with missing values for attributes.
 We have no mechanism for considering these so we must discard these observations for now.
 This reduces our data set from 205 observations to 193 observations.
+
+To simplify this data set we will discretize the continuous variables.
+There are methods to model these variables for example using normal distributions \cite{Dumitru09} however we shall not consider these in this report.
+We split the continuous variables into 10 categories with equal frequency.
 
 As before we carry out 10-fold cross validation for the two metrics.
 The accuracy of our classifier is 59.95\% on the automobile data set.

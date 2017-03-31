@@ -1,14 +1,21 @@
 \chapter{Corrected NBC}
 
-In the previous section we considered a frequentist approach to estimating the probabilities required for the NBC.
+In the previous section we considered used the maximum likelihood estimate for the probabilities required in the NBC.
 We saw that our classifier falls down if there are no observations with attribute $a_j$ and class $c$ in our training set.
-If we take a Bayesian approach to the problem and introduce a prior distribution for these probabilities we can avoid this situation.
-In literature this is often called ``additive smoothing'' or ``Laplace smoothing'' and is presented as simply adding a pseudocount to each of the observed frequencies \cite{Manning08}.
-This is often done without properly considering the prior distribution that is being used.
-In this chapter we will offer a rigorous definition of our prior distribution which will form the basis for the naive Credal classifier we discuss later.
+
+This problem is especially common in the field of language modelling \cite{Chen96}.
+Standard practice in language modelling is to break a sentence down in to individual words.
+The aim is to then estimate the probability of seeing a certain word.
+However due to the large number words in a language an the possibly limited size of the data set the maximum likelihood estimate for some words will often be zero.
+One such approach to this problem is to add a small pseudocount to each word, this is known as additive smoothing \cite{Manning08}.
+
+While this solves the problem of zero counts using equal pseudocounts may introduce more problems.
+For example if the words ``cat'' and ``axolotl'' may not appear in a data set but  using the same pseudocount would give them equal probabilities.
+
+This approach is equivalent to adding a prior distribution for the theta chances discussed previously.
+In this chapter we will define our prior distribution which will form the basis for the naive Credal classifier we discuss later.
 
 \section{Introducing a Prior}
-
 We return to our likelihood function \cref{likelihood} for our theta variables.
 We will introduce a prior distribution for these parameters and then consider the posterior distribution.
 
@@ -33,14 +40,18 @@ $s > 0$ is a fixed constant and we have the following constraints on $t(\cdot):$
 These constraints retain the structure seen for the frequencies in our likelihood.
 
 This family of distributions is a conjugate prior for the likelihood function \cref{likelihood}.
-When we multiply our likelihood by this prior density we get a posterior in the same family as this prior.
+When we multiply our likelihood by a prior density of this form we get a posterior in the same family as this prior.
 If the prior has hyper parameters $st(\cdot)$ the posterior will have hyper parameters $st(\cdot) + n(\cdot)$.
+The conjugate prior make the posterior more convenient to handle and also allows us to more clearly see how the likelihood updates the prior.
 
 We can now estimate the parameters by taking the posterior expectation:
 \begin{align}
 	E(\theta_c \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(c)}{N + s} = \hat{\theta}_c \\
 	E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(a_i, c) + st(a_i, c)}{n(c) + st(c)} = \hat{\theta}_{a_i \mid c}
 \end{align}
+
+Note that if we observe more vehicles from the population we do not expect the ratios to tend to these estimated probabilities.
+These estimates represent the proportions of vehicles from all possible populations from which we could have drawn our original data set \cite{Lidstone20}.
 
 \section{Hyper Parameters}
 
@@ -53,10 +64,14 @@ Walley recommends setting $s=1$ or $s=2$ \cite{Walley96}.
 When comparing the NBC to the corrected NBC we will set $s=1$ then we will look at the sensitivity of the corrected NBC with respect to the $s$ value.
 
 The other hyperparameters $t(\cdot)$ represent our prior beliefs for $P(\cdot)$.
-Initially we have no information regarding what these probabilities are and Laplace tells us \cite{laplace1812} the best way to represent this in through indifference.
+Initially we have no information regarding what these probabilities are and Laplace tells us \cite{laplace1812} the best way to represent this is by making them all equal in our prior.
 This is referred to as ``The Principal of Indifference'' by Keynes \cite{Keynes21} who criticised it as a representation of a lack of prior information.
 He presented several situations where this principal leads to paradoxes.
-In this section we will follow the principal of indifference when selecting our prior distribution however we will return to this problem in chapter 4 where we introduce the imprecise prior.
+For example suppose we know the length of a side of square ($l$) is between 0 and 1 and hence the area ($A$) is also between 0 and 1 but other than that we have no information.
+A uniform prior for the side length gives $P(l < \frac{1}{2}) = \frac{1}/{2}$ so $P(A < \frac{1}{4}) = \frac{1}{2}$.
+However a uniform prior for the area give $P(A < \frac{1}{4}) = \frac{1}{4}$.
+
+In this section we will follow the principal of indifference when selecting our prior distribution however we will address this problem in chapter 4 where we introduce the imprecise prior.
 Hence we set:
 \begin{align}\label{initial prior}
 	t(c)      & = \frac{1}{|C|} \\
@@ -64,38 +79,41 @@ Hence we set:
 \end{align}
 These assignments obey the constraints given in \cref{prior_constraints}.
 
-
 \section{Application}
 
-The accuracy and percentage of indeterminate classifications are shown below:
+Using 10-fold cross validation the accuracy and percentage of indeterminate classifications are shown below:
 \begin{center}
 	\begin{tabular}{ c|c c }
-		              & Accuracy & Indeterminate Classifications\\
+		              & Accuracy & Indeterminate Classifications \\
 		\hline
-		NBC           & 63.73\%  & 20.21\% \\
+		NBC           & 63.73\%  & 20.21\%                       \\
 		Corrected NBC & 72.02\%  & 0\%
 	\end{tabular}
 \end{center}
 
 In addition we can consider the confusion matrix:
 \begin{center}
-    \begin{tabular}{c c c c c c c c}
+    \begin{tabular}{l l r r r r r r}
     \hline
                        &    & \multicolumn{6}{c}{Predicted Class}                   \\
     \hline
-                       &    & -2      & 1       & 0       & 1       & 2       & 3   \\
+                       &    & -2      & -1    & 0       & 1       & 2       & 3     \\
     \hline
-    \multirow{4}{*}{Actual Class} & -2 & \textbf{0.0\%}  & 1.55\% & 0.0\%   & 0.0\%   & 0.0\%  & 0.0\%  \\
-                       & -1 & 1.55\% & \textbf{5.7\%}  & 3.63\%  & 0.52\%  & 0.0\%  & 0.0\%  \\
-                       & 0  & 0.0\%  & 1.55\% & \textbf{24.87\%} & 4.66\%  & 1.55\% & 0.0\%  \\
-                       & 1  & 0.0\%  & 2.59\% & 2.07\%  & \textbf{19.17\%} & 1.04\% & 1.55\% \\
-                       & 2  & 0.0\%  & 0.0\%  & 1.55\%  & 2.07\%  & \textbf{11.4\%} & 1.04\% \\
+    \multirow{6}{*}{Actual Class} & -2 & \textbf{0.0\%}  & 1.55\% & 0.0\%   & 0.0\%   & 0.0\%  & 0.0\%  \\
+                       & -1 & 1.55\% & \textbf{5.7\%}   & 3.63\%  & 0.52\%  & 0.0\%  & 0.0\%  \\
+                       & 0  & 0.0\%  & 1.55\% & \textbf{24.87\%}  & 4.66\%  & 1.55\% & 0.0\%  \\
+                       & 1  & 0.0\%  & 2.59\% & 2.07\%  & \textbf{19.17\%}  & 1.04\% & 1.55\% \\
+                       & 2  & 0.0\%  & 0.0\%  & 1.55\%  & 2.07\%  & \textbf{11.4\%}  & 1.04\% \\
                        & 3  & 0.0\%  & 0.0\%  & 0.52\%  & 0.52\%  & 2.07\% & \textbf{8.81\%} \\
     \hline
     \end{tabular}
 \end{center}
 
 Using posterior expectations instead of maximum likelihood estimates improves our classifier in all three metrics.
+
+We can also see that our classifier rarely assigns risk ratings that are far away from the true risk rating.
+For example if the risk rating is 2 or 3 our classifier never assigns a negative risk rating.
+In the next section we'll look to see whether we can reduce this further.
 
 Firstly introducing the prior distribution means that we no longer have indeterminate classifications as $P(c \mid \mathbf{a})$ will never be zero.
 We will investigate how sensitive our choice of classifications to changes in the prior hyper parameters.
@@ -147,4 +165,4 @@ On the other side of the graph, for $s \leq 1$ we see a fairly consistent classi
 
 We've seen that the corrected NBC has a greater accuracy than the normal NBC and never returns indeterminate classifications.
 We've also seen the effect varying the hyperparameter $s$ has on this classifier.
-In the next section we'll look at our choice of loss function in the original formulation of the NBC.
+In the next section we'll look at how our choice of loss function affects how we assign classes.

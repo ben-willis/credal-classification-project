@@ -1,14 +1,26 @@
 \chapter{Introduction}
 
-Classifiers have many applications in the finance industry ranging from financial trading \cite{Gerlein16} to credit card fraud detection \cite{Pozzolo15}.
-In this report we will study the problem of determining the risk to an insurer of a vehicle.
-We will tackle this problem using classification.
+% It's a good start. The different paragraphs don't quite flow together, e.g. there's a bit of a "jump" just after your example classifiers. Maybe use the phrase "This report is structured as follows. In Chapter 1, ..." etc. This probably should be the last part of your introduction. So, I'd suggest, for a good introduction, to stick to the following structure:
 
+% 1. Describe your problem (could include description of data).
+Classifiers have many applications in the finance industry ranging from financial trading \cite{Gerlein16} to credit card fraud detection \cite{Pozzolo15}.
+In this report we will study the problem of determining the risk to an insurer of an automobile.
+
+We have a data set containing technical information (see \cref{attributes}) and an expert assigned risk rating (on an integer scale from -2 to 3) for 205 automobiles.
+The risk rating has been assigned through a process known as symboling \cite{Automobile}.
+An expert considers the price of a vehicle to set an initial risk rating before moving the rating up or down depending on other attributes of the vehicle.
+We want to predict the risk rating of an automobile based on the provided technical attributes.
+
+We will tackle this problem using classification.
 Classification is the problem of identifying which class an object belongs to.
 Each object can be distinguished by a set of properties know as features and each object belongs to a single class.
 A classifier is an algorithm which, given previous observations and their classes, can determine which class a new observation belongs to \cite{Theodoridis03}.
-There are many applications of classifiers including image recognition, sentiment analysis and medical diagnosis.
 
+We want to develop a credal classifier to tackle our problem.
+A credal classifier is a specific type of classifier that, instead of returning a single class, returns a set of classes.
+
+% 2. Past work (literature that you use, similar studies).
+There are many applications of classifiers including image recognition, sentiment analysis and medical diagnosis.
 There are also many different approaches to the classification problem.
 Firstly there are two types of classifier; supervised and unsupervised.
 Supervised classifiers require a training data set describing the different classes where as unsupervised classifiers learns the classes for itself.
@@ -19,7 +31,36 @@ Some examples of classifiers include:
 	\item[Decision Trees] A decision tree is a rooted tree where each leaf represents a class and at each node a decision is made about an object. An object works its way through the tree until it reaches the end of a branch and is then assigned the corresponding class. 
 \end{description}
 
-In the first section we formulate a simple probabilistic classifier known as the naive Bayes classifier described in Manning \cite{Manning08} - chapter 13.
+For these problem we will build upon a simple probabilistic classifier known as the naive Bayes classifier described by Manning et al. \cite{Manning08} - chapter 13.
+Manning et al present the naive Bayes classifier in the context of text classification.
+
+We will also use the work done by Zaffalon \cite{Zaffalon01} to create our credal classifier.
+Zaffalon extended Walley's imprecise Dirichlet model \cite{Walley96} to the field of classification and offered the naive credal classifier.
+Zaffalon applied the classifier to multiple data sets including letter image recognition and credit ratings.
+He showed that the NCC can have a greater accuracy than then NBC when it returned a single class.
+He also showed that the NBC can have a significantly lower accuracy when classifying objects the NCC was indeterminate about \cite{Zaffalon01}.
+We will examine whether we achieve similar results with our data set.
+
+While there is no previous literature on classifying the insurance risk of vehicles based on this data study it has been used for other purposes.
+In one study an approach to visualizing relationships between the different attributes was investigated \cite{Rosario04}.
+From the visualisations created in this study we can see there are relationships between various attributes.
+The classifiers we study in this report all naively assume conditional independence between the attributes given the classes so we will see whether the observed relationships affects our classifiers.
+
+% 3. Your contribution (what you do differently from the literature, new findings).
+
+There is plenty of literature on the naive Bayes classifier however there is relatively little on it's application to ordinal classification.
+As the risk ratings we're using as our classes we can investigate ways we can alter the NBC to account for this.
+We investigate alternate loss functions which take into account the distance of a misclassification.
+We find we can reduce the average distance or classifications but at the expense of accuracy.
+
+We also provide a further application of the naive Bayes classifier to this insurance problem.
+As previously stated Zaffalon provided several examples of the application of the NCC to other problems.
+We find that the naive Credal classifier is very accurate when returning a single class however can be quite indeterminate when faced with very few observations.
+
+% 4. Overview of rest of report. ("This report is structured ...")
+\section{Report Structure}
+
+This report is structured as follows. In the first section we formulate a simple probabilistic classifier known as the naive Bayes classifier described.
 This classifier forms the basis for the rest of the analysis in this report.
 The naive Bayes classifier (or 'NBC') can be applied to many other problems including breast cancer diagnosis \cite{Dumitru09} and text analysis \cite{Nigam98}.
 We start by applying the NBC to a relatively straightforward data set before applying it to the insurance problem.
@@ -27,29 +68,5 @@ We start by applying the NBC to a relatively straightforward data set before app
 In the second section we will investigate the choice of decision mechanism used in the naive Bayes classifier.
 We will investigate different options that take in to account the structure of our problem.
 
-For the remainder of the report we will expand this classifier to create Zaffalon's \cite{Zaffalon01} naive Credal classifier (or 'NCC').
-A credal classifier is a specific type of classifier that, instead of returning a single class, returns a set of classes.
-Zaffalon applied the classifier to multiple data sets including letter image recognition and credit ratings.
-He showed that the NCC can have a greater accuracy than then NBC when it returned a single class.
-He also showed that the NBC can have a significantly lower accuracy when classifying objects the NCC was indeterminate about \cite{Zaffalon01}.
-We will examine whether we achieve similar results with our data set.
+For the remainder of the report we will expand this classifier to create Zaffalon's  naive Credal classifier (or 'NCC').
 
-\section{Data Set}
-
-The data set we will be analysing contains vehicular information from 205 automobiles.
-Its details 24 different technical attributes including dimensions, engine specifications and vehicle characteristics.
-It also contains an expert's assessed risk to the insurer of the vehicle on an integer scale of -2 to 3 with 3 being most risky and -2 being least risky.
-This risk value is assigned through a process known as symboling \cite{Automobile}.
-An expert considers the price of a vehicle to set an initial risk rating before moving the rating up or down depending on other attributes of the vehicle.
-% In addition to the technical information and the experts assessment, the data set also contains the normalized loss to the insurer.
-% This ranges from 65 to 256 and is normalized for all vehicles within a particular size classification (two-door small, station wagons, etc.) and represents the average loss per car per year.
-
-To simplify this data set we will discretize the continuous variables.
-There are methods to model these variables for example using normal distributions \cite{Dumitru09} however we shall not consider these in this report.
-We split the continuous variables into 10 categories with equal frequency.
-
-This data set has been studied previously however not for classification purposes.
-In one study a visualisation of the relationships between the different attributes was investigated \cite{Rosario04}.
-This study investigated an approach to visualizing relationships between nominal variables.
-From the visualisations created in this study we can see relationships between various attributes.
-The classifiers we study in this report all naively assume conditional independence between the attributes given the classes so we will see whether the observed relationships affects our classifiers.
