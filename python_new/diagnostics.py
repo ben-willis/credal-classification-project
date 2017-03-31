@@ -43,7 +43,7 @@ def confussion(classifications):
 	for row in results:
 		for item in row:
 			print(str(round(item*100, 2)) + "\%", end=" & ")
-		print("\n ----------------------------")
+		print('\\\\')
 	return {
 		"result": results,
 		"name": "Confusion"

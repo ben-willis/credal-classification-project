@@ -2,7 +2,7 @@ from __future__ import division
 import random, math
 
 from diagnostics import accuracy, mse, unclassified, cross_validate, compare
-from lossfns import zero_one, squared_diff,  absolute_diff
+from lossfns import zero_one, squared_diff,  absolute_diff, custom
 
 def transpose(M):
 	return [list(i) for i in zip(*M)]
@@ -40,5 +40,5 @@ def train_classifier(data, values, a_ids, c_id, s):
 				p_c_given_ais[c] = p_c_given_ais[c] * p_ai_given_cs[a_id][c][obj[a_id]]
 		normalizing_factor = sum(p_c_given_ais)
 		p_c_given_ais = [prob/normalizing_factor for prob in p_c_given_ais]
-		return zero_one(p_c_given_ais)
+		return custom(p_c_given_ais)
 	return trained_classifier

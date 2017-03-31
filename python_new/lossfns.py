@@ -12,18 +12,17 @@ def squared_diff(class_probabilities):
 	return mean
 
 def absolute_diff(class_probabilities):
-	left_probs = 0
-	possible_medians = []
-	for i in range(len(class_probabilities)):
-		if (left_probs + class_probabilities[i] >= 0.5) and (1-left_probs >= 0.5):
-			possible_medians.append(i)
-		left_probs = left_probs + class_probabilities[i]
-	if possible_medians == []:
-		bleh = 0;
-		for prob in class_probabilities:
-			print str(left_probs+class_probabilities[i]) + ", " + str(left_probs)
-			bleh = bleh + prob;
-	return random.choice(possible_medians)
+	losses = []
+	for class_estimate in range(len(class_probabilities)):
+		losses.append(sum([abs(class_estimate - i) * class_probabilities[i] for i in range(len(class_probabilities))]))
+	return losses.index(min(losses))
+
+def custom(class_probabilities):
+	loss_matrix = [[0,1,1,1,1,1],[10,0,1,1,1,1],[20,10,0,1,1,1],[50,25,10,0,1,1],[80,40,20,10,0,1],[100,50,30,20,10,0]]
+	losses = []
+	for class_estimate in range(len(class_probabilities)):
+		losses.append(sum([loss_matrix[i][class_estimate] * class_probabilities[i] for i in range(len(class_probabilities))]))
+	return losses.index(min(losses))
 
 def credal(class_probability_intervals):
 	dominated = []
