@@ -26,7 +26,7 @@ def p_ai_given_c_mle(M, a_id, c_id, a_values, c_values):
 			probs.append([(vals.count(a)/len(vals)) for a in a_values])
 	return probs
 
-def train_classifier(data, values, a_ids, c_id):
+def train_classifier(data, values, a_ids, c_id, s):
 	p_cs = p_a_mle(data, c_id, values[c_id])
 	p_ai_given_cs = [p_ai_given_c_mle(data, a_id, c_id, values[a_id], values[c_id]) for a_id in a_ids]
 	def trained_classifier(obj):

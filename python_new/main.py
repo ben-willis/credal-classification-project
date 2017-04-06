@@ -9,7 +9,7 @@ from corrected import train_classifier as corrected_classifier
 from idm import train_classifier as idm_classifier
 # from ncc import train_classifier as ncc_classifier
 
-random.shuffle(unclean_data, lambda : 0.1)
+random.shuffle(unclean_data, lambda : 0.5)
 
 reduced_data = transpose(unclean_data)
 reduced_data = remove_rows_with_missing_values(reduced_data)
@@ -18,4 +18,4 @@ reduced_data = transpose(reduced_data)
 clean_data = remove_rows_with_missing_values(unclean_data)
 
 s=1
-cross_validate(clean_data, len(clean_data[0]) - 1, corrected_classifier, [accuracy, mse, confussion], 10, s)
+cross_validate(clean_data, len(clean_data[0]) - 1, corrected_classifier, [accuracy], 10, 1)
