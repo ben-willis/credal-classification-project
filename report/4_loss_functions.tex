@@ -1,18 +1,27 @@
-\chapter{Alternate Loss Functions}
+\chapter{Decision Rules}
 
-In chapter two we discussed the need for a decision rule to allocate an object to a class.
-We used the 0-1 loss function to do this.
-In this chapter we will investigate some alternate loss functions that make better use of the structure of the insurance problem.
-
+% 1. Describe your problem (could include description of data).
 When classifying the insurance risk of a vehicle we return a class on an integer of scale of -2 to 3.
 We know that it describes order and that a vehicle with a lower risk rating is of more risk to an insurer than a vehicle with a higher risk rating.
 However we do not know whether the intervals between the different risk ratings are equal.
-This would depend on how the insurer decides premiums for the vehicles involved.
-If we assume the differences are not equal then the problem can be described as \textit{ordinal classification}.
 
+In chapter two we discussed the need for a decision rule to allocate an object to a class.
+We introduced the 0-1 loss function and chose the class that minimized expected loss.
+We want to investigate alternate loss functions that makes use of the ordered class structure.
+We also need new metrics to decide which loss functions perform better.
+
+% 2. Past work (literature that you use, similar studies).
 Loss functions have applications in game theory and are often known as cost functions.
-The inverse of a loss function is the utility and then rather than minimizing expected loss we can aim to maximumize expected utility.
-Expected loss is sometimes called risk.
+Ordered classification has been described as somewhere between normal classification and regression.
+
+% 3. Your contribution (what you do differently from the literature, new findings).
+We apply different loss functions to our problem of classifying vehicles in to ordered classes.
+
+
+% 4. Overview of rest of report. ("This report is structured ...")
+First we will introduce some common loss functions and the mean squared error to help determine how successufl these loss functions are.
+Then we will describe a custom approach using a loss matrix and see how we can affect the behaivour of our classifier through this.
+Finally we will discuss some alternate approaches to ordered classification.
 
 % Stevens \cite{Stevens46} argued that the only statistics it is permissible to use when dealing with ordinal data are percentiles and the median.
 
@@ -20,7 +29,7 @@ Expected loss is sometimes called risk.
 
 In this section we outline some common loss functions based on those found in Berger \cite{Berger85}.
 
-We'll start with the 0-1 loss function as described in chapter two and then we will test alternate choices that take into account how close our estimate is to the true value.
+We will start with the 0-1 loss function as described in chapter two and then we will test alternate choices that take into account how close our estimate is to the true value.
 We will use a uniform prior and take the posterior expectations to estimate the required probabilities as in the previous chapter.
 
 \subsection{0-1 Loss Function}
@@ -203,10 +212,22 @@ Custom Matrix:
 We see that our custom loss function is much less likely to underestimate the risk rating of a vehicle.
 This may be more beneficial to an insurer than a more accurate classifier that is less cautious.
 
-\section{Alternative Approaches}
+\section{Conclusions}
 
+% Implicitly restate your thesis/position.
+We have found that using an alternative loss function to create the decision rule can lead to increases in some metrics.
+We saw that using the squared differences loss function reduces the mean squared error but at the expense of accuracy.
+
+We also saw how a custom choice of loss matrix can affect our classifications.
+
+% Emphasize the importance of your subject by placing it in a larger context.
+Ordered classification falls between ordinary classification and regression and has not been fully explored despite its commonness.
+We have demonstrated that varying the loss function can, in some respects, help better tackle this problem.
+
+% Offer suggestions for the future based on what you have argued.
+Further work on identifying how to deal with ordered classes is required given their prominence.
 An alternate approach to ordinal classification was described by Frank and Hall \cite{Frank01}.
 They proposed reducing the classification to a series of binary classifications.
 For our insurance problems this would amount to asking is the vehicle greater than each risk rating.
 Then after making each of these judgements we are able to assign a class.
-They showed this method can lead to a more accurate classifier when handling ordinal classes.
+They showed this method can lead to a more accurate classifier than one that ignores ordering when handling ordinal classes.

@@ -7,7 +7,7 @@ from diagnostics import accuracy, mse, unclassified, cross_validate, compare, co
 from mle import train_classifier as mle_classifier
 from corrected import train_classifier as corrected_classifier
 from idm import train_classifier as idm_classifier
-# from ncc import train_classifier as ncc_classifier
+from ncc import train_classifier as ncc_classifier
 
 random.shuffle(unclean_data, lambda : 0.5)
 
@@ -18,4 +18,4 @@ reduced_data = transpose(reduced_data)
 clean_data = remove_rows_with_missing_values(unclean_data)
 
 s=1
-cross_validate(clean_data, len(clean_data[0]) - 1, corrected_classifier, [accuracy], 10, 1)
+cross_validate(clean_data, len(clean_data[0]) - 1, [corrected_classifier, ncc_classifier], [accuracy], 10, s)

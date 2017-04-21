@@ -1,26 +1,23 @@
 \chapter{Introduction}
 
-% It's a good start. The different paragraphs don't quite flow together, e.g. there's a bit of a "jump" just after your example classifiers. Maybe use the phrase "This report is structured as follows. In Chapter 1, ..." etc. This probably should be the last part of your introduction. So, I'd suggest, for a good introduction, to stick to the following structure:
-
+\section{Problem Description}
 % 1. Describe your problem (could include description of data).
 Classifiers have many applications in the finance industry ranging from financial trading \cite{Gerlein16} to credit card fraud detection \cite{Pozzolo15}.
 In this report we will study the problem of determining the risk to an insurer of an automobile.
 
-We have a data set containing technical information (see \cref{attributes}) and an expert assigned risk rating (on an integer scale from -2 to 3) for 205 automobiles.
+We have a data set containing technical information about 205 automobiles (see \cref{attributes}) and an expert assigned risk rating (on an integer scale from -2 to 3).
 The risk rating has been assigned through a process known as symboling \cite{Automobile}.
 An expert considers the price of a vehicle to set an initial risk rating before moving the rating up or down depending on other attributes of the vehicle.
 We want to predict the risk rating of an automobile based on the provided technical attributes.
 
 We will tackle this problem using classification.
-Classification is the problem of identifying which class an object belongs to.
+Classification is the process of identifying which class an object belongs to.
 Each object can be distinguished by a set of properties know as features and each object belongs to a single class.
 A classifier is an algorithm which, given previous observations and their classes, can determine which class a new observation belongs to \cite{Theodoridis03}.
 
-We want to develop a credal classifier to tackle our problem.
-A credal classifier is a specific type of classifier that, instead of returning a single class, returns a set of classes.
-
+\section{Research Context}
 % 2. Past work (literature that you use, similar studies).
-There are many applications of classifiers including image recognition, sentiment analysis and medical diagnosis.
+There are many applications of classifiers including image recognition \cite{Chapelle99}, sentiment analysis \cite{Melville09} and medical diagnosis \cite{vster96}.
 There are also many different approaches to the classification problem.
 Firstly there are two types of classifier; supervised and unsupervised.
 Supervised classifiers require a training data set describing the different classes where as unsupervised classifiers learns the classes for itself.
@@ -31,42 +28,46 @@ Some examples of classifiers include:
 	\item[Decision Trees] A decision tree is a rooted tree where each leaf represents a class and at each node a decision is made about an object. An object works its way through the tree until it reaches the end of a branch and is then assigned the corresponding class. 
 \end{description}
 
-For these problem we will build upon a simple probabilistic classifier known as the naive Bayes classifier described by Manning et al. \cite{Manning08} - chapter 13.
-Manning et al present the naive Bayes classifier in the context of text classification.
+For these problem we will build upon a simple probabilistic classifier known as the naive Bayes classifier (or ``NBC'') described by Manning et al. \cite{Manning08}.
+Manning et al. present the naive Bayes classifier in the context of text analysis although it has been applied to many other classification problems including breast cancer diagnosis \cite{Dumitru09}.
 
-We will also use the work done by Zaffalon \cite{Zaffalon01} to create our credal classifier.
-Zaffalon extended Walley's imprecise Dirichlet model \cite{Walley96} to the field of classification and offered the naive credal classifier.
-Zaffalon applied the classifier to multiple data sets including letter image recognition and credit ratings.
+We will draw from Zaffalon's work \cite{Zaffalon01} to create the naive Credal classifier (or ``NCC'').
+A credal classifier is a type of classifier that, instead of returning a single class, returns a set of classes.
+Zaffalon extended Walley's imprecise Dirichlet model \cite{Walley96} to the field of classification.
+Zaffalon applied his classifier to multiple data sets including letter image recognition and credit ratings.
 He showed that the NCC can have a greater accuracy than then NBC when it returned a single class.
 He also showed that the NBC can have a significantly lower accuracy when classifying objects the NCC was indeterminate about \cite{Zaffalon01}.
-We will examine whether we achieve similar results with our data set.
+We will examine whether we achieve similar results when the naive credal classifier is applied to our problem.
 
-While there is no previous literature on classifying the insurance risk of vehicles based on this data study it has been used for other purposes.
+While there is a lack of previous literature on using this data set to classify the insurance risk of vehicles it has been used for other purposes.
 In one study an approach to visualizing relationships between the different attributes was investigated \cite{Rosario04}.
 From the visualisations created in this study we can see there are relationships between various attributes.
 The classifiers we study in this report all naively assume conditional independence between the attributes given the classes so we will see whether the observed relationships affects our classifiers.
 
 % 3. Your contribution (what you do differently from the literature, new findings).
+One of the interesting aspects of our problem is that the classes have order.
+There is plenty of literature on the application of the naive Bayes classifier to unordered classes however there is relatively little on it's application to ordered classification.
+We will investigate ways we can alter the classifier to account for this.
+We will find we can reduce the average distance of classifications but at the expense of accuracy.
 
-There is plenty of literature on the naive Bayes classifier however there is relatively little on it's application to ordinal classification.
-As the risk ratings we're using as our classes we can investigate ways we can alter the NBC to account for this.
-We investigate alternate loss functions which take into account the distance of a misclassification.
-We find we can reduce the average distance or classifications but at the expense of accuracy.
-
-We also provide a further application of the naive Bayes classifier to this insurance problem.
+We also provide a further application of the naive Credal classifier to this insurance problem.
 As previously stated Zaffalon provided several examples of the application of the NCC to other problems.
-We find that the naive Credal classifier is very accurate when returning a single class however can be quite indeterminate when faced with very few observations.
+We find that the naive Credal classifier is very accurate when it returns a single class, however it can be indeterminate when faced with few observations.
 
-% 4. Overview of rest of report. ("This report is structured ...")
-\section{Report Structure}
-
-This report is structured as follows. In the first section we formulate a simple probabilistic classifier known as the naive Bayes classifier described.
+\section{Report Overview}
+% 4. Overview of rest of report.
+This report is structured as follows. In the first two chapters we formulate the simple probabilistic naive Bayes classifier described.
 This classifier forms the basis for the rest of the analysis in this report.
-The naive Bayes classifier (or 'NBC') can be applied to many other problems including breast cancer diagnosis \cite{Dumitru09} and text analysis \cite{Nigam98}.
 We start by applying the NBC to a relatively straightforward data set before applying it to the insurance problem.
+We then introduce a prior distribution for the probabilities we need to estimate and see how this affects our classifier.
 
-In the second section we will investigate the choice of decision mechanism used in the naive Bayes classifier.
-We will investigate different options that take in to account the structure of our problem.
+In the third chapter we will investigate the choice of decision mechanism used in the naive Bayes classifier.
+We will investigate different options that take into account the structure of our problem.
+We will conclude that a custom loss function tailored to the needs of the insurer is easy to implement.
+In the absence of these requirements the standard zero one loss function is sufficient.
 
-For the remainder of the report we will expand this classifier to create Zaffalon's  naive Credal classifier (or 'NCC').
+For the remainder of the report we will expand this classifier to create Zaffalon's  naive Credal classifier.
+We present Walley's work \cite{Walley96} on the imprecise Dirichlet model before applying credal classifiers to our problem.
+We also see how the naive Credal classifier can take into account missing values in our data set.
 
+Finally we will conclude that the naive Credal classifier offers a cautious alternative to the naive Bayes classifier.

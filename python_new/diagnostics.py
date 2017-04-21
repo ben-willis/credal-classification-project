@@ -143,13 +143,45 @@ def get_classes(M, col_id):
 def cross_validate(data, c_id, train_classifier, metrics, k, s):
 	values = [range(max(get_classes(data, col_id))+1) for col_id in range(c_id+1)]
 	datas = split_data(data, k)
-	classifications = []
+	classifications1 = []
+	classifications2 = []
 	for i in range(k):
 		training_data = merge_datas(datas[:i] + datas[i+1:])
 		test_data = remove_rows_with_missing_values(datas[i])
-		classifier = train_classifier(training_data, values, range(c_id), c_id, s)
-		classifications = classifications + [(obj[c_id], classifier(obj)) for obj in test_data]
-	for metric in metrics:
-		res = metric(classifications)
-		print(res['name'], end=": ")
-		print(res['result'])
+		classifier1 = train_classifier[0](training_data, values, range(c_id), c_id, s)
+		classifier2 = train_classifier[1](training_data, values, range(c_id), c_id, s)
+		classifications1 = classifications1 + [(obj[c_id], classifier1(obj)) for obj in test_data]
+		classifications2 = classifications2 + [(obj[c_id], classifier2(obj)) for obj in test_data]
+
+	res = single_accuracy(classifications2)
+	print(res['name'], end=": ")
+	print(res['result'])
+
+	res = accuracy(classifications1)
+	print(res['name'], end=": ")
+	print(res['result'])
+
+	res = A_S(classifications1, classifications2)
+	print(res['name'], end=": ")
+	print(res['result'])
+
+	# for metric in metrics:
+	# 	res = metric(classifications)
+	# 	print(res['name'], end=": ")
+	# 	print(res['result'])
+
+def A_S(nbc_classifications, ncc_classifications):
+	results = []
+	for i in range(len(ncc_classifications)):
+		if len(ncc_classifications[i][1]) == 1:
+			continue
+		elif nbc_classifications[i][0] == nbc_classifications[i][1]:
+			results.append(1)
+		else:
+			results.append(0)
+	return {
+		"result": 100*sum(results)/len(results),
+		"name": "A_S"
+	}
+
+	print("A_NSC: " + str(88) + "%")

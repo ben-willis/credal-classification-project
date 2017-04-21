@@ -5,33 +5,43 @@ In this chapter we will summarise our findings and put them in to context.
 \section{Naive Bayes Classifier}
 
 We applied the naive Bayes classifier to the insurance problem.
-We saw that it performed poorly in terms of accuracy however we were able to improve the accuracy by introducing a prior distribution for the parametrised probabilities.
+We saw that it performed poorly in terms of accuracy due to certain combinations of attributes and classes having zero frequencies.
+This problem is well known and we applied the standard approach of introducing a prior distribution for the parametrised probabilities.
 
-When we set $s=0.01$ we achieved an accuracy of 74.61\% which is alright (comparable to other studies?).
-This indicates that while the NBC could be used for the purposes of classifying insurance risk it may not be the most effective method.
+After introducing this prior distribution we were able to increase our accuracy to an acceptable level.
+This is in agreement to the literature that despite being simple the naive Bayes classifier performs well on simple problems.
 
-\section{Loss Function}
+\section{Decision Rules}
 
-We varied the loss function used to make the decision in the naive Bayes classifier.
-We compared the standard 0-1 loss function to the squared difference loss function and the absolute difference loss function.
+Next we looked at how we could use the ordered classes to alter the decision rule used in the naive Bayes classifier.
+The problem of ordered classes usually falls between classification and regression and there is not too much literature on the subject.
+
+We compared the standard 0-1 loss function to the squared difference loss function and the absolute difference loss function which are two loss functions that take into account the distance between the true class and the estimated class.
 
 We saw that for our problem the 0-1 loss functions and the absolute difference loss function returned the same classification.
 We also noted that the squared difference loss function may not return an integer classification.
-We saw that if we don't round the classification we slightly reduce the mean squared error between it and the true classification.
+We saw that if we do not round the classification we slightly reduce the mean squared error between it and the true classification.
 However if we do round and measure accuracy whilst we still have a smaller mean squared error we have a lower accuracy.
 
-Overall there is little reason to not use the 0-1 loss function for this particular problem problem.
+Out of the three presented standard loss functions the choice of loss function depends on our objectives.
+If we are looking to maximise accuracy the zero-one loss function is appropriate.
+However if we want to minimize MSE the squared difference loss function could provide a better option but at the loss of accuracy.
+
+We also looked at a custom loss matrix that can be used to fit to the insurer's needs.
 
 \section{Naive Credal Classifier}
 
-First of all we discussed Walley's imprecise Dirichlet model and how the we can introduce an imprecise prior to our problem.
+First of all we discussed Walley's imprecise Dirichlet model \cite{Walley91} and how the we can introduce an imprecise prior to our problem.
 We created a rudimentary credal classifier by considering upper and lower probabilities derived from this imprecise model and looking at interval dominance.
-We then used the imprecise prior to follow Zaffalon's formulation of the naive Credal classifier.
-We applied this classifier to our problem with mixed results.
-We saw that this classifier is more determinate than our rudimentary classifier however not necessarily as accurate.
+We then used the imprecise prior to follow Zaffalon's formulation of the naive Credal classifier \cite{Zaffalon01}.
 
+We also saw how it can also take in to account missing values and hence consider more vehicles in the training phase.
+When using these missing values we saw the naive Credal classifier performed better in terms of accuracy and determinacy.
+
+Overall we saw mixed results.
+We saw that this classifier is more determinate than our rudimentary interval based credal classifier however not necessarily as accurate.
+We also saw that the NCC was, in some cases, too cautious when compared to the NBC.
 Despite this the NCC would still be useful when classifying insurance risk.
-For $s=0.1$ when it returns a single class it has an accuracy of 80\%.
 The classifier could be used as a preliminary tool and then vehicles it is indeterminate about could be sent on to an expert.
 
 \section{Future Work}
