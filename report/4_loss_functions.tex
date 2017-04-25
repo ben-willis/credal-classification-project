@@ -1,29 +1,18 @@
 \chapter{Decision Rules}
 
-% 1. Describe your problem (could include description of data).
 When classifying the insurance risk of a vehicle we return a class on an integer of scale of -2 to 3.
-We know that it describes order and that a vehicle with a lower risk rating is of more risk to an insurer than a vehicle with a higher risk rating.
+We know that it describes order and that a vehicle with a high risk rating is of more risk to an insurer than a vehicle with a low risk rating.
 However we do not know whether the intervals between the different risk ratings are equal.
+Using a technique that recognises the ordinal nature of classes rather than treating them as nominal classes has been shown to improve the results of classification. \cite{Agresti10}.
 
 In chapter two we discussed the need for a decision rule to allocate an object to a class.
 We introduced the 0-1 loss function and chose the class that minimized expected loss.
 We want to investigate alternate loss functions that makes use of the ordered class structure.
 We also need new metrics to decide which loss functions perform better.
 
-% 2. Past work (literature that you use, similar studies).
-Loss functions have applications in game theory and are often known as cost functions.
-Ordered classification has been described as somewhere between normal classification and regression.
-
-% 3. Your contribution (what you do differently from the literature, new findings).
-We apply different loss functions to our problem of classifying vehicles in to ordered classes.
-
-
-% 4. Overview of rest of report. ("This report is structured ...")
-First we will introduce some common loss functions and the mean squared error to help determine how successufl these loss functions are.
-Then we will describe a custom approach using a loss matrix and see how we can affect the behaivour of our classifier through this.
+First we will introduce some common loss functions and the mean squared error to help determine how successful these loss functions are.
+Then we will describe a custom approach using a loss matrix and see how we can affect the behaviour of our classifier through this.
 Finally we will discuss some alternate approaches to ordered classification.
-
-% Stevens \cite{Stevens46} argued that the only statistics it is permissible to use when dealing with ordinal data are percentiles and the median.
 
 \section{Common Loss Functions}
 
@@ -108,12 +97,13 @@ When more than one risk rating could be reasonably considered the median we will
 
 \section{Application}
 We will now apply these loss functions to our automobile data set and measure accuracy and mean squared error.
+Mean squared error is the average difference between the true class and assigned class squared.
 We will also investigate how often the assigned classes agree.
 
 As the expected posterior estimates perform better than the maximum likelihood estimates we shall use these to estimate the required probabilities.
 We will also use the uniform hyperparameters and set $s=1$.
 
-Using 10-fold cross validation our various loss functions perform as follow:
+Using 10-fold cross validation our various loss functions perform as follows:
 
 \begin{center}
 	\begin{tabular}{l r r}
@@ -129,7 +119,7 @@ Using 10-fold cross validation our various loss functions perform as follow:
 \end{center}
 
 Note that the 0-1 loss function and the absolute difference loss function perform the same.
-The squared difference loss function performs slightly worse in the accuracy metric after rounding however scores better for MSE.
+The squared difference loss function performs slightly worse in the accuracy metric after rounding however still has a lower MSE than the other loss functions.
 
 The 0-1 loss function and absolute differences loss function assign classes in a very similar manner.
 This is due to there often being a $\hat{c} \in \mathcal{C}$ with a much greater $P(c \mid \mathbf{a})$.
@@ -138,9 +128,9 @@ When this is the case $\hat{c}$ is the choice for both the 0-1 loss function and
 The squared difference loss function differs from these two slightly as it is affected more by outliers.
 
 \section{Custom Loss Matrix}
-Here we have considered three common choices for the loss function however there are other options available.
+In the previous section we considered three common choices for the loss function however there are other options available.
 
-If we knew how the true cost to the insurer of misclassifying a vehicle we could construct a specific loss function
+If we knew the true cost to the insurer of misclassifying a vehicle we could construct a specific loss function.
 As an example consider the following loss matrix:
 \begin{equation}
 	L = 
@@ -153,8 +143,9 @@ As an example consider the following loss matrix:
 			100 & 50 & 30 & 20 & 10 & 0 \\
 		\end{bmatrix}
 \end{equation}
-then we can define a loss function as $L(c, \hat{c}) = L_{c,\hat{c}}$.
-In this example we assign increasing loss for underestimating the risk rating of a vehicle (as this would cause the insurer to offer lower premiums despite a possibly high chance of payout) and a consistent loss of one for overestimating the risk.
+Using this matrix we can define a loss function as $L(c, \hat{c}) = L_{c,\hat{c}}$.
+In this example we assign increasing loss for underestimating the risk rating of a vehicle as this would cause the insurer to offer lower premiums despite a possibly high chance of payout.
+We also assign a consistent loss of one for overestimating the risk to avoid always assigning the maximum risk rating.
 This should cause our decision rule to underestimate the risk rating.
 The expected loss would then be calculated as:
 \begin{equation}
@@ -162,7 +153,7 @@ The expected loss would then be calculated as:
 \end{equation}
 The estimate that minimizes this expectation can then be chosen providing our decision rule.
 
-If we apply use this particular loss function and compare it to the zero loss one we get:
+If we use this particular loss function in our naive Bayes classifier and compare it to the zero one loss function we get:
 \begin{center}
 	\begin{tabular}{l r r}
 		\hline
@@ -178,7 +169,7 @@ Note that this custom loss function has a lower accuracy and a greater mean squa
 However if we compare the two confusions matrices:
 
 Zero-One:
-
+\begin{center}
 \begin{tabular}{l l r r r r r r}
     \hline
                        &    & \multicolumn{6}{c}{Predicted Class}                   \\
@@ -191,10 +182,12 @@ Zero-One:
 & 1 & 0.0\% & 2.07\% & 2.59\% & 17.62\% & 3.11\% & 1.04\% \\
 & 2 & 0.0\% & 0.0\% & 1.04\% & 2.07\% & 11.92\% & 1.04\% \\
 & 3 & 0.0\% & 0.52\% & 0.0\% & 0.52\% & 2.07\% & 8.81\% \\
+\hline
 \end{tabular}
+\end{center}
 
-Custom Matrix:
-
+Custom Loss Matrix:
+\begin{center}
 \begin{tabular}{l l r r r r r r}
     \hline
                        &    & \multicolumn{6}{c}{Predicted Class}                   \\
@@ -207,27 +200,28 @@ Custom Matrix:
 & 1 & 0.0\% & 1.55\% & 1.55\% & 17.1\% & 4.66\% & 1.55\% \\
 & 2 & 0.0\% & 0.0\% & 1.04\% & 2.07\% & 11.92\% & 1.04\% \\
 & 3 & 0.0\% & 0.52\% & 0.0\% & 0.52\% & 2.07\% & 8.81\% \\
+\hline
 \end{tabular}
+\end{center}
 
 We see that our custom loss function is much less likely to underestimate the risk rating of a vehicle.
-This may be more beneficial to an insurer than a more accurate classifier that is less cautious.
+This may be more beneficial to an insurer than a more accurate classifier that sometimes underestimates the risk.
 
 \section{Conclusions}
 
 % Implicitly restate your thesis/position.
 We have found that using an alternative loss function to create the decision rule can lead to increases in some metrics.
 We saw that using the squared differences loss function reduces the mean squared error but at the expense of accuracy.
-
 We also saw how a custom choice of loss matrix can affect our classifications.
 
 % Emphasize the importance of your subject by placing it in a larger context.
-Ordered classification falls between ordinary classification and regression and has not been fully explored despite its commonness.
-We have demonstrated that varying the loss function can, in some respects, help better tackle this problem.
+Ordered classification falls between ordinary classification and regression and has not been fully explored despite it being a common occurrence in the real world.
+We have demonstrated that varying the loss function allows us to achieve different goals.
 
 % Offer suggestions for the future based on what you have argued.
 Further work on identifying how to deal with ordered classes is required given their prominence.
 An alternate approach to ordinal classification was described by Frank and Hall \cite{Frank01}.
 They proposed reducing the classification to a series of binary classifications.
-For our insurance problems this would amount to asking is the vehicle greater than each risk rating.
+For our insurance problem this would involved deciding whether the vehicle's true risk rating is greater than each possible risk rating.
 Then after making each of these judgements we are able to assign a class.
 They showed this method can lead to a more accurate classifier than one that ignores ordering when handling ordinal classes.

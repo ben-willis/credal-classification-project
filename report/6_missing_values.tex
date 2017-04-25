@@ -3,24 +3,25 @@
 Missing data is a common problem when working with real data.
 Previously we had no method for classifying or using the vehicles with missing attributes.
 In this chapter we will discuss methods to overcome this issue.
-We will then apply two different methods too our problem and see whether they improve our classifier.
+We will then apply two different methods to our problem and see whether they improve our classifier.
 Note that in our data set the class is never missing from a vehicle so we only have to deal with missing technical attributes.
 
 \section{Common approaches to missing data}
 
-Before we look at how to deal with missing data we should consider what type of missing According to Rubin \cite{Rubin76} there are three types of missing data:
+Before we look at how to deal with missing data we should consider what type of missing data we are dealing with.
+According to Rubin \cite{Rubin76} there are three types of missing data:
 \begin{description}
-	\item[MCAR] The data is missing completely at random if the missing attributes are independent of all other  attributes
-	\item[MAR] The data is missing at random if the missing data can be accounted for by other attributes where there is complete information e.g. cars with two doors might be missing engine specifications but this has nothing to do with the engine specifications themselves
-	\item[MNAR] The data is missing not at random if the attribute is missing due to value of the attribute e.g. vehicles with a high price are missing their price
+	\item[MCAR] The data is missing completely at random (MCAR) if the missing attributes are independent of all other  attributes
+	\item[MAR] The data is missing at random (MAR) if the missing data can be accounted for by other attributes where there is complete information e.g. cars with two doors might be missing engine specifications but this has nothing to do with the engine specifications themselves
+	\item[MNAR] The data is missing not at random (MNAR) if the attribute is missing due to value of the attribute e.g. vehicles with a high price are missing their price
 \end{description}
 Note that there is no way of distinguishing between MAR and MNAR without finding out some of the missing values.
 
-So far we have been removing the vehicles with missing attributes from our data set otherwise known as Listwise Deletion.
-Listwise deletion only introduces no bias if the data is MCAR \cite{Allison02} and can be a waste of important information if the number of objects with missing objects is large \cite{Little92}.
-Despite these issues it remains the easiest method to implement which is why we have used it thus far.
+So far we have been removing the vehicles with missing attributes from our data set which is known as Listwise Deletion.
+Listwise deletion only introduces no bias if the data is MCAR \cite{Allison02} and can be a waste of important information if the number of objects with missing attributes is large \cite{Little92}.
+Despite these issues it remains a very simple method to implement which is why we have used it thus far.
 
-Most other methods involve replacing the missing values with estimated values and fall under the category of \textit{imputation}.
+Most other methods involve replacing the missing values with estimated values and fall under the category of imputation.
 We will briefly describe a few of the most popular as described by Baraldi and Enders \cite{Baraldi09}.
 We could replace the missing values with the mean of the remaining values however this increases correlation between attributes and if the data is not MCAR also biases the mean.
 Alternatively regression can be used to impute values which has the benefit of not introducing bias to the means if the data is MCAR or MAR.
@@ -38,7 +39,7 @@ In this section we will use an approach where we remove all attributes from our 
 
 The method of feature reduction has other applications when working with the naive Bayes classifier.
 In one study \cite{Novakovic10} various techniques for removing features that hold less information about the class were trialled with the aim of improving naive Bayes classifier.
-The feature reduction techniques had mixed with results however use of one particular technique was found to consistently maintain or improve the classifier.
+The feature reduction techniques had mixed results however use of one particular technique was found to consistently maintain or improve the classifier.
 This indicates that the method of feature reduction does not necessarily lead to a weaker classifier.
 
 For our data set we will remove the attributes with missing values (Price, Number of doors, Bore, Stroke, Horsepower, Peak RPM) from our classifier.
@@ -49,7 +50,7 @@ We can then apply the NCC for $s=1$ in a similar manner:
 \begin{tabular}{l|c c c c}
 	                        &   A\%   &   B\%   &  C   &   D\%   \\
 	\hline
-	Without missing values  & 73.68\% & 88.60\% & 3.63 & 19.69\% \\
+	Without missing values  & 75.61\% & 89.12\% & 3.71 & 21.32\% \\
 	Without missing columns & 74.51\% & 82.44\% & 3.33 & 24.88\% \\
 \end{tabular}
 \end{center}
@@ -83,13 +84,13 @@ As before we will measure four metrics: Single Accuracy (A\%), Set Accuracy (B\%
 \begin{tabular}{l|c c c c}
 	                       & A\%     & B\%     & C    & D\%     \\
 	\hline
-	Without missing values & 73.68\% & 88.60\% & 3.63 & 19.69\% \\
+	Without missing values & 75.61\% & 89.12\% & 3.71 & 21.32\% \\
 	With missing values    & 78.57\% & 89.12\% & 3.66 & 21.76\% \\
 \end{tabular}
 \end{center}
 
 When using vehicles with missing attributes we see a large increase in single accuracy and a small increase in set accuracy. We also see an increase in determinacy and indeterminate set size remaining roughly the same.
-This indicates that, despite the added uncertainty, the use of vehicle with missing attributes improves our classifier.
+This indicates that, despite the added uncertainty, the use of vehicles with missing attributes improves our classifier.
 
 \section{Conclusions}
 
@@ -97,7 +98,7 @@ Removing the attributes with missing values is a simple approach for dealing wit
 However for our data set this significantly reduces the set accuracy of our classifier.
 Furthermore this approach would not be appropriate if we had more attributes with missing values.
 
-However using the uncertainty about frequencies in the formulation of the naive Credal classifier improves the classifier.
+However utilising the uncertainty of the frequencies in the formulation of the naive Credal classifier improves the classifier.
 It offers a convenient way of using the objects with missing attributes to improve the accuracy of the classifier.
 
 % CONTEXT

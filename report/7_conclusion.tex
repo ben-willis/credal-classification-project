@@ -1,22 +1,28 @@
-\chapter{Conclusion}
-
-In this chapter we will summarise our findings and put them in to context.
+\chapter{Summary}
 
 \section{Naive Bayes Classifier}
 
 We applied the naive Bayes classifier to the insurance problem.
 We saw that it performed poorly in terms of accuracy due to certain combinations of attributes and classes having zero frequencies.
-This problem is well known and we applied the standard approach of introducing a prior distribution for the parametrised probabilities.
+This problem is common and we applied the standard approach of introducing a prior distribution for the parametrised probabilities.
+After introducing this prior distribution we were able to increase our accuracy of our classifier.
+We saw the accuracy of our classifier increase from 63.73\% to 69.43\%.
 
-After introducing this prior distribution we were able to increase our accuracy to an acceptable level.
-This is in agreement to the literature that despite being simple the naive Bayes classifier performs well on simple problems.
+To use the prior distribution we had to specify the hyperparameters $\mathbf{t}$ and $s$.
+The $\mathbf{t}$ hyperparameters represented our prior beliefs and we set them to be uniform.
+We varied the $s$ parameter and noted that it provided a fairly consistent classifier for $s<100$ however for larger values of $s$ the accuract of our classifier decreased significantly.
+This is because for large $s$ the prior dominates the likelihood and the classifier allocates classes at random.
+
+Overall we showed that the naive Bayes classifier can be used to tackle the insurance problem despite being a relatively simple classifier.
+Alternate methods of classification need to be tested to be able to put the application of the naive Bayes classifier in context.
 
 \section{Decision Rules}
 
 Next we looked at how we could use the ordered classes to alter the decision rule used in the naive Bayes classifier.
-The problem of ordered classes usually falls between classification and regression and there is not too much literature on the subject.
+The problem of ordered classes falls between classification and regression.
 
-We compared the standard 0-1 loss function to the squared difference loss function and the absolute difference loss function which are two loss functions that take into account the distance between the true class and the estimated class.
+We compared the standard 0-1 loss function to the squared difference loss function and the absolute difference loss function. 
+These two difference based loss functions take into account the distance between the true class and the estimated class and assign greater loss to estimates further from the true value.
 
 We saw that for our problem the 0-1 loss functions and the absolute difference loss function returned the same classification.
 We also noted that the squared difference loss function may not return an integer classification.
@@ -28,29 +34,46 @@ If we are looking to maximise accuracy the zero-one loss function is appropriate
 However if we want to minimize MSE the squared difference loss function could provide a better option but at the loss of accuracy.
 
 We also looked at a custom loss matrix that can be used to fit to the insurer's needs.
+We showed that a custom loss function which assigned greater loss to under estimation of risk.
+This led to a cautious classifier that rarely underestimated the risk and would often overestimate the risk which led to a decrease in accuracy and increase in mean squared error.
+However this may be more useful to an insurance company as it will be more costly if the underestimate the risk of a vehicle.
 
 \section{Naive Credal Classifier}
 
-First of all we discussed Walley's imprecise Dirichlet model \cite{Walley91} and how the we can introduce an imprecise prior to our problem.
-We created a rudimentary credal classifier by considering upper and lower probabilities derived from this imprecise model and looking at interval dominance.
-We then used the imprecise prior to follow Zaffalon's formulation of the naive Credal classifier \cite{Zaffalon01}.
+In the next two chapters we first discussed Walley's imprecise Dirichlet model \cite{Walley96} and how we can introduce an imprecise prior to our problem.
+We saw that the imprecise prior allowed us to form intervals for the probabilities we wished to estimate.
+We then saw that using either the upper of lower bounds as estimates resulted in a very poor classifier.
 
-We also saw how it can also take in to account missing values and hence consider more vehicles in the training phase.
-When using these missing values we saw the naive Credal classifier performed better in terms of accuracy and determinacy.
+However we were able to use these bounds to create a simple interval based classifier.
+This classifier outperformed the naive Credal classifier when it was able to return a single class however it was often indeterminate and would return more that one class.
 
-Overall we saw mixed results.
+We then saw how Zaffalon's naive credal classifier performed on this problem.
 We saw that this classifier is more determinate than our rudimentary interval based credal classifier however not necessarily as accurate.
 We also saw that the NCC was, in some cases, too cautious when compared to the NBC.
 Despite this the NCC would still be useful when classifying insurance risk.
 The classifier could be used as a preliminary tool and then vehicles it is indeterminate about could be sent on to an expert.
 
+\section{Missing Values}
+Finally we saw a couple of approaches for dealing with missing values.
+First we saw method of feature reduction that allowed the naive credal classifier to become more determinate but less accurate.
+This is a rudimentary method that does not scale well if there are more features with missing values.
+
+Next we used Zaffalon's approach with missing values to the naive credal classifier.
+We saw that using vehicles with missing attributes improved the classifications in all the metrics we were measuring.
+The ability to use missing values, a common problem when working with real world data, is a very useful feature of the naive credal classifier.
+
 \section{Future Work}
 
 There are a few features of our problem and data set we did not discuss in this report.
 
-Firstly we discretized all continuous variables.
-In the future we could look to model these variables with some kind of distribution.
+Firstly we discretized all of the continuous variables in our data set.
+In the future we could look to model these variables with a distribution.
+We could look at the effect using this model would have on the naive Bayes classifier and compare it to our approach of discretization.
 
 Secondly the naivety assumption, while effective at simplifying the problem, probably is not valid for this data set.
-Attributes such as width and height, and city mpg and rural mpg are in fact highly correlated and not conditionally independent.
-Future research could study how to incorporate the lack of independence into the naive Credal classifier.
+Attributes such as width and height, and city mpg and rural mpg are in fact highly correlated.
+Future research could study how to incorporate the lack of independence into both the naive Bayes classifer and the naive Credal classifier.
+
+Finally in chapter 7 we discussed the method of multiple imputation when dealing with missing data.
+It would informative to apply that method to this problem and compare its performance with the naive Credal classifier.
+This would help put the naive Credal classifier in more context as the feature reduction model is not a good comparison.

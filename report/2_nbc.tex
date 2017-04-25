@@ -7,7 +7,7 @@ We will not be introducing any ideas that have not already been discussed thorou
 
 We will outline the theory behind the naive Bayes classifier and identify points for further investigation.
 We will then introduce a method of measuring how successful our classifier is before applying it to our problem.
-We will show that the naive Bayes classifier performs poorly at this particular problem without any modifications.
+We will show that, without any modifications, the naive Bayes classifier performs poorly at this particular problem.
 
 \section{Previous Applications}
 A Bayesian approach to artificial intelligence has been used since the 1960s, especially in a medical setting \cite{Russell03}.
@@ -25,16 +25,37 @@ Sensitivity is the proportion of true positives meaning in this study a large pr
 
 To help explain how the naive Bayes classifier works we will introduce a new data set from a remote sensing study.
 This study aimed to identify the type of forest based on satellite readings \cite{Forrest}.
-The study measured spectral information in the green, red and infrared wavelengths on three separate dates of $523$ different areas of forest in Japan.
+The study measured spectral information in the green, red and infrared wavelengths on three separate dates (Sept. 26, 2010; March 19, 2011; May 08, 2011) of $523$ different areas of forest in Japan.
 In total each observation has nine continuous attributes and falls in to one of four possible classes: Sugi forest, Hinoki forest, Mixed deciduous forest and other non-forest land.
 This data set was chosen as it contained a large number of observations and demonstrates a situation where the naive Bayes classifier works well.
 
 Formally, let us denote the class variable by $C$, taking values from the set $\mathcal{C} = \{0,1,2,3\}$ for each of the four types of forest.
 We measure 9 features $A_1,\dots,A_9$ which we discretize so that they all take values from the set $\mathcal{A} = \{0,\dots,9\}$.
 The observations of the variables are denoted by $c$ and $a_1,\dots,a_9$ respectively.
+For example a single observation in our data set is:
+\begin{center}
+\begin{tabular}{c c c c c c c c c c}
+\hline
+\multicolumn{3}{c}{Sept. 26, 2010} & \multicolumn{3}{c}{March 19, 2011} & \multicolumn{3}{c}{May 08, 2011} & \multirow{2}{*}{Class} \\
+G & R & IR & G & R & IR & G & R & IR \\
+\hline
+67&28&51&99&50&97&82&26&59 & Sugi \\
+\hline
+\end{tabular}
+\end{center}
+After discretization this becomes:
+\begin{center}
+\begin{tabular}{c c c c c c c c c c}
+\hline
+$a_1$ & $a_2$ & $a_3$ & $a_4$ & $a_5$ & $a_6$ & $a_7$ & $a_8$ & $a_9$ & c \\
+\hline
+4     & 0     & 0     & 3     & 1     & 2     & 4     & 1     & 2     & 3\\
+\hline
+\end{tabular}
+\end{center}
 
 We are interested in the probability of a forest being of type $c$ given sensor readings $\mathbf{a}$ i.e. $P(c \mid \mathbf{a})$.
-Using Bayes theorem we can rewrite this as:
+Using Bayes' theorem we can rewrite this as:
 \begin{equation} \label{bayes}
 	P(c \mid \mathbf{a}) = \frac{P(c)P(\mathbf{a} \mid c)}{P(\mathbf{a})}
 \end{equation}
@@ -109,7 +130,7 @@ We want to maximise the likelihood function.
 To do so we maximise each part of the log likelihood function which we will do so through the use of Lagrange multipliers.
 This is a strategy for finding local maxima and minima of a function subject to constraints.
 
-For the $\theta_c$ parameters we want to maximise:
+For the $\theta_c$ parameters we want to maximise
 \begin{equation}
 	f(\mathbf{\theta}, \mathbf{n}) = \sum_{c \in \mathcal{C}}  n(c)log(\theta_c)
 \end{equation}
@@ -135,7 +156,7 @@ This is just the relative frequency of observations that fall into that class.
 Returning to our example data set we have $N=523$ and $n(0)=158$ so $\hat\theta_0 = \frac{158}{523} \approx 0.302$
 % something else here
 
-Similarly for the $\theta_{a_i \mid c}$ parameters we want to maximize:
+Similarly for the $\theta_{a_i \mid c}$ parameters we want to maximize
 \begin{equation}
 	f(\mathbf{\theta}, \mathbf{n}) = \sum_{c_i \in \mathcal{A}_i} n(a_i, c) log(\theta_{a_i \mid c})
 \end{equation}
@@ -148,7 +169,7 @@ We again solve this using the Lagrangian to find the maximum likelihood estimate
 	\hat\theta_{a_i \mid c} = \frac{n(a_i, c)}{n(c)}
 \end{equation}
 
-We can now estimate the required probabilities and hence have our naive Bayes classifier.
+We can now estimate the required probabilities so we now have our naive Bayes classifier.
 First we estimate the probabilities by taking the maximum likelihood estimate for their parametrisation:
 \begin{align}
 	P(c) & = \frac{n(c)}{N} \\
@@ -160,19 +181,19 @@ Then for an object with an unknown class we choose the MAP estimate given in \cr
 
 To measure how successful our classifier is we will initially use a technique known as $k$-fold cross validation.
 In $k$-fold cross validation we split our dataset into $k$ equally sized groups.
-Then each group is individually excluded, the classifier is trained on all the remaining groups then tested on the excluded group.
+Then each group is individually excluded, the classifier is trained on all the remaining groups and then tested on the excluded group.
 We then average all these measurements to return an estimate for the measurement of our classifier.
 
 The choice of $k$ leads to different types of cross validation.
 A special case of cross validation is when $k=n$ (the number of observations).
-This is knowns as leave-one-out cross validation \cite{Priddy05}.
+This is known as leave-one-out cross validation \cite{Priddy05}.
 
 Kohavi studyed the effect of different values for $k$ on $k$-fold cross validation \cite{Kohavi95}.
 He concluded that small values of $k$, in the study 2 and 5, lead to a large amount of bias and an underestimate of the accuracy.
 However for $k=10$ the estimate is almost unbiased.
 He also noted a high level of variance for both small values of $k$ and large values of $k$ when carrying out leave one out cross validation.
 
-This is an instance of bias-variance tradeoff \cite{James13}.
+This is an instance of bias-variance trade-off \cite{James13}.
 We will use a moderate value for k, $k=10$, throughout this report to keep both variance and bias low.
 
 Initially we will consider two metrics.
@@ -209,21 +230,19 @@ One reason for this is the larger sample size for the forest type data set.
 However our classifier primarily falls down if there are no observations with attribute $a_j$ and class $c$ in our training set.
 In these case the maximum likelihood estimate for $\theta_{a_j \mid c}$ is $0$.
 This estimate leads to $P(c \mid \mathbf{a}) = 0$ and would rule out assigning any objects with the attribute $a_j$ to class $c$.
+For example there are no Mitsubishis with a risk rating of 0 (however there are Mitsubishis with risk ratings of -1 and 1).
 This is especially problematic for small sets of data and can explain the large percentage of indeterminate classifications we saw when applying the classifier to the automobile insurance data set.
 
 \section{Conclusions and Improvements}
 
-% Implicitly restate your thesis/position.
 In this chapter we examined a simple classifier which allowed us to start to solve the problem of determining automobile insurance risk.
 We explained the theory behind the NBC as presented by Manning and applied it to a simpler remote sensing problem as well as our insurance problem.
 
-% Emphasize the importance of your subject by placing it in a larger context.
 We saw that the naive Bayes classifier performed well on the simpler remote sensing problem and achieved a comparable accuracy to a more complex classifier.
 The success of the naive Bayes classifier is well known and other studies have shown it to be comparable with other classifiers \cite{Dumitru09}.
 
 However we also saw that the NBC was not very accurate when applied to our insurance problem.
 We saw that it was often indeterminate about classifications.
-This is a common problem and has been discussed in literature \cite{Need}.
+This is a common problem and has been discussed in literature \cite{Chen96}.
 
-% Offer suggestions for the future based on what you have argued.
 In the next chapter we will tackle the problem of indeterminate classifications by introducing a prior distribution for our $\mathbf{\theta}$ chances.

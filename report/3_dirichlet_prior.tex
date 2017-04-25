@@ -1,10 +1,10 @@
 \chapter{Corrected NBC}
 
 In the previous section we considered the maximum likelihood estimate for the probabilities required in the NBC.
-We saw that our classifier fails to classify an object with attribute $a_j$ and class $c$if there are no previous observations of this combinations in our training set.
+We saw that our classifier fails to classify an object with attribute $a_j$ and class $c$ if there are no previous observations of this combination in our training set.
 In this chapter we will define our prior distribution which will form the basis for the naive Credal classifier we discuss later.
 The prior used is the same prior as that used by Zaffalon when constructing the naive Credal classifier \cite{Zaffalon01}.
-Once again we will not be introducing any new ideas however we will discuss areas for further investigation.
+Once again we will not be introducing any new ideas, however we will discuss areas for further investigation.
 
 \section{Introducing a Prior}
 The problem of zero frequencies is especially common in the field of language modelling \cite{Chen96}.
@@ -58,19 +58,18 @@ To apply this classifier to our data set we need to choose the hyperparameters o
 We note that $s$ represents the strength of our prior distribution when calculating the posterior and hence determines how quickly our classifier learns from the observed data.
 As $s \rightarrow 0$ we get the maximum likelihood estimates.
 On the other hand if $s$ is extremely large the observed frequencies are dominated by our prior beliefs.
-Walley recommends setting $s=1$ or $s=2$ \cite{Walley96}.
-% why does walley say this?
+Walley recommends setting $s=1$ or $s=2$ as these are considered ``reasonably cautious'' \cite{Walley96}.
 When comparing the NBC to the corrected NBC we will set $s=1$.
 We will then look at the sensitivity of the corrected NBC with respect to the $s$ value.
 
 The other hyperparameters $t(\cdot)$ represent our prior beliefs for $P(\cdot)$.
-Initially we have no information regarding what these probabilities are and Laplace tells us \cite{laplace1812} the best way to represent this is by making them all equal in our prior.
+Initially we have no information regarding what these probabilities are and Laplace tells us \cite{Laplace1812} the best way to represent this is by making them all equal in our prior.
 This is referred to as ``The Principal of Indifference'' by Keynes \cite{Keynes21} who criticised it as a representation of a lack of prior information.
 He presented several situations where this principal leads to paradoxes.
 For example suppose we know the length of a side of square ($l$) is between 0 and 1 and hence the area ($A$) is also between 0 and 1 but other than that we have no information.
 A uniform prior for the side length gives $P(l < \frac{1}{2}) = \frac{1}{2}$ so $P(A < \frac{1}{4}) = \frac{1}{2}$.
-However a uniform prior for the area give $P(A < \frac{1}{4}) = \frac{1}{4}$. A clear contradiction.
-% this contradiction shows how tyhe uniform prior is not invarant
+However a uniform prior for the area gives $P(A < \frac{1}{4}) = \frac{1}{4}$.
+A clear contradiction.
 
 In this section we will follow the principal of indifference when selecting our prior distribution.
 However we will address this problem in chapter 4 where we introduce the imprecise prior.
