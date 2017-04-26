@@ -3,7 +3,7 @@
 As previously stated, we want a classifier that will learn from a set of vehicles and their risk ratings and, given a new observation, be able to return the risk rating of this new vehicle.
 
 In this chapter we will use Manning's \cite{Manning08} formulation of the naive Bayes classifier and apply it to our insurance problem.
-We will not be introducing any ideas that have not already been discussed thoroughly in literature.
+We will not introduce any ideas that have not already been thoroughly discussed in the literature.
 
 We will outline the theory behind the naive Bayes classifier and identify points for further investigation.
 We will then introduce a method of measuring how successful our classifier is before applying it to our problem.
@@ -16,7 +16,7 @@ The naive Bayes classifier has been shown to be highly effective in many differe
 In one particular study \cite{Dumitru09} images of breast mass for patients who had previously suffered from breast cancer were analysed.
 The naive Bayes classifier used attributes of the cells in the image such as radius and symmetry to determine whether the cancer was recurrent or non-recurrent.
 In this study the classifier achieved an accuracy of 74.24\% which is consistent with the best results of other classifiers.
-Accuracy is the proportion of the objects for which the classifier allocated the true class.
+Accuracy is defined as the proportion of the objects for which the classifier allocated the true class.
 However this same study indicates there is room for improvement.
 The sensitivity of the classifier was only 27.78\%.
 Sensitivity is the proportion of true positives meaning in this study a large proportion of sick patients were not correctly diagnosed.
@@ -25,7 +25,7 @@ Sensitivity is the proportion of true positives meaning in this study a large pr
 
 To help explain how the naive Bayes classifier works we will introduce a new data set from a remote sensing study.
 This study aimed to identify the type of forest based on satellite readings \cite{Forrest}.
-The study measured spectral information in the green, red and infrared wavelengths on three separate dates (Sept. 26, 2010; March 19, 2011; May 08, 2011) of $523$ different areas of forest in Japan.
+The study measured spectral information in the green, red and infrared wavelengths on three separate dates (Sept. 26, 2010; March 19, 2011; May 08, 2011) of $523$ different areas of land in Japan.
 In total each observation has nine continuous attributes and falls in to one of four possible classes: Sugi forest, Hinoki forest, Mixed deciduous forest and other non-forest land.
 This data set was chosen as it contained a large number of observations and demonstrates a situation where the naive Bayes classifier works well.
 
@@ -78,7 +78,7 @@ So by bringing together \cref{bayes,naivety} we can write:
 \end{equation}
 
 To turn this into a classifier we need a decision rule to decide which class a forest falls into based on these probabilities.
-We can introduce a loss function to allow us to choose the class.
+We introduce a loss function to allow us to choose the class.
 The standard choice for the naive Bayes classifier is the 0-1 loss function \cite{Rish01} defined as:
 \begin{equation}\label{0-1_loss_function}
 	L(c, \hat{c}) = 
@@ -90,13 +90,13 @@ The standard choice for the naive Bayes classifier is the 0-1 loss function \cit
 This function assigns a loss of 1 to any wrong classification regardless of the class that is assigned. 
 Under this loss function we can write the expected loss as:
 \begin{equation}
-	E(L) = \sum L(c, \hat{c})P(c \mid \mathbf{a}) = 1 - P(\hat{c} \mid \mathbf{a})
+	E[L] = \sum L(c, \hat{c})P(c \mid \mathbf{a}) = 1 - P(\hat{c} \mid \mathbf{a})
 \end{equation}
 So to minimize our expected loss we choose:
 \begin{equation} \label{map_estimate}
 	\hat c = \arg\max_{c \in \mathcal{C}} P(c)\prod_{i=1}^{k}P(a_i \mid c)
 \end{equation}
-This is known as the maximum a posteriori (MAP) estimate.
+This is known as the maximum a posteriori (MAP) estimate \cite{Jermyn15}.
 Note that when using this loss function our estimates for the probabilities do not necessarily have to be accurate, they just have to be ordered correctly.
 We will investigate other options for the loss function later on in this report.
 
@@ -105,8 +105,9 @@ Now that we have our method for making our decision we need to estimate the requ
 To do so we parametrise these probabilities.
 We denote the unknown chances of observing an object in class $c$ by $\theta_c$ and the chance of observing an object in class $c$ with attributes $\mathbf{a}$ by $\theta_{\mathbf{a}, c}$.
 Similarly we denote the conditional chances of observing an individual attribute $a_i$ and a set of attributes $\mathbf{a}$ given $C=c$ by $\theta_{a_i \mid c}$ and $\theta_{\mathbf{a} \mid c}$ respectively.
+We consider the vector $\bm{\theta}$ of these parameters.
 
-Now we have parametrised the probabilities that we wish to estimate, we can consider the likelihood function for $\mathbf{\theta}$, the vector whose elements are the chances $\theta_{c}$ and $\theta_{a_i \mid c}$.
+Now we have parametrised the probabilities that we wish to estimate, we can consider the likelihood function for $\bm{\theta}$, the vector whose elements are the chances $\theta_{c}$ and $\theta_{a_i \mid c}$.
 Using our data we denote the frequencies of objects in each class $c$ by $n(c)$ and the number of objects in class $c$ with attribute $a_i$ by $n(a_i, c)$.
 For example, returning to the forest type data set, the number of observations of class $0$ is $158$ so $n(0) = 158$.
 Note that $\sum_{c \in \mathcal{C}}n(c) = N$ and $\sum_{a_i \in \mathcal{A}_i}n(a_i, c) = n(c)$.
@@ -114,7 +115,7 @@ We then consider the vector $\mathbf{n}$ which contains these frequencies.
 
 We can derive the likelihood function for $\mathbf{\theta}$ given the frequencies described above:
 \begin{align} \label{likelihood}
-	l(\mathbf{\theta} \mid \mathbf{n}) & =  \prod_{c \in \mathcal{C}} \prod_{\mathbf{a} \in \mathbf{\mathcal{A}}} \theta_{\mathbf{a}, c}^{n(\mathbf{a}, c)} \\
+	l(\bm{\theta} \mid \mathbf{n}) & =  \prod_{c \in \mathcal{C}} \prod_{\mathbf{a} \in \mathbf{\mathcal{A}}} \theta_{\mathbf{a}, c}^{n(\mathbf{a}, c)} \\
 	& = \prod_{c \in \mathcal{C}} \prod_{\mathbf{a} \in \mathbf{\mathcal{A}}} \left[ \theta_{c}^{n(\mathbf{a}, c)} \theta_{\mathbf{a} \mid c}^{n(\mathbf{a}, c)} \right] \\
 	& = \prod_{c \in \mathcal{C}} \left[ \theta_{c}^{\sum_{\mathbf{a} \in \mathbf{\mathcal{A}}} n(\mathbf{a}, c)} \prod_{\mathbf{a} \in \mathbf{\mathcal{A}}} \prod_{i=1}^k \theta_{a_i \mid c}^{n(\mathbf{a}, c)} \right] \\
 	& \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{n(c)} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{n(a_i, c)} \right]
@@ -124,7 +125,7 @@ Now we want to estimate these probabilities.
 A simple estimate for these parameters is the maximum likelihood estimate (MLE).
 To find the MLE first we take the log likelihood:
 \begin{equation}
-	L(\mathbf{\theta} \mid \mathbf{n}) \propto \sum_{c \in \mathcal{C}}  n(c)log(\theta_c) + \sum_{c \in \mathcal{C}} \sum_{i=1}^k \sum_{a_i \in \mathcal{A}_i} n(a_i, c) log(\theta_{a_i \mid c}) 
+	L(\bm{\theta} \mid \mathbf{n}) \propto \sum_{c \in \mathcal{C}}  n(c)log(\theta_c) + \sum_{c \in \mathcal{C}} \sum_{i=1}^k \sum_{a_i \in \mathcal{A}_i} n(a_i, c) log(\theta_{a_i \mid c}) 
 \end{equation}
 We want to maximise the likelihood function.
 To do so we maximise each part of the log likelihood function which we will do so through the use of Lagrange multipliers.
@@ -132,20 +133,20 @@ This is a strategy for finding local maxima and minima of a function subject to 
 
 For the $\theta_c$ parameters we want to maximise
 \begin{equation}
-	f(\mathbf{\theta}, \mathbf{n}) = \sum_{c \in \mathcal{C}}  n(c)log(\theta_c)
+	f(\bm{\theta}, \mathbf{n}) = \sum_{c \in \mathcal{C}}  n(c)log(\theta_c)
 \end{equation}
 under the constraint:
 \begin{equation}\label{theta_c constraint}
-	g(\mathbf{\theta}, \mathbf{n}) = \sum_{c \in \mathcal{C}}  \theta_c - 1 = 0
+	g(\bm{\theta}, \mathbf{n}) = \sum_{c \in \mathcal{C}}  \theta_c - 1 = 0
 \end{equation}
 This gives us our Lagrangian:
 \begin{equation}
-	\mathcal{L}(\mathbf{\theta}, \mathbf{n}, \lambda) = \sum_{c \in \mathcal{C}}  n(c)log(\theta_c) - \lambda(\sum_{c \in \mathcal{C}}  \theta_c - 1)
+	\mathcal{L}(\bm{\theta}, \mathbf{n}, \lambda) = \sum_{c \in \mathcal{C}}  n(c)log(\theta_c) - \lambda(\sum_{c \in \mathcal{C}}  \theta_c - 1)
 \end{equation}
 
 Differentiating with respect to $\theta_c$ we have:
 \begin{equation}
-	\nabla_{\theta_c} \mathcal{L}(\mathbf{\theta}, \mathbf{n}, \lambda) = \frac{n(c)}{\theta_c} - \lambda
+	\nabla_{\theta_c} \mathcal{L}(\bm{\theta}, \mathbf{n}, \lambda) = \frac{n(c)}{\theta_c} - \lambda
 \end{equation}
 
 Setting this to zero and using the constraint in \cref{theta_c constraint} we have maximum likelihood estimate:
@@ -153,16 +154,16 @@ Setting this to zero and using the constraint in \cref{theta_c constraint} we ha
 	\hat\theta_c = \frac{n(c)}{N}
 \end{equation}
 This is just the relative frequency of observations that fall into that class.
-Returning to our example data set we have $N=523$ and $n(0)=158$ so $\hat\theta_0 = \frac{158}{523} \approx 0.302$
-% something else here
+Returning to our example data set we have $N=523$ and $n(0)=158$ so $\hat\theta_0 = \frac{158}{523} \approx 0.302$.
+So the maximum likelihood estimate for the probability of observing a deciduous forest is approximately 0.302.
 
 Similarly for the $\theta_{a_i \mid c}$ parameters we want to maximize
 \begin{equation}
-	f(\mathbf{\theta}, \mathbf{n}) = \sum_{c_i \in \mathcal{A}_i} n(a_i, c) log(\theta_{a_i \mid c})
+	f(\bm{\theta}, \mathbf{n}) = \sum_{c_i \in \mathcal{A}_i} n(a_i, c) log(\theta_{a_i \mid c})
 \end{equation}
 for each $c \in \mathcal{C}$ and $i \in \{1,\dots,k\}$ under the constraint:
 \begin{equation}
-	g(\mathbf{\theta}, \mathbf{n}) = \sum_{a_i \in \mathcal{A}_i}  \theta_{a_i \mid c} - 1 = 0
+	g(\bm{\theta}, \mathbf{n}) = \sum_{a_i \in \mathcal{A}_i}  \theta_{a_i \mid c} - 1 = 0
 \end{equation}
 We again solve this using the Lagrangian to find the maximum likelihood estimate:
 \begin{equation}
@@ -181,7 +182,7 @@ Then for an object with an unknown class we choose the MAP estimate given in \cr
 
 To measure how successful our classifier is we will initially use a technique known as $k$-fold cross validation.
 In $k$-fold cross validation we split our dataset into $k$ equally sized groups.
-Then each group is individually excluded, the classifier is trained on all the remaining groups and then tested on the excluded group.
+Each group is then individually excluded, the classifier is trained on all the remaining groups and then tested on the excluded group.
 We then average all these measurements to return an estimate for the measurement of our classifier.
 
 The choice of $k$ leads to different types of cross validation.
@@ -189,7 +190,7 @@ A special case of cross validation is when $k=n$ (the number of observations).
 This is known as leave-one-out cross validation \cite{Priddy05}.
 
 Kohavi studyed the effect of different values for $k$ on $k$-fold cross validation \cite{Kohavi95}.
-He concluded that small values of $k$, in the study 2 and 5, lead to a large amount of bias and an underestimate of the accuracy.
+He concluded that small values of $k$ (in the study $k=2$ and $k=5$) lead to a large amount of bias and an underestimate of the accuracy.
 However for $k=10$ the estimate is almost unbiased.
 He also noted a high level of variance for both small values of $k$ and large values of $k$ when carrying out leave one out cross validation.
 
@@ -210,7 +211,7 @@ This indicates that our relatively simple NBC can still achieve a high degree of
 
 Now we have seen an application of the NBC to a straightforward data set we want to apply it to our insurance problem.
 
-Unlike in the trees data set, in the automobile data set we have objects with missing values for attributes.
+Unlike in the forest data set, in the automobile data set we have objects with missing values for attributes.
 We have no mechanism for considering these so we must discard these observations for now.
 This is known as Listwise Deletion.
 This reduces our data set from 205 observations to 193 observations.
@@ -222,12 +223,12 @@ We split the continuous variables into 10 categories with equal frequency.
 As before we carry out 10-fold cross validation for the two metrics.
 The accuracy of our classifier is 63.73\% on the automobile data set.
 This is considerably worse than the example forest data set.
-Moreover our classifier was indeterminate about 18.13\% of the objects.
+Moreover our classifier was indeterminate for about 18.13\% of the objects.
 
 Clearly the classifier performs better on the forest type dataset than on the automobile data set.
 One reason for this is the larger sample size for the forest type data set.
 
-However our classifier primarily falls down if there are no observations with attribute $a_j$ and class $c$ in our training set.
+However the primary issue of the classifier occurs when there are no observations with attribute $a_j$ and class $c$ in our training set.
 In these case the maximum likelihood estimate for $\theta_{a_j \mid c}$ is $0$.
 This estimate leads to $P(c \mid \mathbf{a}) = 0$ and would rule out assigning any objects with the attribute $a_j$ to class $c$.
 For example there are no Mitsubishis with a risk rating of 0 (however there are Mitsubishis with risk ratings of -1 and 1).
@@ -236,7 +237,7 @@ This is especially problematic for small sets of data and can explain the large 
 \section{Conclusions and Improvements}
 
 In this chapter we examined a simple classifier which allowed us to start to solve the problem of determining automobile insurance risk.
-We explained the theory behind the NBC as presented by Manning and applied it to a simpler remote sensing problem as well as our insurance problem.
+We explained the theory behind the NBC as presented by Manning \cite{Manning08} and applied it to a simpler remote sensing problem as well as our insurance problem.
 
 We saw that the naive Bayes classifier performed well on the simpler remote sensing problem and achieved a comparable accuracy to a more complex classifier.
 The success of the naive Bayes classifier is well known and other studies have shown it to be comparable with other classifiers \cite{Dumitru09}.
@@ -245,4 +246,4 @@ However we also saw that the NBC was not very accurate when applied to our insur
 We saw that it was often indeterminate about classifications.
 This is a common problem and has been discussed in literature \cite{Chen96}.
 
-In the next chapter we will tackle the problem of indeterminate classifications by introducing a prior distribution for our $\mathbf{\theta}$ chances.
+In the next chapter we will tackle the problem of indeterminate classifications by introducing a prior distribution for our $\bm{\theta}$ chances.

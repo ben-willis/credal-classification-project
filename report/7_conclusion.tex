@@ -1,5 +1,8 @@
 \chapter{Summary}
 
+We applied several different variations of classifier to our problem and trialled different adaptations to deal with the ordered classes and missing data.
+We now summarise the results from this work.
+
 \section{Naive Bayes Classifier}
 
 We applied the naive Bayes classifier to the insurance problem.
@@ -10,7 +13,7 @@ We saw the accuracy of our classifier increase from 63.73\% to 69.43\%.
 
 To use the prior distribution we had to specify the hyperparameters $\mathbf{t}$ and $s$.
 The $\mathbf{t}$ hyperparameters represented our prior beliefs and we set them to be uniform.
-We varied the $s$ parameter and noted that it provided a fairly consistent classifier for $s<100$ however for larger values of $s$ the accuract of our classifier decreased significantly.
+We varied the $s$ parameter and noted that it provided a fairly consistent classifier for $s<100$ however for larger values of $s$ the accuracy of our classifier decreased significantly.
 This is because for large $s$ the prior dominates the likelihood and the classifier allocates classes at random.
 
 Overall we showed that the naive Bayes classifier can be used to tackle the insurance problem despite being a relatively simple classifier.
@@ -34,9 +37,10 @@ If we are looking to maximise accuracy the zero-one loss function is appropriate
 However if we want to minimize MSE the squared difference loss function could provide a better option but at the loss of accuracy.
 
 We also looked at a custom loss matrix that can be used to fit to the insurer's needs.
-We showed that a custom loss function which assigned greater loss to under estimation of risk.
-This led to a cautious classifier that rarely underestimated the risk and would often overestimate the risk which led to a decrease in accuracy and increase in mean squared error.
-However this may be more useful to an insurance company as it will be more costly if the underestimate the risk of a vehicle.
+We demonstrated a custom loss function which assigned greater loss to under estimation of risk.
+This loss function created a cautious classifier that rarely underestimated the risk and would often overestimate the risk.
+However this in turn led to a decrease in accuracy and increase in mean squared error.
+This may be more useful to an insurance company as underestimating the risk value of a vehicle would be more costly to them than an overestimation.
 
 \section{Naive Credal Classifier}
 
@@ -45,9 +49,9 @@ We saw that the imprecise prior allowed us to form intervals for the probabiliti
 We then saw that using either the upper of lower bounds as estimates resulted in a very poor classifier.
 
 However we were able to use these bounds to create a simple interval based classifier.
-This classifier outperformed the naive Credal classifier when it was able to return a single class however it was often indeterminate and would return more that one class.
+This classifier outperformed the naive credal classifier when it was able to return a single class however it was often indeterminate and would return more that one class.
 
-We then saw how Zaffalon's naive credal classifier performed on this problem.
+We then saw how Zaffalon's naive credal classifier \cite{Zaffalon01} performed on this problem.
 We saw that this classifier is more determinate than our rudimentary interval based credal classifier however not necessarily as accurate.
 We also saw that the NCC was, in some cases, too cautious when compared to the NBC.
 Despite this the NCC would still be useful when classifying insurance risk.
@@ -72,8 +76,11 @@ We could look at the effect using this model would have on the naive Bayes class
 
 Secondly the naivety assumption, while effective at simplifying the problem, probably is not valid for this data set.
 Attributes such as width and height, and city mpg and rural mpg are in fact highly correlated.
-Future research could study how to incorporate the lack of independence into both the naive Bayes classifer and the naive Credal classifier.
+Future research could study how to incorporate the lack of independence into both the naive Bayes classifier and the naive credal classifier.
 
 Finally in chapter 7 we discussed the method of multiple imputation when dealing with missing data.
-It would informative to apply that method to this problem and compare its performance with the naive Credal classifier.
-This would help put the naive Credal classifier in more context as the feature reduction model is not a good comparison.
+It would informative to apply that method to this problem and compare its performance with the naive credal classifier.
+This would help put the naive credal classifier in more context as the feature reduction model is not a good comparison.
+
+Overall the naive credal classifier is a useful tool when determining automobile insurance risk.
+It benefits from its ability to make use of missing data however it can be overly cautious when it has few observations of a particular class.

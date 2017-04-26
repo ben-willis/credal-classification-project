@@ -1,9 +1,9 @@
 \chapter{Corrected NBC}
 
 In the previous section we considered the maximum likelihood estimate for the probabilities required in the NBC.
-We saw that our classifier fails to classify an object with attribute $a_j$ and class $c$ if there are no previous observations of this combination in our training set.
+We saw that our classifier fails to classify an object with attribute $a_j$ and class $c$ if there are no previous observations of this combination in our training data set.
 In this chapter we will define our prior distribution which will form the basis for the naive Credal classifier we discuss later.
-The prior used is the same prior as that used by Zaffalon when constructing the naive Credal classifier \cite{Zaffalon01}.
+The prior we will use is the same prior as that used by Zaffalon when constructing the naive Credal classifier \cite{Zaffalon01}.
 Once again we will not be introducing any new ideas, however we will discuss areas for further investigation.
 
 \section{Introducing a Prior}
@@ -14,7 +14,7 @@ However due to the large number of words in a language, and the limited size of 
 One such approach to this problem is to add a small pseudocount to each word, which is known as additive smoothing \cite{Manning08}.
 This is the same as adding a prior distribution to our probability estimates.
 
-We return to our likelihood function \cref{likelihood} for our $\mathbf{\theta}$ variables.
+We return to our likelihood function for our $\bm{\theta}$ variables \cref{likelihood}.
 We will introduce a prior distribution for these parameters and then consider the posterior distribution.
 
 The Dirichlet distribution is the multinomial extension of the beta distribution for $\theta_1,\dots,\theta_k$ where $\theta_i \in (0,1)$ and $\sum_{i=1}^k \theta_i = 1$ with probability density function:
@@ -26,7 +26,7 @@ The family of Dirichlet distributions is a conjugate prior for the multinomial d
 
 We introduce a distribution that has similar properties to the Dirichlet distribution and has a similar structure to our likelihood as our prior density:
 \begin{equation} \label{prior}
-	f(\mathbf{\theta} \mid \mathbf{t}, s) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(c, a_i) - 1} \right]
+	f(\bm{\theta} \mid \mathbf{t}, s) \propto \prod_{c \in \mathcal{C}} \left[ \theta_c^{st(c) - 1} \prod_{i=1}^k \prod_{a_i \in \mathcal{A}_i} \theta_{a_i \mid c}^{st(c, a_i) - 1} \right]
 \end{equation}
 This is in the same form as the likelihood however each $n(\cdot)$ is replaces by $st(\cdot) - 1$.
 $s > 0$ is a fixed constant and we have the following constraints on $t(\cdot):$
@@ -44,8 +44,8 @@ The conjugate prior make the posterior more convenient to handle and also allows
 
 We can now estimate the parameters by taking the posterior expectation:
 \begin{align}
-	E(\theta_c \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(c) + st(c)}{N + s} = \hat{\theta}_c \\
-	E(\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}) & = \frac{n(a_i, c) + st(a_i, c)}{n(c) + st(c)} = \hat{\theta}_{a_i \mid c}
+	E[\theta_c \mid \mathbf{n},s,\mathbf{t}] & = \frac{n(c) + st(c)}{N + s} = \hat{\theta}_c \\
+	E[\theta_{a_i \mid c} \mid \mathbf{n},s,\mathbf{t}] & = \frac{n(a_i, c) + st(a_i, c)}{n(c) + st(c)} = \hat{\theta}_{a_i \mid c}
 \end{align}
 
 Note that if we observe more vehicles from the population we do not expect the ratios to tend to these estimated probabilities.
@@ -64,12 +64,8 @@ We will then look at the sensitivity of the corrected NBC with respect to the $s
 
 The other hyperparameters $t(\cdot)$ represent our prior beliefs for $P(\cdot)$.
 Initially we have no information regarding what these probabilities are and Laplace tells us \cite{Laplace1812} the best way to represent this is by making them all equal in our prior.
-This is referred to as ``The Principal of Indifference'' by Keynes \cite{Keynes21} who criticised it as a representation of a lack of prior information.
+This is referred to as ``the principal of indifference'' by Keynes \cite{Keynes21} who criticised it as a representation of a lack of prior information.
 He presented several situations where this principal leads to paradoxes.
-For example suppose we know the length of a side of square ($l$) is between 0 and 1 and hence the area ($A$) is also between 0 and 1 but other than that we have no information.
-A uniform prior for the side length gives $P(l < \frac{1}{2}) = \frac{1}{2}$ so $P(A < \frac{1}{4}) = \frac{1}{2}$.
-However a uniform prior for the area gives $P(A < \frac{1}{4}) = \frac{1}{4}$.
-A clear contradiction.
 
 In this section we will follow the principal of indifference when selecting our prior distribution.
 However we will address this problem in chapter 4 where we introduce the imprecise prior.
@@ -118,7 +114,7 @@ We can also see that our classifier rarely assigns risk ratings that are far awa
 For example if the risk rating is 2 or 3 our classifier never assigns a negative risk rating.
 In the next section we will look to see whether we can reduce this further.
 
-Firstly introducing the prior distribution means that we no longer have indeterminate classifications as $P(c \mid \mathbf{a})$ will never be zero.
+Introducing the prior distribution means that we no longer have indeterminate classifications as $P(c \mid \mathbf{a})$ will never be zero.
 We will investigate how sensitive our classifier is to our choice of prior hyperparameters.
 
 A proportion of vehicles that previously had indeterminate classifications are now classified correctly.
@@ -128,7 +124,7 @@ However we are still achieving an accuracy of less than 70\% which still leaves 
 \section{Varying $s$ Hyperparameter}
 
 We now look at the sensitivity of the accuracy of the corrected NBC to changes in the $s$ hyperparameter.
-If we choose $s$ values log uniformly between $10^{0}$ and $10^{6}$ and plot these against the accuracy of the corrected NBC using these s values we get the following plot:
+If we choose $s$ values log uniformly between $10^{0}$ and $10^{6}$ and plot these against the accuracy of the corrected NBC we get the following plot:
 \begin{center}
 \begin{tikzpicture}
 \begin{axis}[

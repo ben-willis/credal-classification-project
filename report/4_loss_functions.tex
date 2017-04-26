@@ -1,9 +1,9 @@
 \chapter{Decision Rules}
 
 When classifying the insurance risk of a vehicle we return a class on an integer of scale of -2 to 3.
-We know that it describes order and that a vehicle with a high risk rating is of more risk to an insurer than a vehicle with a low risk rating.
+We know that the risk ratings are ordered and that a vehicle with a high risk rating is of more risk to an insurer than a vehicle with a low risk rating.
 However we do not know whether the intervals between the different risk ratings are equal.
-Using a technique that recognises the ordinal nature of classes rather than treating them as nominal classes has been shown to improve the results of classification. \cite{Agresti10}.
+Using a technique that recognises the ordinal nature of classes rather than treating them as nominal classes has been shown to improve the results of classification \cite{Agresti10}.
 
 In chapter two we discussed the need for a decision rule to allocate an object to a class.
 We introduced the 0-1 loss function and chose the class that minimized expected loss.
@@ -11,7 +11,7 @@ We want to investigate alternate loss functions that makes use of the ordered cl
 We also need new metrics to decide which loss functions perform better.
 
 First we will introduce some common loss functions and the mean squared error to help determine how successful these loss functions are.
-Then we will describe a custom approach using a loss matrix and see how we can affect the behaviour of our classifier through this.
+Then we will describe a custom approach using a loss matrix and see how this can affect the behaviour of our classifier.
 Finally we will discuss some alternate approaches to ordered classification.
 
 \section{Common Loss Functions}
@@ -34,7 +34,7 @@ To recap this is defined by:
 
 The expected loss is:
 \begin{equation}
-	E(L) = \sum_{c \in \mathcal{C}} L(c, \hat{c})P(c \mid \mathbf{a}) = 1 - P(\hat{c} \mid \mathbf{a})
+	E[L] = \sum_{c \in \mathcal{C}} L(c, \hat{c})P(c \mid \mathbf{a}) = 1 - P(\hat{c} \mid \mathbf{a})
 \end{equation}
 
 So to minimize our expected loss we choose:
@@ -52,12 +52,12 @@ This assigns greater loss to risk ratings that are further away from the true va
 
 For this function the expected loss is:
 \begin{equation}
-	E(L) = \sum_{c \in \mathcal{C}} (c - \hat{c})^2P(c \mid \mathbf{a}) 
+	E[L] = \sum_{c \in \mathcal{C}} (c - \hat{c})^2P(c \mid \mathbf{a}) 
 \end{equation}
 
 Differentiating this with respect to $\hat{c}$ gives:
 \begin{equation}
-	\frac{\partial}{\partial \hat{c}} E(L) = \sum_{c \in \mathcal{C}} (-2c + 2\hat{c})P(c \mid \mathbf{a}) 
+	\frac{\partial}{\partial \hat{c}} E[L] = \sum_{c \in \mathcal{C}} (-2c + 2\hat{c})P(c \mid \mathbf{a}) 
 \end{equation}
 Setting this equal to zero gives:
 \begin{align}
@@ -76,14 +76,13 @@ Once again this assigns greater loss to risk ratings that are further away from 
 
 For this function the expected loss is:
 \begin{align}
-	E(L) & = \sum_{c \in \mathcal{C}} |c - \hat{c}|P(c \mid \mathbf{a}) \\
-	     & = \sum_{c < \hat{c}} (\hat{c} - c)P(c \mid \mathbf{a}) - \sum_{c \geq \hat{c}} (\hat{c} - c)P(c \mid \mathbf{a})
+	E[L] & = \sum_{c \in \mathcal{C}} |c - \hat{c}|P(c \mid \mathbf{a}) \\
+	     & = \sum_{c \leq \hat{c}} (\hat{c} - c)P(c \mid \mathbf{a}) - \sum_{c \geq \hat{c}} (\hat{c} - c)P(c \mid \mathbf{a})
 \end{align}
 
 Differentiating this with respect to $\hat{c}$ gives:
 \begin{align}
-	\frac{\partial}{\partial \hat{c}} E(L) & = \sum_{c < \hat{c}} P(c \mid \mathbf{a}) - \sum_{c \geq \hat{c}} P(c \mid \mathbf{a}) \\
-	& = \sum_{c \leq \hat{c}} P(c \mid \mathbf{a}) - \sum_{c \geq \hat{c}} P(c \mid \mathbf{a})
+	\frac{\partial}{\partial \hat{c}} E[L] = \sum_{c \leq \hat{c}} P(c \mid \mathbf{a}) - \sum_{c \geq \hat{c}} P(c \mid \mathbf{a})
 \end{align}
 Setting this equal to zero gives:
 \begin{align}
@@ -92,15 +91,15 @@ Setting this equal to zero gives:
 \end{align}
 So the estimate that minimizes expected loss for this loss function is the median value.
 This may be difficult to define on our data set.
-For example suppose class -3 had $P(C = -2 \mid \mathbf{a}) = 0.5 = P(C=3 \mid \mathbf{a})$ then any class could reasonably be considered the median and therefore minimize our expected loss.
-When more than one risk rating could be reasonably considered the median we will choose the one with the largest probability and then at random.
+For example suppose an object had $P(C = -2 \mid \mathbf{a}) = 0.5 = P(C=3 \mid \mathbf{a})$ then any class could reasonably be considered the median and therefore minimize our expected loss.
+When more than one risk rating could be reasonably considered the median we will choose at random.
 
 \section{Application}
 We will now apply these loss functions to our automobile data set and measure accuracy and mean squared error.
 Mean squared error is the average difference between the true class and assigned class squared.
 We will also investigate how often the assigned classes agree.
 
-As the expected posterior estimates perform better than the maximum likelihood estimates we shall use these to estimate the required probabilities.
+As the posterior expectations for the $\bm{\theta}$ chances are never zero we shall use these to estimate the required probabilities.
 We will also use the uniform hyperparameters and set $s=1$.
 
 Using 10-fold cross validation our various loss functions perform as follows:
@@ -146,12 +145,12 @@ As an example consider the following loss matrix:
 Using this matrix we can define a loss function as $L(c, \hat{c}) = L_{c,\hat{c}}$.
 In this example we assign increasing loss for underestimating the risk rating of a vehicle as this would cause the insurer to offer lower premiums despite a possibly high chance of payout.
 We also assign a consistent loss of one for overestimating the risk to avoid always assigning the maximum risk rating.
-This should cause our decision rule to underestimate the risk rating.
 The expected loss would then be calculated as:
 \begin{equation}
-	E(L) = \sum_{c \in \mathcal{C}} L_{c,\hat{c}}P(c \mid \mathbf{a})
+	E[L] = \sum_{c \in \mathcal{C}} L_{c,\hat{c}}P(c \mid \mathbf{a})
 \end{equation}
 The estimate that minimizes this expectation can then be chosen providing our decision rule.
+This loss function should lead to a decision rule that does not underestimate the risk rating of a vehicle.
 
 If we use this particular loss function in our naive Bayes classifier and compare it to the zero one loss function we get:
 \begin{center}
@@ -176,12 +175,12 @@ Zero-One:
     \hline
                        &    & -2      & -1    & 0       & 1       & 2       & 3     \\
     \hline
-\multirow{6}{*}{Actual Class} & -2 & 0.52\% & 1.04\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% \\
-& -1 & 1.55\% & 5.7\% & 3.63\% & 0.52\% & 0.0\% & 0.0\% \\
-& 0 & 0.0\% & 1.55\% & 24.87\% & 4.66\% & 1.55\% & 0.0\% \\
-& 1 & 0.0\% & 2.07\% & 2.59\% & 17.62\% & 3.11\% & 1.04\% \\
-& 2 & 0.0\% & 0.0\% & 1.04\% & 2.07\% & 11.92\% & 1.04\% \\
-& 3 & 0.0\% & 0.52\% & 0.0\% & 0.52\% & 2.07\% & 8.81\% \\
+\multirow{6}{*}{Actual Class} & -2 & \bf{0.52\%} & 1.04\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% \\
+& -1 & 1.55\% & \bf{5.7\%} & 3.63\% & 0.52\% & 0.0\% & 0.0\% \\
+& 0 & 0.0\% & 1.55\% & \bf{24.87\%} & 4.66\% & 1.55\% & 0.0\% \\
+& 1 & 0.0\% & 2.07\% & 2.59\% & \bf{17.62\%} & 3.11\% & 1.04\% \\
+& 2 & 0.0\% & 0.0\% & 1.04\% & 2.07\% & \bf{11.92\%} & 1.04\% \\
+& 3 & 0.0\% & 0.52\% & 0.0\% & 0.52\% & 2.07\% & \bf{8.81\%} \\
 \hline
 \end{tabular}
 \end{center}
@@ -194,12 +193,12 @@ Custom Loss Matrix:
     \hline
                        &    & -2      & -1    & 0       & 1       & 2       & 3     \\
     \hline
-\multirow{6}{*}{Actual Class} & -2 & 0.0\% & 1.55\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% \\
-& -1 & 0.52\% & 5.7\% & 4.66\% & 0.52\% & 0.0\% & 0.0\% \\
-& 0 & 0.0\% & 1.04\% & 21.76\% & 5.7\% & 4.15\% & 0.0\% \\
-& 1 & 0.0\% & 1.55\% & 1.55\% & 17.1\% & 4.66\% & 1.55\% \\
-& 2 & 0.0\% & 0.0\% & 1.04\% & 2.07\% & 11.92\% & 1.04\% \\
-& 3 & 0.0\% & 0.52\% & 0.0\% & 0.52\% & 2.07\% & 8.81\% \\
+\multirow{6}{*}{Actual Class} & -2 & \bf{0.0\%} & 1.55\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% \\
+& -1 & 0.52\% & \bf{5.7\%} & 4.66\% & 0.52\% & 0.0\% & 0.0\% \\
+& 0 & 0.0\% & 1.04\% & \bf{2}\bf{1.76\%} & 5.7\% & 4.15\% & 0.0\% \\
+& 1 & 0.0\% & 1.55\% & 1.55\% & \bf{17.1\%} & 4.66\% & 1.55\% \\
+& 2 & 0.0\% & 0.0\% & 1.04\% & 2.07\% & \bf{11.92\%} & 1.04\% \\
+& 3 & 0.0\% & 0.52\% & 0.0\% & 0.52\% & 2.07\% & \bf{8.81\%}\\
 \hline
 \end{tabular}
 \end{center}
@@ -213,12 +212,8 @@ This may be more beneficial to an insurer than a more accurate classifier that s
 We have found that using an alternative loss function to create the decision rule can lead to increases in some metrics.
 We saw that using the squared differences loss function reduces the mean squared error but at the expense of accuracy.
 We also saw how a custom choice of loss matrix can affect our classifications.
+Overall we have demonstrated that varying the loss function allows us to achieve different goals.
 
-% Emphasize the importance of your subject by placing it in a larger context.
-Ordered classification falls between ordinary classification and regression and has not been fully explored despite it being a common occurrence in the real world.
-We have demonstrated that varying the loss function allows us to achieve different goals.
-
-% Offer suggestions for the future based on what you have argued.
 Further work on identifying how to deal with ordered classes is required given their prominence.
 An alternate approach to ordinal classification was described by Frank and Hall \cite{Frank01}.
 They proposed reducing the classification to a series of binary classifications.

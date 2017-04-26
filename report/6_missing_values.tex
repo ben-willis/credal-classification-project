@@ -23,7 +23,7 @@ Despite these issues it remains a very simple method to implement which is why w
 
 Most other methods involve replacing the missing values with estimated values and fall under the category of imputation.
 We will briefly describe a few of the most popular as described by Baraldi and Enders \cite{Baraldi09}.
-We could replace the missing values with the mean of the remaining values however this increases correlation between attributes and if the data is not MCAR also biases the mean.
+We could replace the missing values with the mean of the remaining values however this increases correlation between attributes and, if the data is not MCAR, also biases the mean.
 Alternatively regression can be used to impute values which has the benefit of not introducing bias to the means if the data is MCAR or MAR.
 However regression imputation also exaggerates the correlation.
 Finally we can model the attribute with missing values using a distribution and draw multiple samples to create multiple plausible data sets.
@@ -39,7 +39,7 @@ In this section we will use an approach where we remove all attributes from our 
 
 The method of feature reduction has other applications when working with the naive Bayes classifier.
 In one study \cite{Novakovic10} various techniques for removing features that hold less information about the class were trialled with the aim of improving naive Bayes classifier.
-The feature reduction techniques had mixed results however use of one particular technique was found to consistently maintain or improve the classifier.
+The feature reduction techniques had mixed results, however use of one particular technique was found to consistently maintain or improve the classifier.
 This indicates that the method of feature reduction does not necessarily lead to a weaker classifier.
 
 For our data set we will remove the attributes with missing values (Price, Number of doors, Bore, Stroke, Horsepower, Peak RPM) from our classifier.
@@ -58,7 +58,7 @@ We can then apply the NCC for $s=1$ in a similar manner:
 We see a small rise in single accuracy but a large decrease in set accuracy.
 We also observe a large increase in determinacy.
 Removing the features with missing values is having two main effects on our classifier.
-Firstly it would appear the NCC is able to use the extra vehicles we are now considering to eliminate more classes.
+Firstly it would appear the NCC is able to use the vehicles that were previously excluded from analysis to eliminate more classes.
 However the decrease in attributes is also causing the classifier to be less accurate and leading to our classifier dropping the correct class more often.
 
 \section{NCC Approach}
@@ -67,7 +67,7 @@ Another method builds upon our test for credal dominance in \cref{Credal Dominan
 This method was introduced by Zaffalon when he originally introduced the naive Credal classifier \cite{Zaffalon01}.
 
 We return to the optimization problem seen in section 5 \cref{Credal Dominance Test}.
-We can factor in our the uncertainty of the frequencies caused by missing values by giving lower and upper bounds for them.
+We can factor in the uncertainty of the frequencies caused by missing values by giving lower and upper bounds for them.
 These lower and upper bounds ($\underline{n}(a_i \mid c)$ and $\overline{n}(a_i \mid c)$) are found by considering all possibilities for the missing attributes in our data set.
 The optimization problem then becomes:
 \begin{align}
@@ -77,7 +77,7 @@ The optimization problem then becomes:
 We can find the solution to this problem as before.
 
 We will apply this method to our data set and compare it to previous results.
-Unlike before we will not vary the $s$ value and instead use $s=1$ throughout.
+Unlike before we will not vary the $s$ value and instead use $s=1$ throughout as we are interested in comparing the two approaches.
 As before we will measure four metrics: Single Accuracy (A\%), Set Accuracy (B\%), Indeterminate Output Size (C) and Determinacy (D\%).
 
 \begin{center}

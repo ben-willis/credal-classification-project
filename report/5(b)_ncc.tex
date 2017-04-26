@@ -21,7 +21,8 @@ Here we see similarly positive results; when the NCC isolates a single class it 
 This study gives an example when a large data set can lead to the NCC being highly determinate and accurate.
 
 In another study he applies the NCC to environmental mining data \cite{Zaffalon02}.
-Here the data falls in to one of four categories however the data set only consists of 155 complete instances which is much closer in size to our insurance problem.
+Here the data falls in to one of four categories.
+This data set only consists of 155 complete instances which is much closer in size to our insurance data set.
 In this study the NCC only produced a single class 60\% of the time and of these classes had a single accuracy of 52\%.
 When returning more than one class the true class was contained in the output set 82\% of the time.
 In comparison the NBC had an accuracy of 48\% on the whole data set and 43\% on the subset of objects the NCC was indeterminate about.
@@ -139,7 +140,8 @@ These are due to the domination criteria becoming harder to satisfy for larger $
 This leads to less classes being credal dominated and larger output size.
 
 This can also explain the slight trends in single and set accuracy.
-Set accuracy increases because the indeterminate output size is always increasing so for each increase in $s$ value we are more likely to see the true class added to the output set if it was not already there.
+Set accuracy increases because the indeterminate output size is also increases with $s$.
+So for each increase in $s$ value we are more likely to see the true class added to the output set if it was not already there.
 On the other hand the single accuracy does not change much.
 As we increase the $s$ value we decrease the number of single outputs and it would appear the outputs that become indeterminate are equally likely to be correct classifications as incorrect classifications.
 
@@ -193,6 +195,6 @@ The NBC is more decisive and will opt for the correct class in many of these occ
 We have seen that Zaffalon's naive Credal classifier is slightly more determinate than our simple interval based classifier.
 We have also seen how our choice of the $s$ hyper parameter affects how cautious our classifier is.
 
-However we have also seen that the naive Credal classifier can be very cautious when there are a small number of observations of a particular class.
+However we have also seen that the naive Credal classifier can be overly cautious when there are a small number of observations of a particular class.
 We saw that when this is the case it would often return sets of size two containing the true class and the class with a low number of observations.
 We saw that this meant the NBC still had a good accuracy when applied to the sets the NCC was indeterminate about because it is a less cautious classifier.

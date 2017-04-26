@@ -19,8 +19,8 @@ A classifier is an algorithm which, given previous observations and their classe
 % 2. Past work (literature that you use, similar studies).
 There are many applications of classifiers including image recognition \cite{Chapelle99}, sentiment analysis \cite{Melville09} and medical diagnosis \cite{Ster96}.
 There are also many different approaches to the classification problem \cite{Michie94}.
-Firstly there are two types of classifier; supervised and unsupervised.
-Supervised classifiers require a training data set describing the different classes whereas unsupervised classifiers learns the classes for itself.
+Firstly there are two types of classifier: supervised and unsupervised.
+Supervised classifiers require a training data set which provides them with information about the different classes before they can classify. Unsupervised classifiers, however, are able to independently identify the classes and assign them without training.
 Some examples of classifiers include:
 \begin{description}
 	\item[Neural Networks] Neural networks are a collection of artificial neurons which mimic the brain's axons. These neurons are then connected to each other and an input into one neuron can lead to outputs in other neurons.
@@ -29,31 +29,28 @@ Some examples of classifiers include:
 \end{description}
 
 In this report we will build upon a simple probabilistic classifier known as the naive Bayes classifier (or ``NBC'') described by Manning et al. \cite{Manning08}.
-Manning et al. present the naive Bayes classifier in the context of text analysis although it has been applied to many other classification problems including breast cancer diagnosis \cite{Dumitru09}.
+Manning et al. present the naive Bayes classifier in the context of text analysis, although it has been applied to many other classification problems including breast cancer diagnosis \cite{Dumitru09}.
 
-We will draw from Zaffalon's work \cite{Zaffalon01} to create the naive Credal classifier (or ``NCC'').
+We will then draw from Zaffalon's work \cite{Zaffalon01} to create the naive Credal classifier (or ``NCC'').
 A credal classifier is a type of classifier that, instead of returning a single class, returns a set of classes.
 Zaffalon extended Walley's imprecise Dirichlet model \cite{Walley96} to the field of classification.
-Zaffalon applied his classifier to multiple data sets including letter image recognition and credit ratings.
+Zaffalon applied the NCC to multiple data sets including letter image recognition and credit ratings.
 He showed that the NCC can have a greater accuracy than the NBC when it returned a single class.
 He also showed that the NBC can have a significantly lower accuracy when classifying objects the NCC was indeterminate about \cite{Zaffalon01}.
-We will examine whether we achieve similar results when the naive credal classifier is applied to our problem.
+We will find that when the naive credal classifier is applied to our problem the NCC has a greater accuracy than the NBC when it returns a single class.
+However we also find that the NBC does not have a significantly lower accuracy when classifying objects the NCC is indeterminate about in contrast to Zaffalon's work.
 
 While there is a lack of previous literature on using this data set to classify the insurance risk of vehicles it has been used for other purposes.
 In one study an approach to visualizing relationships between the different attributes was investigated \cite{Rosario04}.
-From the visualisations created in this study we can see there are relationships between various attributes.
+Visualisations were created which showed the relationships between various attributes in the data set.
 The classifiers we study in this report all naively assume conditional independence between the attributes given the object's class.
-We will see whether the observed relationships affect our classifiers.
+We will see whether the relationships observed that are present in the data set affect the performance of our classifiers.
 
 % 3. Your contribution (what you do differently from the literature, new findings).
 One of the interesting aspects of our problem is that the classes have order.
 There is plenty of literature on the application of the naive Bayes classifier to unordered classes however there is relatively little on its application to ordered classification.
 We will investigate ways we can alter the classifier to account for this.
 We will find we can reduce the average distance of classifications but at the expense of accuracy.
-
-We also provide a further application of the naive Credal classifier to this insurance problem.
-As previously stated Zaffalon provided several examples of the application of the NCC to other problems.
-We find that the naive Credal classifier is very accurate when it returns a single class, however it can be indeterminate when faced with few observations.
 
 \section{Report Overview}
 % 4. Overview of rest of report.

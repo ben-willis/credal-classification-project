@@ -4,7 +4,7 @@
 
 When estimating the probabilities for our classifier we take into account our prior beliefs for them and the likelihood given a set of observations.
 When choosing our prior distribution we had to pick hyperparameters without any knowledge.
-In this chapter we will use Walley's imprecise Dirichlet model to model this lack of knowledge and then create a simple interval based credal classifier.
+In this chapter we will use Walley's imprecise Dirichlet model \cite{Walley96} to model this lack of knowledge and then create a simple interval based credal classifier.
 
 \section{Imprecise Dirichlet Model}
 
@@ -15,20 +15,19 @@ We need a way to represent this lack of knowledge and acknowledge that our estim
 The imprecise Dirichlet model is a model for this lack of knowledge introduced by Walley \cite{Walley96}.
 Instead of using a single prior distribution to represent our beliefs about the unknown parameters we use a set of prior distributions.
 
-Suppose our objects had no attributes but we were still interested in classifying the object.
-In the imprecise Dirichlet models the prior distributions are Dirichlet distributions with parameters $(s, \mathbf{t})$ such that $\sum_{c \in \mathcal{C}} t(c) = 1$.
+In the imprecise Dirichlet model the prior distributions are Dirichlet distributions with parameters $(s, \mathbf{t})$ such that $\sum_{c \in \mathcal{C}} t(c) = 1$.
 The distributions for the likelihood are multinomial so:
 \begin{equation}
-	f(\mathbf{n} \mid \mathbf{\theta}) \propto \prod_{c \in \mathcal{C}} \theta_c^{n(c)}
+	f(\mathbf{n} \mid \bm{\theta}) \propto \prod_{c \in \mathcal{C}} \theta_c^{n(c)}
 	\qquad
-	f(\mathbf{\theta} \mid s, \mathbf{t}) \propto \prod_{c \in \mathcal{C}} \theta_c^{st(c) - 1}
+	f(\bm{\theta} \mid s, \mathbf{t}) \propto \prod_{c \in \mathcal{C}} \theta_c^{st(c) - 1}
 \end{equation}
 Then the posterior distribution is of the form:
 \begin{equation} \label{dirichlet_pdf2}
 	f(\mathbf{\theta} \mid \mathbf{n}, s, \mathbf{t}) \propto \prod_{c \in \mathcal{C}} \theta_c^{n(c) + st(c) - 1}
 \end{equation}
 which is also a Dirichlet distribution with parameters $(N+s, \frac{\mathbf{n}+s\mathbf{t}}{N+s})$.
-We can then take the posterior expectation for the $\theta$ chances giving:
+We can then take the posterior expectation for the $\bm{\theta}$ chances giving:
 \begin{equation}
 	P_t(c) = E(\theta_c \mid \mathbf{n}, s, \mathbf{t}) = \frac{n(c)+st(c)}{N+s}
 \end{equation}
@@ -46,7 +45,6 @@ The parameter $s$ represents the strength of our prior beliefs and determines ho
 
 Imprecise probability refers to the partial specification of a probability for example through upper and lower bounds for a probability.
 Imprecise probabilities have other applications in artificial intelligence and can better represent an experts knowledge \cite{Coolen11}.
-One such approach is to use upper and lower bounds for a probability.
 Using the model of imprecise priors we can find the upper and lower bounds for each posterior expectation based on different prior distributions.
 
 Recall that we estimate the probabilities by taking the expectation of the posterior distribution and that these estimates depend on $\mathbf{t}$ i.e.:
@@ -84,7 +82,7 @@ We will measure accuracy and indeterminate classifications as before.
 
 Neither of these offer a sufficient classification.
 There are often no observations of an attribute with a particular class which is why using the lower estimates leads to indeterminate classifications despite a reasonable accuracy for this data set.
-On the other hand when using the upper estimates our classifier has terrible accuracy.
+On the other hand when using the upper estimates our classifier has very low accuracy.
 
 \section{Simple Credal Classifier}
 Alternatively we can turn our classifier into a credal classifier.
@@ -171,6 +169,6 @@ Hence increasing the value of $s$ increases the size of the interval and increas
 
 \section{Conclusion}
 
-In this chapter we've seen how Walley's imprecise Dirichlet model can be used to create intervals for the probabilities we wish to estimate when using the naive Bayes classifier.
+In this chapter we have seen how Walley's imprecise Dirichlet model can be used to create intervals for the probabilities we wish to estimate when using the naive Bayes classifier.
 We have seen that using either the upper and lower bounds lead to a very poor classifier.
 We then used these imprecise probabilities to create a simple credal classifier.
